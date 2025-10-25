@@ -1,0 +1,24 @@
+{
+  "name": "@pogo/database",
+  "version": "1.0.0",
+  "description": "Shared database models and repositories for POGO Community",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf lib",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "mssql": "^10.0.0",
+    "inversify": "^6.0.1",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/mssql": "^9.1.0",
+    "@types/node": "^18.15.3",
+    "typescript": "^5.8.3"
+  }
+}
+
