@@ -1,0 +1,288 @@
+version: '3.8'
+
+services:
+  # Databases
+  account-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: account-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - account_db_data:/var/opt/mssql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  player-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: player-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1434:1433"
+    volumes:
+      - player_db_data:/var/opt/mssql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  location-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: location-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1435:1433"
+    volumes:
+      - location_db_data:/var/opt/mssql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  gym-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: gym-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1436:1433"
+    volumes:
+      - gym_db_data:/var/opt/mssql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  raid-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: raid-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1437:1433"
+    volumes:
+      - raid_db_data:/var/opt/mssql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Microservices
+  account-service:
+    build:
+      context: .
+      dockerfile: apps/backend/microservices/Account.Service/Dockerfile
+    container_name: account-service
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Server=account-db,1433;Database=AccountDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;
+    depends_on:
+      account-db:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  player-service:
+    build:
+      context: .
+      dockerfile: apps/backend/microservices/Player.Service/Dockerfile
+    container_name: player-service
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5002
+      - ConnectionStrings__DefaultConnection=Server=player-db,1433;Database=PlayerDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;
+    depends_on:
+      player-db:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  location-service:
+    build:
+      context: .
+      dockerfile: apps/backend/microservices/Location.Service/Dockerfile
+    container_name: location-service
+    ports:
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__DefaultConnection=Server=location-db,1433;Database=LocationDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;
+    depends_on:
+      location-db:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  gym-service:
+    build:
+      context: .
+      dockerfile: apps/backend/microservices/Gym.Service/Dockerfile
+    container_name: gym-service
+    ports:
+      - "5004:5004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5004
+      - ConnectionStrings__DefaultConnection=Server=gym-db,1433;Database=GymDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;
+      - LocationService__BaseUrl=http://location-service:5003
+    depends_on:
+      gym-db:
+        condition: service_healthy
+      location-service:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  raid-service:
+    build:
+      context: .
+      dockerfile: apps/backend/microservices/Raid.Service/Dockerfile
+    container_name: raid-service
+    ports:
+      - "5005:5005"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5005
+      - ConnectionStrings__DefaultConnection=Server=raid-db,1433;Database=RaidDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;
+      - GymService__BaseUrl=http://gym-service:5004
+      - PlayerService__BaseUrl=http://player-service:5002
+    depends_on:
+      raid-db:
+        condition: service_healthy
+      gym-service:
+        condition: service_healthy
+      player-service:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend for Frontend (BFF) Services
+  bot-bff:
+    build:
+      context: .
+      dockerfile: apps/backend/bffs/Bot.BFF/Dockerfile
+    container_name: bot-bff
+    ports:
+      - "6001:6001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6001
+    depends_on:
+      account-service:
+        condition: service_healthy
+      player-service:
+        condition: service_healthy
+      location-service:
+        condition: service_healthy
+      gym-service:
+        condition: service_healthy
+      raid-service:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  app-bff:
+    build:
+      context: .
+      dockerfile: apps/backend/bffs/App.BFF/Dockerfile
+    container_name: app-bff
+    ports:
+      - "6002:6002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6002
+    depends_on:
+      account-service:
+        condition: service_healthy
+      player-service:
+        condition: service_healthy
+      location-service:
+        condition: service_healthy
+      gym-service:
+        condition: service_healthy
+      raid-service:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  account_db_data:
+  player_db_data:
+  location_db_data:
+  gym_db_data:
+  raid_db_data:
+
+networks:
+  pogo-network:
+    driver: bridge

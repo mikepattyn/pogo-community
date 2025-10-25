@@ -1,0 +1,149 @@
+# Pogo Microservices Makefile
+# This Makefile provides commands for managing the microservices architecture
+
+.PHONY: help build clean test start stop restart logs status health
+
+# Default target
+help:
+	@echo "Pogo Microservices Management"
+	@echo "============================="
+	@echo ""
+	@echo "Available commands:"
+	@echo "  build          - Build all microservices and BFFs"
+	@echo "  build-services - Build only microservices"
+	@echo "  build-bffs     - Build only BFFs"
+	@echo "  clean          - Clean all build artifacts"
+	@echo "  test           - Run tests for all services"
+	@echo "  start          - Start all services with Docker Compose"
+	@echo "  stop           - Stop all services"
+	@echo "  restart        - Restart all services"
+	@echo "  logs           - Show logs for all services"
+	@echo "  logs-service   - Show logs for a specific service"
+	@echo "  status         - Show status of all services"
+	@echo "  health         - Check health of all services"
+	@echo "  shell-service  - Open shell in a specific service container"
+	@echo "  db-reset       - Reset all databases"
+	@echo "  db-migrate     - Run database migrations"
+	@echo ""
+
+# Build commands
+build:
+	@echo "Building all microservices and BFFs..."
+	dotnet build PogoMicroservices.sln --configuration Release
+
+build-services:
+	@echo "Building microservices..."
+	dotnet build apps/backend/microservices/Account.Service/Account.Service.csproj --configuration Release
+	dotnet build apps/backend/microservices/Player.Service/Player.Service.csproj --configuration Release
+	dotnet build apps/backend/microservices/Location.Service/Location.Service.csproj --configuration Release
+	dotnet build apps/backend/microservices/Gym.Service/Gym.Service.csproj --configuration Release
+	dotnet build apps/backend/microservices/Raid.Service/Raid.Service.csproj --configuration Release
+
+build-bffs:
+	@echo "Building BFFs..."
+	dotnet build apps/backend/bffs/Bot.BFF/Bot.BFF.csproj --configuration Release
+	dotnet build apps/backend/bffs/App.BFF/App.BFF.csproj --configuration Release
+
+# Clean commands
+clean:
+	@echo "Cleaning build artifacts..."
+	dotnet clean PogoMicroservices.sln
+	docker system prune -f
+
+# Test commands
+test:
+	@echo "Running tests..."
+	dotnet test PogoMicroservices.sln --configuration Release --verbosity normal
+
+# Docker Compose commands
+start:
+	@echo "Starting all microservices..."
+	docker-compose -f docker-compose.microservices.yml up -d
+
+stop:
+	@echo "Stopping all microservices..."
+	docker-compose -f docker-compose.microservices.yml down
+
+restart: stop start
+
+logs:
+	@echo "Showing logs for all services..."
+	docker-compose -f docker-compose.microservices.yml logs -f
+
+logs-service:
+	@echo "Usage: make logs-service SERVICE=<service-name>"
+	@echo "Available services: account-service, player-service, location-service, gym-service, raid-service, bot-bff, app-bff"
+	@if [ -z "$(SERVICE)" ]; then echo "Please specify SERVICE=<service-name>"; exit 1; fi
+	docker-compose -f docker-compose.microservices.yml logs -f $(SERVICE)
+
+status:
+	@echo "Service Status:"
+	@echo "==============="
+	docker-compose -f docker-compose.microservices.yml ps
+
+health:
+	@echo "Health Check Results:"
+	@echo "===================="
+	@echo "Account Service:"
+	@curl -s http://localhost:5001/health || echo "❌ Account Service not responding"
+	@echo ""
+	@echo "Player Service:"
+	@curl -s http://localhost:5002/health || echo "❌ Player Service not responding"
+	@echo ""
+	@echo "Location Service:"
+	@curl -s http://localhost:5003/health || echo "❌ Location Service not responding"
+	@echo ""
+	@echo "Gym Service:"
+	@curl -s http://localhost:5004/health || echo "❌ Gym Service not responding"
+	@echo ""
+	@echo "Raid Service:"
+	@curl -s http://localhost:5005/health || echo "❌ Raid Service not responding"
+	@echo ""
+	@echo "Bot BFF:"
+	@curl -s http://localhost:6001/health || echo "❌ Bot BFF not responding"
+	@echo ""
+	@echo "App BFF:"
+	@curl -s http://localhost:6002/health || echo "❌ App BFF not responding"
+
+# Database commands
+db-reset:
+	@echo "Resetting all databases..."
+	docker-compose -f docker-compose.microservices.yml down -v
+	docker-compose -f docker-compose.microservices.yml up -d
+
+db-migrate:
+	@echo "Running database migrations..."
+	@echo "Account Service migrations..."
+	dotnet ef database update --project apps/backend/microservices/Account.Service/Account.Service.csproj
+	@echo "Player Service migrations..."
+	dotnet ef database update --project apps/backend/microservices/Player.Service/Player.Service.csproj
+	@echo "Location Service migrations..."
+	dotnet ef database update --project apps/backend/microservices/Location.Service/Location.Service.csproj
+	@echo "Gym Service migrations..."
+	dotnet ef database update --project apps/backend/microservices/Gym.Service/Gym.Service.csproj
+	@echo "Raid Service migrations..."
+	dotnet ef database update --project apps/backend/microservices/Raid.Service/Raid.Service.csproj
+
+# Development commands
+dev-start:
+	@echo "Starting development environment..."
+	docker-compose -f docker-compose.microservices.yml up -d account-db player-db location-db gym-db raid-db
+	@echo "Databases started. You can now run individual services locally."
+
+dev-stop:
+	@echo "Stopping development environment..."
+	docker-compose -f docker-compose.microservices.yml stop
+
+# Utility commands
+shell-service:
+	@echo "Usage: make shell-service SERVICE=<service-name>"
+	@if [ -z "$(SERVICE)" ]; then echo "Please specify SERVICE=<service-name>"; exit 1; fi
+	docker exec -it $(SERVICE) /bin/bash
+
+# Quick start for development
+quick-start: build start
+	@echo "Microservices started! Check status with 'make status'"
+
+# Full reset
+reset: stop clean build start
+	@echo "Full reset completed!"
