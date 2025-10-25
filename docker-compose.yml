@@ -1,64 +1,7 @@
 version: '3.8'
 
 services:
-  # MSSQL Database (Shared by API and Bot)
-  mssql:
-    build:
-      context: .
-      dockerfile: mssql.Dockerfile
-    container_name: pogo-mssql
-    environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: ${MSSQL_SA_PASSWORD}
-      MSSQL_PID: Express
-    volumes:
-      - mssql-data:/var/opt/mssql
-    ports:
-      - "5000:1433"
-    networks:
-      - pogo-network
-    healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_SA_PASSWORD}", "-Q", "SELECT 1"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 60s
-    restart: unless-stopped
 
-  # API Backend
-  api:
-    build:
-      context: .
-      dockerfile: api.Dockerfile
-    container_name: pogo-api
-    environment:
-      # Server Configuration
-      PORT: 8080
-      NODE_ENV: production
-      
-      # JWT Configuration
-      JWT_KEY: ${JWT_KEY}
-      
-      # Database Configuration (MSSQL)
-      MSSQL_HOST: mssql
-      MSSQL_PORT: 1433
-      MSSQL_DATABASE: pogo
-      MSSQL_USER: sa
-      MSSQL_PASSWORD: ${MSSQL_SA_PASSWORD}
-      MSSQL_ENCRYPT: false
-      MSSQL_TRUST_CERT: true
-      
-      # Google Cloud Configuration
-      CLOUD_SQL_CONNECTION_NAME: ${GOOGLE_CLOUD_PROJECT_ID}
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
-    ports:
-      - "1000:8080"
-    depends_on:
-      mssql:
-        condition: service_healthy
-    networks:
-      - pogo-network
-    restart: unless-stopped
 
   # Discord Bot
   bot:
@@ -352,8 +295,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  mssql-data:
-    name: pogo-mssql-data
   account_db_data:
     name: pogo-account-db-data
   player_db_data:

@@ -9,6 +9,8 @@
 .PHONY: docker-logs docker-logs-api docker-logs-bot docker-logs-app docker-logs-mysql docker-logs-mssql
 .PHONY: docker-ps docker-status docker-db-mysql docker-db-mssql
 .PHONY: docker-clean docker-clean-all
+.PHONY: microservices microservices-build microservices-start microservices-stop microservices-restart
+.PHONY: microservices-logs microservices-status microservices-health microservices-clean
 
 # Default target
 .DEFAULT_GOAL := help
@@ -281,4 +283,67 @@ docker-clean-all: ## Remove all Docker resources (containers, images, volumes)
 	else \
 		echo "$(YELLOW)Cancelled.$(NC)"; \
 	fi
+
+##@ Microservices
+
+microservices: ## Show microservices help
+	@echo "$(CYAN)POGO Microservices - Available Commands$(NC)"
+	@echo ""
+	@echo "$(GREEN)Build Commands:$(NC)"
+	@echo "  microservices-build     Build all microservices and BFFs"
+	@echo "  microservices-start     Start all microservices with Docker Compose"
+	@echo "  microservices-stop      Stop all microservices"
+	@echo "  microservices-restart   Restart all microservices"
+	@echo ""
+	@echo "$(GREEN)Management Commands:$(NC)"
+	@echo "  microservices-logs      View logs for all microservices"
+	@echo "  microservices-status    Show status of all microservices"
+	@echo "  microservices-health    Check health of all microservices"
+	@echo "  microservices-clean     Clean up microservices resources"
+	@echo ""
+	@echo "$(YELLOW)For detailed microservices management, use: make -f Makefile.microservices help$(NC)"
+
+microservices-build: ## Build all microservices and BFFs
+	@echo "$(CYAN)Building microservices...$(NC)"
+	@make -f Makefile.microservices build
+	@echo "$(GREEN)Microservices build complete!$(NC)"
+
+microservices-start: ## Start all microservices with Docker Compose
+	@echo "$(CYAN)Starting microservices...$(NC)"
+	@make -f Makefile.microservices start
+	@echo "$(GREEN)Microservices started!$(NC)"
+	@echo "$(YELLOW)Bot BFF: http://localhost:6001$(NC)"
+	@echo "$(YELLOW)App BFF: http://localhost:6002$(NC)"
+	@echo "$(YELLOW)Account Service: http://localhost:5001$(NC)"
+	@echo "$(YELLOW)Player Service: http://localhost:5002$(NC)"
+	@echo "$(YELLOW)Location Service: http://localhost:5003$(NC)"
+	@echo "$(YELLOW)Gym Service: http://localhost:5004$(NC)"
+	@echo "$(YELLOW)Raid Service: http://localhost:5005$(NC)"
+
+microservices-stop: ## Stop all microservices
+	@echo "$(CYAN)Stopping microservices...$(NC)"
+	@make -f Makefile.microservices stop
+	@echo "$(GREEN)Microservices stopped!$(NC)"
+
+microservices-restart: ## Restart all microservices
+	@echo "$(CYAN)Restarting microservices...$(NC)"
+	@make -f Makefile.microservices restart
+	@echo "$(GREEN)Microservices restarted!$(NC)"
+
+microservices-logs: ## View logs for all microservices
+	@echo "$(CYAN)Viewing microservices logs...$(NC)"
+	@make -f Makefile.microservices logs
+
+microservices-status: ## Show status of all microservices
+	@echo "$(CYAN)Microservices Status:$(NC)"
+	@make -f Makefile.microservices status
+
+microservices-health: ## Check health of all microservices
+	@echo "$(CYAN)Checking microservices health...$(NC)"
+	@make -f Makefile.microservices health
+
+microservices-clean: ## Clean up microservices resources
+	@echo "$(CYAN)Cleaning microservices resources...$(NC)"
+	@make -f Makefile.microservices clean
+	@echo "$(GREEN)Microservices cleanup complete!$(NC)"
 
