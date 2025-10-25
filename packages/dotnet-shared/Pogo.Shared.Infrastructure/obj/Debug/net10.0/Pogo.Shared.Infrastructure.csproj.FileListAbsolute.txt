@@ -1,0 +1,17 @@
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.csproj.AssemblyReference.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.AssemblyInfoInputs.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.AssemblyInfo.cs
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/bin/Debug/net10.0/Pogo.Shared.Infrastructure.deps.json
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/bin/Debug/net10.0/Pogo.Shared.Infrastructure.runtimeconfig.json
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/bin/Debug/net10.0/Pogo.Shared.Infrastructure.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/bin/Debug/net10.0/Pogo.Shared.Infrastructure.pdb
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/bin/Debug/net10.0/Pogo.Shared.Kernel.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/bin/Debug/net10.0/Pogo.Shared.Kernel.pdb
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Sha.7DB7E752.Up2Date
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/refint/Pogo.Shared.Infrastructure.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.pdb
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/Pogo.Shared.Infrastructure.genruntimeconfig.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Infrastructure/obj/Debug/net10.0/ref/Pogo.Shared.Infrastructure.dll

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "WWX4Gs6JX7Q=",
+  "success": true,
+  "projectFilePath": "/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/Pogo.Shared.Application.csproj",
+  "expectedPackageFiles": [
+    "/Users/mikepattyn/.nuget/packages/fluentvalidation/11.9.0/fluentvalidation.11.9.0.nupkg.sha512",
+    "/Users/mikepattyn/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.9.0/fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
+    "/Users/mikepattyn/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
+    "/Users/mikepattyn/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/Users/mikepattyn/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.0-rc.2.25502.107/microsoft.extensions.dependencyinjection.abstractions.10.0.0-rc.2.25502.107.nupkg.sha512",
+    "/Users/mikepattyn/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.0-rc.2.25502.107/microsoft.extensions.logging.abstractions.10.0.0-rc.2.25502.107.nupkg.sha512"
+  ],
+  "logs": []
+}

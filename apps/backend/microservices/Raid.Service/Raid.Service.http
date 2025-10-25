@@ -1,0 +1,6 @@
+@Raid.Service_HostAddress = http://localhost:5125
+
+GET {{Raid.Service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

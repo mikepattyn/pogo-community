@@ -1,0 +1,15 @@
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.csproj.AssemblyReference.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.AssemblyInfoInputs.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.AssemblyInfo.cs
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.csproj.CoreCompileInputs.cache
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/bin/Debug/net10.0/Pogo.Shared.Application.deps.json
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/bin/Debug/net10.0/Pogo.Shared.Application.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/bin/Debug/net10.0/Pogo.Shared.Application.pdb
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/bin/Debug/net10.0/Pogo.Shared.Kernel.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/bin/Debug/net10.0/Pogo.Shared.Kernel.pdb
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Sha.534F251A.Up2Date
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/refint/Pogo.Shared.Application.dll
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/Pogo.Shared.Application.pdb
+/Users/mikepattyn/pogo/packages/dotnet-shared/Pogo.Shared.Application/obj/Debug/net10.0/ref/Pogo.Shared.Application.dll
