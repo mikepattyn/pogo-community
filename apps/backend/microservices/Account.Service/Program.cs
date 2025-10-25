@@ -69,10 +69,14 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+// Prometheus metrics
+app.UseHttpMetrics();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapMetrics();
 
 // Map health checks
 app.MapHealthChecks();
