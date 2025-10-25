@@ -18,7 +18,7 @@ export class ApiClient {
 
     private baseUrl: string | undefined = "http://localhost:3000/api/v1";
 
-    constructor(@inject(Logger) private logger: Logger) {
+    constructor(@inject("Logger") private logger: Logger) {
         // Add a request interceptor
         axios.interceptors.request.use(requestInterceptor, errorInterceptor);
     }

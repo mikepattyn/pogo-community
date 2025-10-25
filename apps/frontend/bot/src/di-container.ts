@@ -23,6 +23,6 @@ dependencyInjectionContainer.bind<PokemonStore>(PokemonStore).toSelf().inSinglet
 dependencyInjectionContainer.bind<ApiClient>(ApiClient).toSelf().inSingletonScope();
 
 // Other
-dependencyInjectionContainer.bind<Logger>(Logger).toSelf().inSingletonScope();
+dependencyInjectionContainer.bind<Logger>("Logger").to(Logger).inSingletonScope();
 
 export { dependencyInjectionContainer };

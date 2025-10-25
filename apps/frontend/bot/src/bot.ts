@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { DiscordClient } from './clients/discord.client';
 
 // Setup Environment

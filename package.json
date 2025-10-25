@@ -24,5 +24,11 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "inversify": "^6.2.2",
+      "reflect-metadata": "^0.2.2"
+    }
   }
 }
