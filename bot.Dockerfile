@@ -1,5 +1,8 @@
 # Multi-stage build for POGO Community Discord Bot
-FROM node:18-alpine AS base
+FROM node:22-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
@@ -12,7 +15,7 @@ COPY apps/frontend/bot/tsconfig.json ./
 FROM base AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm install --legacy-peer-deps
+RUN pnpm install
 
 # Build stage
 FROM dependencies AS build
@@ -21,16 +24,16 @@ FROM dependencies AS build
 COPY apps/frontend/bot/src/ ./src/
 
 # Build TypeScript
-RUN npm run build
+RUN pnpm run build
 
 # Production dependencies stage
 FROM base AS production-deps
 
 # Install only production dependencies
-RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
+RUN pnpm install --prod && pnpm store prune
 
 # Run stage
-FROM node:18-alpine AS run
+FROM node:22-alpine AS run
 
 # Set working directory
 WORKDIR /app

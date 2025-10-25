@@ -1,5 +1,8 @@
 # Multi-stage build for POGO Community Mobile Web App
-FROM node:18-alpine AS base
+FROM node:22-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
@@ -12,7 +15,7 @@ COPY apps/frontend/mobile/tsconfig.json ./
 FROM base AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm install --legacy-peer-deps
+RUN pnpm install
 
 # Build stage
 FROM dependencies AS build
@@ -27,7 +30,7 @@ COPY apps/frontend/mobile/inversify.config.ts ./
 COPY apps/frontend/mobile/react-native/ ./react-native/
 
 # Export web build using Expo
-RUN npx expo export --platform web
+RUN pnpm exec expo export --platform web
 
 # Run stage with nginx
 FROM nginx:alpine AS run
