@@ -15,7 +15,7 @@ spec:
       paths:
       # Mobile App - Root path
       - path: /()(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: pogo-app
@@ -24,7 +24,7 @@ spec:
       
       # Bot BFF API
       - path: /bot-api(/|$)(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: bot-bff
@@ -33,7 +33,7 @@ spec:
       
       # App BFF API
       - path: /app-api(/|$)(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: app-bff
@@ -42,7 +42,7 @@ spec:
       
       # Grafana
       - path: /grafana(/|$)(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: grafana
@@ -51,7 +51,7 @@ spec:
       
       # Prometheus
       - path: /prometheus(/|$)(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: prometheus
