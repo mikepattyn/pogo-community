@@ -1,0 +1,44 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/lib": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.turbo": true,
+        "**/coverage": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/lib": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.turbo": true,
+        "**/coverage": true,
+        "**/android": true,
+        "**/ios": true
+    },
+    "jest.jestCommandLine": "pnpm test",
+    "jest.autoRun": "off",
+    "emmet.includeLanguages": {
+        "typescript": "html",
+        "typescriptreact": "html"
+    },
+    "files.associations": {
+        "*.tsx": "typescriptreact",
+        "*.ts": "typescript"
+    }
+}

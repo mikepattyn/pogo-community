@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "msjsdiag.vscode-react-native",
+        "orta.vscode-jest",
+        "expo.vscode-expo-tools",
+        "eamodio.gitlens",
+        "chakrounanas.turbo-console-log",
+        "christian-kohler.path-intellisense",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "formulahendry.auto-rename-tag",
+        "ms-vscode.vscode-json"
+    ]
+}
