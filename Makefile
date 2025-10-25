@@ -3,6 +3,12 @@
 .PHONY: run-api run-bot run-mobile-web run-mobile-android run-mobile-ios
 .PHONY: test-api test-bot test-mobile
 .PHONY: lint-api lint-bot lint-mobile
+.PHONY: docker-build docker-build-api docker-build-bot docker-build-app docker-build-mysql docker-build-mssql
+.PHONY: docker-up docker-up-build docker-down docker-down-volumes docker-restart
+.PHONY: docker-restart-api docker-restart-bot docker-restart-app
+.PHONY: docker-logs docker-logs-api docker-logs-bot docker-logs-app docker-logs-mysql docker-logs-mssql
+.PHONY: docker-ps docker-status docker-db-mysql docker-db-mssql
+.PHONY: docker-clean docker-clean-all
 
 # Default target
 .DEFAULT_GOAL := help
