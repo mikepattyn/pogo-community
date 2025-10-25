@@ -3,7 +3,7 @@ import { SettingsManager } from '../../../managers/settings/settings.manager';
 import { ImageBackground, View, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 
-export class WelcomeScreen extends Component<any> {
+export class WelcomeScreen extends Component<Record<string, never>> {
   registrationManager: SettingsManager = new SettingsManager();
 
   constructor(props) {

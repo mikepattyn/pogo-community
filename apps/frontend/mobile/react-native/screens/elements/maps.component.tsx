@@ -21,7 +21,7 @@ const info = [
   },
 ];
 
-export class MapComponent extends Component<any> {
+export class MapComponent extends Component<Record<string, never>> {
   render() {
     return (
       <MapView

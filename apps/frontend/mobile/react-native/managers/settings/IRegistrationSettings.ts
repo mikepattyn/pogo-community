@@ -1,5 +1,3 @@
-import { isNullOrUndefined } from 'util';
-
 export interface IRegistrationSettings {
   Email?: string;
   Password?: string;

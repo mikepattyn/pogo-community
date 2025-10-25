@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
 import { isNullOrUndefined } from 'util';
 import { MapComponent } from '../../../elements/maps.component';
 import GymManager from '../../../../managers/gym.manager';
@@ -12,8 +12,8 @@ export interface GymScreenState {
   isDialogVisible: boolean;
 }
 
-export class GymScreenContainerComponent<P, S> extends Component<
-  any,
+export class GymScreenContainerComponent extends Component<
+  Record<string, never>,
   GymScreenState
 > {
   private gymManager: GymManager = GymManager.instance;
@@ -21,9 +21,9 @@ export class GymScreenContainerComponent<P, S> extends Component<
     super(props);
     this.onUserLocationChange = this.onUserLocationChange.bind(this);
   }
-  map: any;
+  map: unknown;
   // _mapView: MapView
-  componentWillReceiveProps() {
+  UNSAFE_componentWillReceiveProps() {
     this.getCurrentPosition();
     this.initMap();
     this.forceUpdate();

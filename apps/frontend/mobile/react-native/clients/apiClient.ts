@@ -17,7 +17,7 @@ export default class ApiClient {
     axios.interceptors.request.use(requestInterceptor, errorInterceptor);
   }
 
-  async post(url: string, body: any): Promise<AxiosResponse> {
+  async post(url: string, body: unknown): Promise<AxiosResponse> {
     let retVal: AxiosResponse = {
       data: null,
       status: -1,

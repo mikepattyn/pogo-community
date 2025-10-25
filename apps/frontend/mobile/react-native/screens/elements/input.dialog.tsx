@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Keyboard, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Input } from 'react-native-elements';
 import {
   Dialog,
@@ -8,22 +8,20 @@ import {
   DialogFooter,
   DialogButton,
 } from 'react-native-popup-dialog';
-import ApiClient from '../../clients/apiClient';
-import GymManager from '../../managers/gym.manager';
 
 export interface InputDialogProps {
   onChangeDialogInput(): void;
   dialogTitle: string;
   dialogSubmitText: string;
   dialogCancelText: string;
-  dialogSubmit: Function;
-  dialogCancel: Function;
+  dialogSubmit: () => void;
+  dialogCancel: () => void;
   isDialogVisible: boolean;
 }
 
 // TODO: Test the custom InputDialog - Check if state is maintained and correctly passed to and from the child component;
 
-export class InputDialog extends Component<any, any> {
+export class InputDialog extends Component<InputDialogProps, Record<string, never>> {
   render() {
     return (
       <Dialog

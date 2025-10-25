@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Image, TouchableHighlight } from 'react-native';
 
-export class HeaderSubcomponent extends Component<any, any> {
+export class HeaderSubcomponent extends Component<Record<string, never>, Record<string, never>> {
   render() {
     return (
       <View

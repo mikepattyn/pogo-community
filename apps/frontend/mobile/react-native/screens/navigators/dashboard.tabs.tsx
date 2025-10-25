@@ -22,7 +22,7 @@ export const DashboardTabs = () => {
           borderTopColor: '#474848',
         },
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: any;
+          let iconName: string;
           if (route.name === 'Profile') {
             iconName = focused ? 'account-circle' : 'account-circle-outline';
           } else if (route.name === 'Gyms') {

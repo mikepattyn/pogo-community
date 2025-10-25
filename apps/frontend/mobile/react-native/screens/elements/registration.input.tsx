@@ -6,7 +6,7 @@ export interface IRegistrationInput {
   index: number;
   value: string | number;
   name: string;
-  onChange: any;
+  onChange: (value: string | number) => void;
 }
 
 export class RegistrationInput extends Component<IRegistrationInput> {

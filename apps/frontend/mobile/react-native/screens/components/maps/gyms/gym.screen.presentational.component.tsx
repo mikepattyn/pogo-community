@@ -7,10 +7,7 @@ import {
 import { GymScreenStyles } from './resources/styles';
 import { InputDialog } from './../../../elements/input.dialog';
 
-class GymScreenPresentationalComponent extends GymScreenContainerComponent<
-  any,
-  GymScreenState
-> {
+class GymScreenPresentationalComponent extends GymScreenContainerComponent {
   constructor(props) {
     super(props);
     this.state = {

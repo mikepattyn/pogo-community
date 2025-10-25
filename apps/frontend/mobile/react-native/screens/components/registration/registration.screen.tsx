@@ -7,7 +7,7 @@ import { RegistrationProps } from './RegistrationProps';
 import { Button } from 'react-native-elements';
 
 export class RegistrationScreen extends React.Component<
-  any,
+  Record<string, never>,
   RegistrationState
 > {
   private propertyCommands: string[] = [
