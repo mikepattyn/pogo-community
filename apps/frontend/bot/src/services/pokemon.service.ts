@@ -14,9 +14,9 @@ export class PokemonService {
       pokemonCounters = request;
       console.log('Info: ', JSON.stringify(pokemonCounters));
     }
-    const pokemon = pokemonCounters.filter(
+    const pokemon = pokemonCounters?.filter(
       (x: { name: string }) => x.name.toLowerCase() == name.toLowerCase()
-    );
+    ) || [];
     if (!isNullOrUndefined(pokemon)) {
       return pokemon;
     } else {

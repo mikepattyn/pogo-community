@@ -91,7 +91,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to create account', error);
+      this.logger.error(`Failed to create account: ${error}`);
       return null;
     }
   }
@@ -104,7 +104,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to login', error);
+      this.logger.error(`Failed to login: ${error}`);
       return null;
     }
   }
@@ -114,7 +114,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/account/email/${email}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get account by email', error);
+      this.logger.error(`Failed to get account by email: ${error}`);
       return null;
     }
   }
@@ -131,7 +131,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to create player', error);
+      this.logger.error(`'Failed to create player': ${error}`);
       return null;
     }
   }
@@ -141,7 +141,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/player/${id}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get player by ID', error);
+      this.logger.error(`'Failed to get player by ID': ${error}`);
       return null;
     }
   }
@@ -151,7 +151,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/player/username/${username}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get player by username', error);
+      this.logger.error(`'Failed to get player by username': ${error}`);
       return null;
     }
   }
@@ -161,7 +161,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/player/discord/${discordId}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get player by Discord ID', error);
+      this.logger.error(`'Failed to get player by Discord ID': ${error}`);
       return null;
     }
   }
@@ -192,7 +192,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to create location', error);
+      this.logger.error(`'Failed to create location': ${error}`);
       return null;
     }
   }
@@ -202,7 +202,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/location/${id}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get location by ID', error);
+      this.logger.error(`'Failed to get location by ID': ${error}`);
       return null;
     }
   }
@@ -216,7 +216,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || [];
     } catch (error) {
-      this.logger.error('Failed to search locations nearby', error);
+      this.logger.error(`'Failed to search locations nearby': ${error}`);
       return [];
     }
   }
@@ -237,7 +237,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to create gym', error);
+      this.logger.error(`'Failed to create gym': ${error}`);
       return null;
     }
   }
@@ -247,7 +247,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/gym/${id}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get gym by ID', error);
+      this.logger.error(`'Failed to get gym by ID': ${error}`);
       return null;
     }
   }
@@ -257,7 +257,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/gym/location/${locationId}`);
       return response.data?.data || [];
     } catch (error) {
-      this.logger.error('Failed to get gyms by location', error);
+      this.logger.error(`'Failed to get gyms by location': ${error}`);
       return [];
     }
   }
@@ -271,7 +271,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || [];
     } catch (error) {
-      this.logger.error('Failed to search gyms nearby', error);
+      this.logger.error(`'Failed to search gyms nearby': ${error}`);
       return [];
     }
   }
@@ -302,7 +302,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to create raid', error);
+      this.logger.error(`'Failed to create raid': ${error}`);
       return null;
     }
   }
@@ -312,7 +312,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get(`/api/raid/${id}`);
       return response.data?.data || null;
     } catch (error) {
-      this.logger.error('Failed to get raid by ID', error);
+      this.logger.error(`'Failed to get raid by ID': ${error}`);
       return null;
     }
   }
@@ -324,7 +324,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || [];
     } catch (error) {
-      this.logger.error('Failed to get raids by gym', error);
+      this.logger.error(`'Failed to get raids by gym': ${error}`);
       return [];
     }
   }
@@ -334,7 +334,7 @@ export class MicroservicesClient {
       const response = await this.apiClient.get('/api/raid/active');
       return response.data?.data || [];
     } catch (error) {
-      this.logger.error('Failed to get active raids', error);
+      this.logger.error(`'Failed to get active raids': ${error}`);
       return [];
     }
   }
@@ -348,7 +348,7 @@ export class MicroservicesClient {
       });
       return response.data?.data || [];
     } catch (error) {
-      this.logger.error('Failed to search raids nearby', error);
+      this.logger.error(`'Failed to search raids nearby': ${error}`);
       return [];
     }
   }
@@ -361,7 +361,7 @@ export class MicroservicesClient {
       });
       return response.status === 200;
     } catch (error) {
-      this.logger.error('Failed to join raid', error);
+      this.logger.error(`'Failed to join raid': ${error}`);
       return false;
     }
   }
@@ -374,7 +374,7 @@ export class MicroservicesClient {
       });
       return response.status === 200;
     } catch (error) {
-      this.logger.error('Failed to leave raid', error);
+      this.logger.error(`'Failed to leave raid': ${error}`);
       return false;
     }
   }

@@ -30,7 +30,7 @@ export class CounterCommand {
             const searchResult: unknown = await pokemonService.searchPokemonCounter(
               args[0]
             );
-            if (!isNull(searchResult) && searchResult.length > 0) {
+            if (!isNull(searchResult) && Array.isArray(searchResult) && searchResult.length > 0) {
               messageService.handlePokemonCounterMessage(searchResult[0]); // take first
             } else {
               message.delete();

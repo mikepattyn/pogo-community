@@ -147,10 +147,10 @@ export class ScanRaidImageCommand {
 
         let gymName = '';
 
-        if (isHatched) {
+        if (isHatched && pokemonMatch) {
           // asume the gym name is above the pokemon name
           const findRes = resultWithoutNumbers.filter(
-            (x) => x.indexOf(pokemonMatch.substring(2)) > -1
+            (x) => x.indexOf(pokemonMatch!.substring(2)) > -1
           )[0];
           const index = resultWithoutNumbers.indexOf(findRes) - 1;
           gymName =
@@ -169,7 +169,7 @@ export class ScanRaidImageCommand {
               : resultWithoutNumbers[index];
         }
 
-        const info = new GymInfo([gymName, pokemonMatch, timeLeft]);
+        const info = new GymInfo([gymName, pokemonMatch || '', timeLeft]);
         returnMessage = new RichEmbed();
 
         if (isHatched) {
