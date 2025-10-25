@@ -33,7 +33,7 @@ export class gymController
         .then((result) => {
           res.status(200).json(result);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(500).json(error);
         });
     } else {

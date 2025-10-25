@@ -52,7 +52,7 @@ export class raidController
           // return view result.
           res.status(200).json(new RaidViewModel(raid));
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } else {
@@ -71,7 +71,7 @@ export class raidController
         .then(() => {
           res.sendStatus(201);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } else {
@@ -90,7 +90,7 @@ export class raidController
         .then(() => {
           res.sendStatus(201);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } else {

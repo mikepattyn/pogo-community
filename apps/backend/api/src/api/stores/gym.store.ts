@@ -9,11 +9,11 @@ const { poolPromise } = require('./../sqlDb');
 export class GymStore {
   async getById(id: number) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataGym.GetById(),
           [id],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -28,11 +28,11 @@ export class GymStore {
 
   async post(dataGym: IDataGym) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataGym.Insert(),
           [dataGym.Name, dataGym.LocationId],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);
@@ -46,11 +46,11 @@ export class GymStore {
   }
   async getAll() {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataGym.GetAllWithLocations(),
           null,
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results);

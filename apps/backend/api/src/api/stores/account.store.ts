@@ -8,11 +8,11 @@ const { poolPromise } = require('./../sqlDb');
 export class AuthStore {
   async getByPlayerId(playerId: number) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataAccount.GetByPlayerId(),
           [playerId],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -27,11 +27,11 @@ export class AuthStore {
 
   async getByEmail(email: string) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataAccount.GetByEmail(),
           [email],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results && results.length == 1) {
               resolve(results[0]);
@@ -46,9 +46,9 @@ export class AuthStore {
     }
   }
 
-  async post(dataAccount: any) {
+  async post(dataAccount: unknown) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataAccount.Insert(),
           [
@@ -57,7 +57,7 @@ export class AuthStore {
             dataAccount.DateJoined,
             dataAccount.Email,
           ],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);

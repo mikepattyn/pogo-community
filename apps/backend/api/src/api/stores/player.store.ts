@@ -8,7 +8,7 @@ const { poolPromise } = require('./../sqlDb');
 @injectable()
 export class PlayerStore {
   async post(dataPlayer: IDataPlayer) {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
       poolPromise.query(
         DataPlayer.Insert(),
         [
@@ -19,7 +19,7 @@ export class PlayerStore {
           dataPlayer.Team,
           dataPlayer.DateJoined,
         ],
-        (error: any, results: any, _fields: any) => {
+        (error: unknown, results: unknown, _fields: unknown) => {
           if (error) {
             console.log('Error: ', error);
             reject(error);
@@ -32,11 +32,11 @@ export class PlayerStore {
     });
   }
   async get(id: number) {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
       poolPromise.query(
         DataPlayer.GetByDiscordId(),
         [id],
-        (error: any, results: any, _fields: any) => {
+        (error: unknown, results: unknown, _fields: unknown) => {
           if (error) {
             console.log('Error: ', error);
             reject(error);

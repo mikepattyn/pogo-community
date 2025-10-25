@@ -25,14 +25,14 @@ export class CustomAuthProvider implements interfaces.AuthProvider {
 }
 
 class Principal implements interfaces.Principal {
-  public details: any;
-  public constructor(details: any) {
+  public details: unknown;
+  public constructor(details: unknown) {
     this.details = details;
   }
   public isAuthenticated(): Promise<boolean> {
     return Promise.resolve(!isNullOrUndefined(this.details));
   }
-  public isResourceOwner(resourceId: any): Promise<boolean> {
+  public isResourceOwner(resourceId: unknown): Promise<boolean> {
     return Promise.resolve(resourceId === 1111);
   }
   public isInRole(role: string): Promise<boolean> {

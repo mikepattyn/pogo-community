@@ -9,11 +9,11 @@ const { poolPromise } = require('./../sqlDb');
 export class LocationStore {
   async getById(id: number) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataLocation.GetById(),
           [id],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -28,11 +28,11 @@ export class LocationStore {
 
   async post(dataLocation: IDataLocation) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataLocation.Insert(),
           [dataLocation.Latitude, dataLocation.Longtitude],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);

@@ -65,7 +65,7 @@ export class authController implements interfaces.Controller {
           this.logger.log(`User registered with email: ${body.Email}`);
           res.sendStatus(201);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } catch (e) {

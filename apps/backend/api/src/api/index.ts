@@ -72,7 +72,7 @@ server.setConfig((app) => {
 const app = server.build();
 
 app.use(function (req, res, next) {
-  res.locals.version = `Build: ${(<any>pkg)['version']}`;
+  res.locals.version = `Build: ${(pkg as { version: string }).version}`;
   next();
 });
 

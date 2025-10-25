@@ -11,11 +11,11 @@ const { poolPromise } = require('./../sqlDb');
 export class RaidStore {
   async getByMessageId(id: string) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataRaid.GetByMessageId(),
           [id],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -29,11 +29,11 @@ export class RaidStore {
   }
   async addPlayer(raidId: string, playerId: string) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataRaid.AddPlayerToRaid(),
           [raidId, playerId, new Date()],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -47,7 +47,7 @@ export class RaidStore {
   }
   async post(dataRaid: IDataRaid) {
     try {
-      return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: (value: unknown) => void, reject: (reason?: unknown) => void) => {
         poolPromise.query(
           DataRaid.Insert(),
           [
@@ -56,7 +56,7 @@ export class RaidStore {
             dataRaid.Tiers,
             dataRaid.TimeRemaining,
           ],
-          (error: any, results: any, _fields: any) => {
+          (error: unknown, results: unknown, _fields: unknown) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);

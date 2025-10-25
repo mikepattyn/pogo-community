@@ -33,7 +33,7 @@ export class locationController
         .then((result) => {
           res.status(200).json(result);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } else {

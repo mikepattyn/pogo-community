@@ -17,7 +17,7 @@ export class GoogleCloudClient {
     // Get image as buffer
     const bytes = await axios
       .get(url, { responseType: 'arraybuffer' })
-      .then((response: any) => {
+      .then((response: { data: Buffer }) => {
         return Buffer.from(response.data, 'binary');
       });
 
@@ -32,10 +32,10 @@ export class GoogleCloudClient {
 
     retVal = await this.googleCloudServices.textClient
       .documentTextDetection(request)
-      .then((response: any) => {
+      .then((response: Array<{ textAnnotations: Array<{ description: string }> }>) => {
         return response[0].textAnnotations[0].description.split('\n');
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         this.logger.log(`Error in ${GoogleCloudClient.name}\n${error}`);
       });
 

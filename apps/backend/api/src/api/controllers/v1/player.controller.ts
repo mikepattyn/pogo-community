@@ -32,7 +32,7 @@ export class playerController
         .then(() => {
           res.sendStatus(201);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } else {
@@ -51,7 +51,7 @@ export class playerController
         .then((response) => {
           res.status(200).json(response);
         })
-        .catch((error: any) => {
+        .catch((error: unknown) => {
           res.status(400).json(error);
         });
     } else {
