@@ -1,4 +1,4 @@
 export interface ILocation {
-    Longtitude: string;
-    Latitude: string;
+  Longtitude: string;
+  Latitude: string;
 }

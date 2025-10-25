@@ -1,13 +1,13 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import { DiscordClient } from './clients/discord.client';
 
 // Setup Environment
-import * as dotenv from "dotenv"
-dotenv.config()
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // Setup DiscordClient
-var client = new DiscordClient()
-client.login()
+var client = new DiscordClient();
+client.login();
 client.onReady();
 client.onMessage();
 client.onMessageReactionAdd();

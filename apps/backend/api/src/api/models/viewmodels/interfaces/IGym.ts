@@ -1,5 +1,5 @@
-import { ILocation } from "./ILocation";
+import { ILocation } from './ILocation';
 export interface IGym {
-    Name: string;
-    Location: ILocation;
+  Name: string;
+  Location: ILocation;
 }

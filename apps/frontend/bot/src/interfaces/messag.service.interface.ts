@@ -1,5 +1,5 @@
-import { Message } from "discord.js";
+import { Message } from 'discord.js';
 
 export interface IMessageService {
-    setMessage(message: Message): any
+  setMessage(message: Message): any;
 }

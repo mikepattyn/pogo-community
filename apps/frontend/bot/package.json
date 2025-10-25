@@ -3,19 +3,19 @@
   "version": "1.0.0",
   "description": "POGO Community Discord Bot",
   "main": "lib/bot.js",
-	"scripts": {
-		"build": "tsc",
-		"start": "node lib/bot.js",
-		"dev": "tsc --watch",
-		"clean": "rm -rf lib",
-		"lint": "eslint src --ext .ts",
-		"lint:fix": "eslint src --ext .ts --fix",
-		"test": "jest",
-		"test:watch": "jest --watch",
-		"test:coverage": "jest --coverage",
-		"format": "prettier --write \"src/**/*.{ts,js,json}\"",
-		"format:check": "prettier --check \"src/**/*.{ts,js,json}\""
-	},
+  "scripts": {
+    "build": "tsc",
+    "start": "node lib/bot.js",
+    "dev": "tsc --watch",
+    "clean": "rm -rf lib",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\""
+  },
   "author": "Mike Pattyn",
   "dependencies": {
     "@google-cloud/datastore": "^5.0.3",

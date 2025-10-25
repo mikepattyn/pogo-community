@@ -13,4 +13,3 @@ module.exports = {
   coverageDirectory: '<rootDir>/coverage',
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
 };
-

@@ -1,7 +1,7 @@
-import { IGym } from "./IGym";
+import { IGym } from './IGym';
 export interface IRaid {
-    Pokemon: string;
-    Gym: IGym;
-    Tiers: number;
-    TimeRemaining: number;
+  Pokemon: string;
+  Gym: IGym;
+  Tiers: number;
+  TimeRemaining: number;
 }

@@ -1,5 +1,5 @@
 export enum RankEmoji {
-    "valor" = "🔥",
-    "mystic" = "💧",
-    "instinct" = "⚡"
+  'valor' = '🔥',
+  'mystic' = '💧',
+  'instinct' = '⚡',
 }

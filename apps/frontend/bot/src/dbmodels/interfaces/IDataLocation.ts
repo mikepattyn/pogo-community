@@ -1,5 +1,5 @@
 export interface IDataLocation {
-    Id: number;
-    Latitude: string;
-    Longtitude: string;
+  Id: number;
+  Latitude: string;
+  Longtitude: string;
 }

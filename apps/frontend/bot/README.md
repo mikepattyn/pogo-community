@@ -1,4 +1,4 @@
-Commands so far are: 
+Commands so far are:
 
 !register (RANK) (FIRSTNAME)(INGAMENAME) (INGAMELVL)
 
