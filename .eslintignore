@@ -1,0 +1,14 @@
+node_modules/
+lib/
+build/
+dist/
+web-build/
+*.js.map
+*.d.ts
+.turbo/
+coverage/
+android/
+ios/
+.expo/
+.expo-shared/
+

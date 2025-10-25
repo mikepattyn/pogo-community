@@ -12,6 +12,10 @@
     "ios-device": "react-native run-ios --device \"iPhone van Mike\"",
     "web": "expo start --web",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "react-devtools": "react-devtools",
     "clean": "rm -rf web-build"
   },
