@@ -124,7 +124,6 @@ export class MessageService implements IMessageService {
     ).first();
     const emoji = EmojiHelper.getEmoji(role.name.toLowerCase());
     const user = this.message!.guild.members.get(this.message!.author.id);
-    const bot = this.message!.guild.members.get(botId);
     if (!isNullOrUndefined(user) && !isNullOrUndefined(role)) {
       // if user exists
       if (

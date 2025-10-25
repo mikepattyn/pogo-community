@@ -1,7 +1,5 @@
 import { ApiClient } from './http.client';
 
-const axios = require('axios').default;
-
 export class PokeapiClient {
   private baseUrl = 'http://pokeapi.co/api/v2';
 

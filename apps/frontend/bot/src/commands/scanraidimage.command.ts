@@ -20,7 +20,6 @@ const arrayWithGenerations: any[] = [
   pokemon.gen4,
   pokemon.gen5,
 ];
-const allowedChannels: string[] = ['668134717614456895'];
 
 const uuidv4 = require('uuid/v4');
 export class ScanRaidImageCommand {

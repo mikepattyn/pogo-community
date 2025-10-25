@@ -2,10 +2,10 @@ import { MessageReaction, User } from 'discord.js';
 
 export class MessageReactionHandler {
   constructor() {}
-  handleJoiningRaid(reaction: MessageReaction, user: User) {}
-  handleLeavingRaid(reaction: MessageReaction, user: User) {}
-  handleAddingExtra(reaction: MessageReaction, user: User) {}
-  handleRemovingExtra(reaction: MessageReaction, user: User) {}
-  handleJoiningRank(reaction: MessageReaction, user: User) {}
-  handleLeavingRank(reaction: MessageReaction, user: User) {}
+  handleJoiningRaid(_reaction: MessageReaction, _user: User) {}
+  handleLeavingRaid(_reaction: MessageReaction, _user: User) {}
+  handleAddingExtra(_reaction: MessageReaction, _user: User) {}
+  handleRemovingExtra(_reaction: MessageReaction, _user: User) {}
+  handleJoiningRank(_reaction: MessageReaction, _user: User) {}
+  handleLeavingRank(_reaction: MessageReaction, _user: User) {}
 }

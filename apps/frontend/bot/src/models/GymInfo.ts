@@ -1,4 +1,3 @@
-import { IGymInfo } from '../interfaces/IGymInfo';
 export class GymInfo {
   titel: string | null;
   pokemon: string | null;

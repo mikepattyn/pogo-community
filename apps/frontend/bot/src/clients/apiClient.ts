@@ -1,6 +1,5 @@
 import axios, {
   AxiosRequestConfig,
-  Method,
   AxiosResponse,
   AxiosError,
 } from 'axios';

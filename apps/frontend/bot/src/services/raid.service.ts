@@ -3,7 +3,6 @@ import {
   MessageReaction,
   User,
   RichEmbed,
-  RichEmbedOptions,
 } from 'discord.js';
 import { IPlayer } from '../interfaces/player.interface';
 import { IRaid } from '../interfaces/raid.interface';

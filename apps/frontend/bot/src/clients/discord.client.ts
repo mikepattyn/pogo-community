@@ -17,9 +17,9 @@ import { CounterCommand } from '../commands/counter.command';
 import { JoinCommand } from '../commands/join.command';
 import { ScanRaidImageCommand } from '../commands/scanraidimage.command';
 import { TestCommand } from '../commands/test.command';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { ApiClient } from './apiClient';
-import { AxiosResponse, AxiosError } from 'axios';
+import { AxiosResponse } from 'axios';
 import { DataPlayer } from '../dbmodels/classes/DataPlayer';
 import { IDataPlayer } from '../dbmodels/interfaces/IDataPlayer';
 import moment from 'moment';
@@ -80,7 +80,7 @@ export class DiscordClient {
           Level: null,
           Team: null,
         };
-        const result: AxiosResponse = await this.apiClient.post(
+        await this.apiClient.post(
           '/players',
           newPlayer
         );

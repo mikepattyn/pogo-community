@@ -1,5 +1,4 @@
 import { MessageHandler } from 'discord-message-handler';
-import { Infra } from '../models/infra.class';
 import { Message } from 'discord.js';
 import { PokemonService } from '../services/pokemon.service';
 import { dependencyInjectionContainer } from '../di-container';
