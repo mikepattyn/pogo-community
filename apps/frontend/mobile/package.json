@@ -17,7 +17,9 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "react-devtools": "react-devtools",
-    "clean": "rm -rf web-build"
+    "clean": "rm -rf web-build",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\""
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
