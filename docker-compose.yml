@@ -1,32 +1,7 @@
 version: '3.8'
 
 services:
-  # MySQL Database for API
-  mysql:
-    build:
-      context: .
-      dockerfile: mysql.Dockerfile
-    container_name: pogo-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: pogo_api
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - mysql-data:/var/lib/mysql
-    ports:
-      - "4000:3306"
-    networks:
-      - pogo-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 30s
-    restart: unless-stopped
-
-  # MSSQL Database for Bot
+  # MSSQL Database (Shared by API and Bot)
   mssql:
     build:
       context: .
@@ -64,12 +39,14 @@ services:
       # JWT Configuration
       JWT_KEY: ${JWT_KEY}
       
-      # Database Configuration
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_NAME: pogo_api
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
+      # Database Configuration (MSSQL)
+      MSSQL_HOST: mssql
+      MSSQL_PORT: 1433
+      MSSQL_DATABASE: pogo
+      MSSQL_USER: sa
+      MSSQL_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_ENCRYPT: false
+      MSSQL_TRUST_CERT: true
       
       # Google Cloud Configuration
       CLOUD_SQL_CONNECTION_NAME: ${GOOGLE_CLOUD_PROJECT_ID}
@@ -77,7 +54,7 @@ services:
     ports:
       - "1000:8080"
     depends_on:
-      mysql:
+      mssql:
         condition: service_healthy
     networks:
       - pogo-network
@@ -97,11 +74,13 @@ services:
       API_BASE_URL: http://api:8080/api/v1
       
       # Database Configuration (MSSQL)
-      DB_SERVER: mssql
-      DB_PORT: 1433
-      DB_DATABASE: pogo_bot
-      DB_USER: sa
-      DB_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_HOST: mssql
+      MSSQL_PORT: 1433
+      MSSQL_DATABASE: pogo
+      MSSQL_USER: sa
+      MSSQL_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_ENCRYPT: false
+      MSSQL_TRUST_CERT: true
       
       # Google Cloud Configuration
       GOOGLE_CLOUD_PROJECT_ID: ${GOOGLE_CLOUD_PROJECT_ID}
@@ -134,8 +113,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  mysql-data:
-    name: pogo-mysql-data
   mssql-data:
     name: pogo-mssql-data
 

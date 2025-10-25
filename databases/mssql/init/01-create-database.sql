@@ -1,18 +1,18 @@
--- POGO Community Bot Database - Create Database
--- This script creates the database for the Discord bot
+-- POGO Community Database - Create Database
+-- This script creates the shared database for API and Bot
 
 -- Create database if it doesn't exist
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'pogo_bot')
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'pogo')
 BEGIN
-    CREATE DATABASE pogo_bot;
-    PRINT 'Database pogo_bot created successfully';
+    CREATE DATABASE pogo;
+    PRINT 'Database pogo created successfully';
 END
 ELSE
 BEGIN
-    PRINT 'Database pogo_bot already exists';
+    PRINT 'Database pogo already exists';
 END
 GO
 
-USE pogo_bot;
+USE pogo;
 GO
 
