@@ -26,13 +26,14 @@ export class RaidRepository {
       const pool = await getConnection();
       const result = await pool
         .request()
-        .input('messageId', mssql.VarChar, raid.MessageId)
         .input('gymId', mssql.Int, raid.GymId)
-        .input('createdAt', mssql.DateTime, raid.CreatedAt || new Date())
-        .input('tiers', mssql.Int, raid.Tiers)
-        .input('timeRemaining', mssql.Int, raid.TimeRemaining)
+        .input('pokemon', mssql.VarChar, raid.Pokemon)
+        .input('level', mssql.Int, raid.Level)
+        .input('startTime', mssql.DateTime, raid.StartTime)
+        .input('endTime', mssql.DateTime, raid.EndTime)
+        .input('createdBy', mssql.Int, raid.CreatedBy)
         .query(
-          'INSERT INTO Raids (MessageId, GymId, CreatedAt, Tiers, TimeRemaining) OUTPUT INSERTED.Id VALUES (@messageId, @gymId, @createdAt, @tiers, @timeRemaining)'
+          'INSERT INTO Raids (GymId, Pokemon, Level, StartTime, EndTime, CreatedBy) OUTPUT INSERTED.Id VALUES (@gymId, @pokemon, @level, @startTime, @endTime, @createdBy)'
         );
 
       return result.recordset[0].Id;

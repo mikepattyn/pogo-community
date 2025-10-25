@@ -27,13 +27,16 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Pl
 BEGIN
     CREATE TABLE [dbo].[Players] (
         [Id] INT IDENTITY(1,1) PRIMARY KEY,
-        [DiscordId] NVARCHAR(100) NOT NULL UNIQUE,
-        [FirstName] NVARCHAR(255) NULL,
-        [Nickname] NVARCHAR(255) NULL,
-        [Level] INT NULL,
-        [Team] INT NULL,
-        [DateJoined] DATETIME NOT NULL DEFAULT GETDATE()
+        [Name] NVARCHAR(255) NOT NULL,
+        [Team] NVARCHAR(50) NULL,
+        [Level] INT DEFAULT 1,
+        [TrainerCode] NVARCHAR(20) NULL,
+        [DiscordId] NVARCHAR(100) NULL,
+        [CreatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
+        [UpdatedAt] DATETIME NOT NULL DEFAULT GETDATE()
     );
+    CREATE INDEX idx_players_name ON [dbo].[Players]([Name]);
+    CREATE INDEX idx_players_trainer_code ON [dbo].[Players]([TrainerCode]);
     CREATE INDEX idx_players_discord_id ON [dbo].[Players]([DiscordId]);
     PRINT 'Table Players created successfully';
 END
@@ -44,8 +47,11 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Lo
 BEGIN
     CREATE TABLE [dbo].[Locations] (
         [Id] INT IDENTITY(1,1) PRIMARY KEY,
-        [Latitude] NVARCHAR(50) NOT NULL,
-        [Longtitude] NVARCHAR(50) NOT NULL
+        [Latitude] DECIMAL(10, 8) NOT NULL,
+        [Longtitude] DECIMAL(11, 8) NOT NULL,
+        [Name] NVARCHAR(255) NULL,
+        [Address] NVARCHAR(255) NULL,
+        [CreatedAt] DATETIME NOT NULL DEFAULT GETDATE()
     );
     CREATE INDEX idx_locations_coordinates ON [dbo].[Locations]([Latitude], [Longtitude]);
     PRINT 'Table Locations created successfully';
@@ -59,6 +65,9 @@ BEGIN
         [Id] INT IDENTITY(1,1) PRIMARY KEY,
         [Name] NVARCHAR(255) NOT NULL,
         [LocationId] INT NOT NULL,
+        [ExGym] BIT DEFAULT 0,
+        [CreatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
+        [UpdatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
         FOREIGN KEY ([LocationId]) REFERENCES [dbo].[Locations]([Id]) ON DELETE CASCADE
     );
     CREATE INDEX idx_gyms_name ON [dbo].[Gyms]([Name]);
@@ -72,20 +81,25 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Ra
 BEGIN
     CREATE TABLE [dbo].[Raids] (
         [Id] INT IDENTITY(1,1) PRIMARY KEY,
-        [MessageId] NVARCHAR(100) NOT NULL,
         [GymId] INT NOT NULL,
+        [Pokemon] NVARCHAR(100) NOT NULL,
+        [Level] INT NOT NULL,
+        [StartTime] DATETIME NOT NULL,
+        [EndTime] DATETIME NOT NULL,
+        [CreatedBy] INT NULL,
         [CreatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
-        [Tiers] INT NOT NULL,
-        [TimeRemaining] INT NOT NULL,
-        FOREIGN KEY ([GymId]) REFERENCES [dbo].[Gyms]([Id]) ON DELETE CASCADE
+        [UpdatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
+        FOREIGN KEY ([GymId]) REFERENCES [dbo].[Gyms]([Id]) ON DELETE CASCADE,
+        FOREIGN KEY ([CreatedBy]) REFERENCES [dbo].[Players]([Id]) ON DELETE SET NULL
     );
     CREATE INDEX idx_raids_gym ON [dbo].[Raids]([GymId]);
-    CREATE INDEX idx_raids_message ON [dbo].[Raids]([MessageId]);
+    CREATE INDEX idx_raids_start_time ON [dbo].[Raids]([StartTime]);
+    CREATE INDEX idx_raids_end_time ON [dbo].[Raids]([EndTime]);
     PRINT 'Table Raids created successfully';
 END
 GO
 
--- Create RaidParticipants table
+-- Create RaidParticipants table (many-to-many relationship)
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RaidParticipants]') AND type in (N'U'))
 BEGIN
     CREATE TABLE [dbo].[RaidParticipants] (
@@ -95,7 +109,7 @@ BEGIN
         [JoinedAt] DATETIME NOT NULL DEFAULT GETDATE(),
         FOREIGN KEY ([RaidId]) REFERENCES [dbo].[Raids]([Id]) ON DELETE CASCADE,
         FOREIGN KEY ([PlayerId]) REFERENCES [dbo].[Players]([Id]) ON DELETE CASCADE,
-        UNIQUE ([RaidId], [PlayerId])
+        CONSTRAINT unique_raid_player UNIQUE ([RaidId], [PlayerId])
     );
     CREATE INDEX idx_raid_participants_raid ON [dbo].[RaidParticipants]([RaidId]);
     CREATE INDEX idx_raid_participants_player ON [dbo].[RaidParticipants]([PlayerId]);

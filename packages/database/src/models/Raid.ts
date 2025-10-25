@@ -1,27 +1,36 @@
 export interface IRaid {
   Id: number;
-  MessageId: string;
   GymId: number;
+  Pokemon: string;
+  Level: number;
+  StartTime: Date;
+  EndTime: Date;
+  CreatedBy: number | null;
   CreatedAt: Date;
-  Tiers: number;
-  TimeRemaining: number;
+  UpdatedAt: Date;
 }
 
 export class Raid implements IRaid {
   Id: number;
-  MessageId: string;
   GymId: number;
+  Pokemon: string;
+  Level: number;
+  StartTime: Date;
+  EndTime: Date;
+  CreatedBy: number | null;
   CreatedAt: Date;
-  Tiers: number;
-  TimeRemaining: number;
+  UpdatedAt: Date;
 
   constructor(data: IRaid) {
     this.Id = data.Id;
-    this.MessageId = data.MessageId;
     this.GymId = data.GymId;
+    this.Pokemon = data.Pokemon;
+    this.Level = data.Level;
+    this.StartTime = data.StartTime;
+    this.EndTime = data.EndTime;
+    this.CreatedBy = data.CreatedBy;
     this.CreatedAt = data.CreatedAt;
-    this.Tiers = data.Tiers;
-    this.TimeRemaining = data.TimeRemaining;
+    this.UpdatedAt = data.UpdatedAt;
   }
 }
 

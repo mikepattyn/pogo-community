@@ -21,19 +21,48 @@ export class PlayerRepository {
     }
   }
 
+  async getByName(name: string): Promise<IPlayer | null> {
+    try {
+      const pool = await getConnection();
+      const result: MssqlQueryResult<IPlayer> = await pool
+        .request()
+        .input('name', mssql.VarChar, name)
+        .query('SELECT * FROM Players WHERE Name = @name');
+
+      return result.recordset.length > 0 ? result.recordset[0] : null;
+    } catch (error) {
+      console.error('Error in getByName:', error);
+      throw error;
+    }
+  }
+
+  async getByTrainerCode(trainerCode: string): Promise<IPlayer | null> {
+    try {
+      const pool = await getConnection();
+      const result: MssqlQueryResult<IPlayer> = await pool
+        .request()
+        .input('trainerCode', mssql.VarChar, trainerCode)
+        .query('SELECT * FROM Players WHERE TrainerCode = @trainerCode');
+
+      return result.recordset.length > 0 ? result.recordset[0] : null;
+    } catch (error) {
+      console.error('Error in getByTrainerCode:', error);
+      throw error;
+    }
+  }
+
   async create(player: Partial<IPlayer>): Promise<number> {
     try {
       const pool = await getConnection();
       const result = await pool
         .request()
-        .input('discordId', mssql.VarChar, player.DiscordId)
-        .input('firstName', mssql.VarChar, player.FirstName)
-        .input('nickname', mssql.VarChar, player.Nickname)
+        .input('name', mssql.VarChar, player.Name)
+        .input('team', mssql.VarChar, player.Team)
         .input('level', mssql.Int, player.Level)
-        .input('team', mssql.Int, player.Team)
-        .input('dateJoined', mssql.DateTime, player.DateJoined || new Date())
+        .input('trainerCode', mssql.VarChar, player.TrainerCode)
+        .input('discordId', mssql.VarChar, player.DiscordId)
         .query(
-          'INSERT INTO Players (DiscordId, FirstName, Nickname, Level, Team, DateJoined) OUTPUT INSERTED.Id VALUES (@discordId, @firstName, @nickname, @level, @team, @dateJoined)'
+          'INSERT INTO Players (Name, Team, Level, TrainerCode, DiscordId) OUTPUT INSERTED.Id VALUES (@name, @team, @level, @trainerCode, @discordId)'
         );
 
       return result.recordset[0].Id;
@@ -49,12 +78,13 @@ export class PlayerRepository {
       const result = await pool
         .request()
         .input('id', mssql.Int, id)
-        .input('firstName', mssql.VarChar, player.FirstName)
-        .input('nickname', mssql.VarChar, player.Nickname)
+        .input('name', mssql.VarChar, player.Name)
+        .input('team', mssql.VarChar, player.Team)
         .input('level', mssql.Int, player.Level)
-        .input('team', mssql.Int, player.Team)
+        .input('trainerCode', mssql.VarChar, player.TrainerCode)
+        .input('discordId', mssql.VarChar, player.DiscordId)
         .query(
-          'UPDATE Players SET FirstName = @firstName, Nickname = @nickname, Level = @level, Team = @team WHERE Id = @id'
+          'UPDATE Players SET Name = @name, Team = @team, Level = @level, TrainerCode = @trainerCode, DiscordId = @discordId, UpdatedAt = GETDATE() WHERE Id = @id'
         );
 
       return result.rowsAffected[0] > 0;
