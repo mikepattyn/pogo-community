@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+  namespace: pogo-system
+data:
+  # ASP.NET Core Configuration
+  ASPNETCORE_ENVIRONMENT: "Production"
+  
+  # Node.js Configuration
+  NODE_ENV: "production"
+  
+  # CockroachDB Configuration
+  DB_HOST: "cockroachdb-public"
+  DB_PORT: "26257"
+  DB_SSL_MODE: "disable"
+  
+  # Service Mesh Configuration
+  SERVICE_MESH_ENABLED: "false"
+
