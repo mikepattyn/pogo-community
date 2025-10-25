@@ -7,6 +7,7 @@ import { PokemonService } from './services/pokemon.service';
 import { PokemonStore } from './stores/pokemon.store';
 import { RaidStore } from './stores/raid.store';
 import { ApiClient } from './clients/apiClient';
+import { MicroservicesClient } from './clients/microservices.client';
 import { Logger } from './logger';
 
 const dependencyInjectionContainer = new Container();
@@ -34,9 +35,14 @@ dependencyInjectionContainer
   .toSelf()
   .inSingletonScope();
 
-// Cients
+// Clients
 dependencyInjectionContainer
   .bind<ApiClient>(ApiClient)
+  .toSelf()
+  .inSingletonScope();
+
+dependencyInjectionContainer
+  .bind<MicroservicesClient>(MicroservicesClient)
   .toSelf()
   .inSingletonScope();
 

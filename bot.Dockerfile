@@ -67,6 +67,10 @@ RUN addgroup -g 1001 -S nodejs && \
 RUN chown -R nodejs:nodejs /app
 USER nodejs
 
+# Set environment variables
+ENV BOT_BFF_URL=http://bot-bff:6001
+ENV NODE_ENV=production
+
 # Expose port for health checks
 EXPOSE 2000
 

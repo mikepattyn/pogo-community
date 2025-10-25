@@ -24,7 +24,7 @@ export const errorInterceptor = async (error: AxiosError) => {
 };
 @injectable()
 export class ApiClient {
-  private baseUrl: string | undefined = 'http://localhost:3000/api/v1';
+  private baseUrl: string | undefined = process.env.BOT_BFF_URL || 'http://localhost:6001';
 
   constructor(@inject('Logger') private logger: Logger) {
     // Add a request interceptor
@@ -47,6 +47,83 @@ export class ApiClient {
 
     await axios
       .post(config.url!, config.data)
+      .then((response: AxiosResponse) => {
+        console.log(response);
+        retVal = response;
+      })
+      .catch((error: AxiosError) => {
+        console.log(error);
+      });
+    return retVal;
+  }
+
+  async get(url: string, params?: Record<string, any>): Promise<AxiosResponse> {
+    let retVal: AxiosResponse = {
+      data: null,
+      status: -1,
+      statusText: 'UhOh',
+      headers: null,
+      config: {},
+    };
+
+    const config: AxiosRequestConfig = {};
+
+    if (!isNullOrUndefined(url)) config.url = `${this.baseUrl}${url}`;
+    if (!isNullOrUndefined(params)) config.params = params;
+
+    await axios
+      .get(config.url!, config)
+      .then((response: AxiosResponse) => {
+        console.log(response);
+        retVal = response;
+      })
+      .catch((error: AxiosError) => {
+        console.log(error);
+      });
+    return retVal;
+  }
+
+  async put(url: string, body: unknown): Promise<AxiosResponse> {
+    let retVal: AxiosResponse = {
+      data: null,
+      status: -1,
+      statusText: 'UhOh',
+      headers: null,
+      config: {},
+    };
+
+    const config: AxiosRequestConfig = {};
+
+    if (!isNullOrUndefined(url)) config.url = `${this.baseUrl}${url}`;
+    if (!isNullOrUndefined(body)) config.data = body;
+
+    await axios
+      .put(config.url!, config.data)
+      .then((response: AxiosResponse) => {
+        console.log(response);
+        retVal = response;
+      })
+      .catch((error: AxiosError) => {
+        console.log(error);
+      });
+    return retVal;
+  }
+
+  async delete(url: string): Promise<AxiosResponse> {
+    let retVal: AxiosResponse = {
+      data: null,
+      status: -1,
+      statusText: 'UhOh',
+      headers: null,
+      config: {},
+    };
+
+    const config: AxiosRequestConfig = {};
+
+    if (!isNullOrUndefined(url)) config.url = `${this.baseUrl}${url}`;
+
+    await axios
+      .delete(config.url!, config)
       .then((response: AxiosResponse) => {
         console.log(response);
         retVal = response;
