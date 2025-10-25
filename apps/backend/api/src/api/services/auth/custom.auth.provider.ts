@@ -12,7 +12,7 @@ export class CustomAuthProvider implements interfaces.AuthProvider {
     next: express.NextFunction
   ): Promise<interfaces.Principal> {
     console.log(req.headers);
-    var token = req.headers['authorization'];
+    let token = req.headers['authorization'];
     if (!isNullOrUndefined(token)) {
       token = token.replace('Bearer ', '');
       const user = AuthService.VerifyToken(token);

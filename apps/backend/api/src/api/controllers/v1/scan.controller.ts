@@ -29,7 +29,7 @@ export class scanController
     @response() res: express.Response
   ) {
     if (req.body.url) {
-      var results = await this.googleCloudClient.readImage(req.body.url);
+      const results = await this.googleCloudClient.readImage(req.body.url);
       if (!isNullOrUndefined(results)) {
         res.status(201).json({ textResults: results });
       } else {

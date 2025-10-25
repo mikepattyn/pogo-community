@@ -37,12 +37,12 @@ export class raidController
         .getByMessageId(id)
         .then((result) => {
           console.log(result[0]);
-          var location: ILocation = new Location({
+          const location: ILocation = new Location({
             Longtitude: result[0].Longtitude,
             Latitude: result[0].Latitude,
           });
-          var gym: IGym = new Gym({ Name: result[0].Name, Location: location });
-          var raid: Raid = new Raid(
+          const gym: IGym = new Gym({ Name: result[0].Name, Location: location });
+          const raid: Raid = new Raid(
             result[0].Pokemon,
             gym,
             result[0].Tiers,

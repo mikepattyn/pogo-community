@@ -5,7 +5,7 @@ import { isNullOrUndefined } from 'util';
 export class AuthService {
   static VerifyToken(token: string) {
     try {
-      var retVal: string | null | object = jwt.verify(
+      let retVal: string | null | object = jwt.verify(
         token.replace('Bearer ', ''),
         process.env.JWT_KEY!
       );

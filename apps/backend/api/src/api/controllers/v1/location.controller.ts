@@ -48,7 +48,7 @@ export class locationController
   ) {
     if (await this.httpContext.user.isAuthenticated()) {
       try {
-        var insertedId = await this.locationStore.post(req.body);
+        const insertedId = await this.locationStore.post(req.body);
         if (!isNullOrUndefined(insertedId) && !isNaN(Number(insertedId)))
           res.status(201).json({ id: insertedId });
         else

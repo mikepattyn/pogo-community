@@ -14,8 +14,8 @@ export class StatusController extends BaseHttpController {
 
   @httpGet('/')
   private health(req: Request, resp: Response) {
-    var duration = process.uptime();
-    var display = moment().milliseconds(duration).format('mm:ss');
+    const duration = process.uptime();
+    const display = moment().milliseconds(duration).format('mm:ss');
     resp.json({ Uptime: display });
   }
 }

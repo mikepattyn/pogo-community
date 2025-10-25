@@ -49,7 +49,7 @@ export class gymController
   ) {
     if (await this.httpContext.user.isAuthenticated()) {
       try {
-        var insertedId = await this.gymStore.post(req.body);
+        const insertedId = await this.gymStore.post(req.body);
         if (!isNullOrUndefined(insertedId) && !isNaN(Number(insertedId)))
           res.status(201).json({ id: insertedId });
         else
@@ -71,7 +71,7 @@ export class gymController
   ) {
     if (await this.httpContext.user.isAuthenticated()) {
       try {
-        var results = await this.gymStore.getAll();
+        const results = await this.gymStore.getAll();
         console.log('Results from get all gyms: ', results);
         if (!isNullOrUndefined(results))
           res.status(200).json({ gyms: results });

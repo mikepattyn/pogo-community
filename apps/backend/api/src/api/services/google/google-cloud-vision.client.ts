@@ -13,7 +13,7 @@ export class GoogleCloudClient {
   ) {}
 
   async readImage(url: string) {
-    var retVal: string[] | null = null;
+    let retVal: string[] | null = null;
     // Get image as buffer
     const bytes = await axios
       .get(url, { responseType: 'arraybuffer' })
@@ -21,9 +21,9 @@ export class GoogleCloudClient {
         return Buffer.from(response.data, 'binary');
       });
 
-    var image = { content: bytes };
+    const image = { content: bytes };
 
-    var imageContext = { languageHints: ['en', 'en-GB', 'nl', 'nl-BE'] };
+    const imageContext = { languageHints: ['en', 'en-GB', 'nl', 'nl-BE'] };
 
     const request = {
       image: image,

@@ -8,7 +8,7 @@ export class Logger {
   private logging = new Logging({ projectId: this.projectId });
 
   async log(data: string) {
-    var log = this.logging.log(this.logName);
+    const log = this.logging.log(this.logName);
     const metadata = {
       resource: { type: 'global' },
     };

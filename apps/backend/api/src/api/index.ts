@@ -26,9 +26,9 @@ import { GoogleCloudClient } from './services/google/google-cloud-vision.client.
 
 require('dotenv').config();
 
-var port = process.env.PORT || '8080';
+const port = process.env.PORT || '8080';
 // set up container
-let container = new Container();
+const container = new Container();
 
 // set up bindings
 container.bind<Logger>(Logger).to(Logger);
@@ -52,7 +52,7 @@ container
   .inSingletonScope();
 
 // create server
-let server = new InversifyExpressServer(
+const server = new InversifyExpressServer(
   container,
   null,
   null,
@@ -69,7 +69,7 @@ server.setConfig((app) => {
   app.use(bodyParser.json());
 });
 
-let app = server.build();
+const app = server.build();
 
 app.use(function (req, res, next) {
   res.locals.version = `Build: ${(<any>pkg)['version']}`;
