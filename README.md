@@ -1,3 +1,109 @@
+# 📱 POGO Community Monorepo
+
+A comprehensive Pokemon GO community ecosystem with API backend, React Native mobile app, and Discord bot.
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js >= 18.0.0
+- pnpm >= 8.0.0
+- For mobile development: Expo CLI, Android Studio (Android), Xcode (iOS)
+
+### Installation
+```bash
+# Install dependencies
+make install
+# or
+pnpm install
+```
+
+### Development
+```bash
+# Run all apps in development mode
+make dev
+# or
+pnpm run dev
+
+# Run specific apps
+make run-api      # API backend
+make run-bot      # Discord bot
+make run-mobile-web  # Mobile app (web)
+```
+
+### Building
+```bash
+# Build all apps
+make build
+
+# Build specific apps
+make build-api
+make build-bot
+make build-mobile
+```
+
+### Testing
+```bash
+# Run all tests
+make test
+
+# Run specific app tests
+make test-api
+make test-bot
+make test-mobile
+```
+
+### Linting
+```bash
+# Lint all apps
+make lint
+
+# Lint and auto-fix
+make lint-fix
+```
+
+## 📁 Project Structure
+
+```
+pogo/
+├── apps/
+│   ├── backend/api/          # Node.js API backend
+│   └── frontend/
+│       ├── bot/              # Discord bot
+│       └── mobile/           # React Native mobile app
+├── Makefile                  # Build and development commands
+├── turbo.json               # Turborepo configuration
+└── package.json             # Root package configuration
+```
+
+## 🛠️ Available Commands
+
+| Command | Description |
+|---------|-------------|
+| `make help` | Show all available commands |
+| `make install` | Install all dependencies |
+| `make build` | Build all apps |
+| `make dev` | Run all apps in development mode |
+| `make test` | Run all tests |
+| `make lint` | Lint all apps |
+| `make clean` | Clean build artifacts |
+
+## 🔧 Development Tools
+
+### VS Code Extensions
+The project includes recommended VS Code extensions for optimal development experience:
+- ESLint & Prettier for code quality
+- React Native Tools for mobile development
+- Jest for testing
+- GitLens for Git integration
+
+### Code Quality
+- **ESLint**: TypeScript and React linting
+- **Prettier**: Code formatting
+- **Jest**: Testing framework
+- **TypeScript**: Type checking
+
+---
+
 # 📱 POGO Community Apps - Framework & Package Inventory
 
 ## 🏗️ **App 1: POGO Community API (Node.js Backend)**
