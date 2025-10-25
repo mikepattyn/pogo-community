@@ -1,41 +1,77 @@
+using Location.Service.Application.Commands;
+using Location.Service.Application.Interfaces;
+using Location.Service.Application.Queries;
+using Location.Service.Infrastructure.Data;
+using Location.Service.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Pogo.Shared.API;
+using Pogo.Shared.Application;
+using MediatR;
+using FluentValidation;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add Entity Framework
+builder.Services.AddDbContext<LocationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add MediatR
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+});
+
+// Add FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+// Add pipeline behaviors
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+// Add repositories and services
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+
+// Add health checks
+builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("DefaultConnection")!);
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseCors("AllowAll");
 
-app.MapGet("/weatherforecast", () =>
+app.MapControllers();
+
+// Map health checks
+app.MapHealthChecks();
+
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var context = scope.ServiceProvider.GetRequiredService<LocationDbContext>();
+    context.Database.EnsureCreated();
+}
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
