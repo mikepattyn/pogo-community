@@ -1,12 +1,13 @@
 {
-  "name": "pokebot-webapp",
+  "name": "@pogo/api",
   "version": "1.0.0",
-  "description": "webapp to control",
-  "main": "index.js",
+  "description": "POGO Community API backend",
+  "main": "lib/index.js",
   "scripts": {
-    "buildstart": "tsc && node lib/index.js",
     "build": "tsc",
-    "start": "node lib/index.js"
+    "start": "node lib/index.js",
+    "dev": "tsc --watch",
+    "clean": "rm -rf lib"
   },
   "author": "",
   "license": "ISC",
@@ -33,9 +34,10 @@
     "moment": "^2.24.0",
     "mssql": "^5.1.0",
     "mysql": "^2.17.1",
-    "node": "^10.19.0",
     "password-hash": "^1.2.2",
     "pug": "^2.0.4",
-    "typescript": "^3.6.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2"
   }
 }
