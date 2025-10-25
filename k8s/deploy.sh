@@ -27,12 +27,24 @@ echo ""
 echo "📦 Applying Kubernetes manifests..."
 
 # Apply base resources
-echo "  → Creating namespace and base resources..."
-kubectl apply -f k8s/base/
+echo "  → Creating namespace..."
+kubectl apply -f k8s/base/namespace.yaml
+
+# Wait for namespace to be ready
+echo "  → Waiting for namespace to be ready..."
+sleep 2
+kubectl wait --for=condition=Active namespace pogo-system --timeout=30s
+
+# Apply ingress after namespace is ready
+echo "  → Creating ingress..."
+kubectl apply -f k8s/base/ingress.yaml
 
 # Apply database
 echo "  → Deploying CockroachDB..."
-kubectl apply -f k8s/databases/
+kubectl apply -f k8s/databases/ || {
+    echo "❌ Failed to apply database resources"
+    exit 1
+}
 
 # Wait for CockroachDB to be ready
 echo "  → Waiting for CockroachDB to be ready..."
