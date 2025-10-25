@@ -1,36 +1,50 @@
 # Multi-stage build for POGO Community Discord Bot
 FROM node:22-alpine AS base
 
+# Install pnpm and turbo
+RUN npm install -g pnpm turbo
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace files for turbo prune
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps/ ./apps/
+
+# Prune workspace for Bot
+RUN turbo prune --scope=@pogo/bot --docker
+
+# Pruned workspace stage
+FROM node:22-alpine AS pruned
+
 # Install pnpm
 RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files from bot directory
-COPY apps/frontend/bot/package*.json ./
-COPY apps/frontend/bot/tsconfig.json ./
+# Copy pruned workspace
+COPY --from=base /app/out/json/ ./
+COPY --from=base /app/out/full/apps/frontend/bot/ ./apps/frontend/bot/
+COPY --from=base /app/out/full/turbo.json ./
 
 # Dependencies stage
-FROM base AS dependencies
+FROM pruned AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Build stage
 FROM dependencies AS build
 
-# Copy source code from bot directory
-COPY apps/frontend/bot/src/ ./src/
-
 # Build TypeScript
-RUN pnpm run build
+RUN cd apps/frontend/bot && pnpm run build
 
 # Production dependencies stage
-FROM base AS production-deps
+FROM pruned AS production-deps
 
 # Install only production dependencies
-RUN pnpm install --prod && pnpm store prune
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts && pnpm store prune
 
 # Run stage
 FROM node:22-alpine AS run
@@ -42,8 +56,8 @@ WORKDIR /app
 COPY --from=production-deps /app/node_modules ./node_modules
 
 # Copy built application
-COPY --from=build /app/lib ./lib
-COPY --from=build /app/package*.json ./
+COPY --from=build /app/apps/frontend/bot/lib ./lib
+COPY --from=build /app/apps/frontend/bot/package.json ./package.json
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \

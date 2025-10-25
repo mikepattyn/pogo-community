@@ -1,36 +1,44 @@
 # Multi-stage build for POGO Community Mobile Web App
 FROM node:22-alpine AS base
 
+# Install pnpm and turbo
+RUN npm install -g pnpm turbo
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace files for turbo prune
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps/ ./apps/
+
+# Prune workspace for Mobile App
+RUN turbo prune --scope=@pogo/mobile --docker
+
+# Pruned workspace stage
+FROM node:22-alpine AS pruned
+
 # Install pnpm
 RUN npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files from mobile directory
-COPY apps/frontend/mobile/package*.json ./
-COPY apps/frontend/mobile/tsconfig.json ./
+# Copy pruned workspace
+COPY --from=base /app/out/json/ ./
+COPY --from=base /app/out/full/apps/frontend/mobile/ ./apps/frontend/mobile/
+COPY --from=base /app/out/full/turbo.json ./
 
 # Dependencies stage
-FROM base AS dependencies
+FROM pruned AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN pnpm install
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Build stage
 FROM dependencies AS build
 
-# Copy source code and configuration from mobile directory
-COPY apps/frontend/mobile/App.tsx ./
-COPY apps/frontend/mobile/index.js ./
-COPY apps/frontend/mobile/app.json ./
-COPY apps/frontend/mobile/babel.config.js ./
-COPY apps/frontend/mobile/metro.config.js ./
-COPY apps/frontend/mobile/inversify.config.ts ./
-COPY apps/frontend/mobile/react-native/ ./react-native/
-
 # Export web build using Expo
-RUN pnpm exec expo export --platform web
+RUN cd apps/frontend/mobile && pnpm exec expo export --platform web
 
 # Run stage with nginx
 FROM nginx:alpine AS run
@@ -62,7 +70,7 @@ server {
 EOF
 
 # Copy built web files from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/apps/frontend/mobile/dist /usr/share/nginx/html
 
 # Expose port
 EXPOSE 3000
