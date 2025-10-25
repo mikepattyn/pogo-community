@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bot-bff
+  namespace: pogo-system
+  labels:
+    app: bot-bff
+    tier: gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bot-bff
+  template:
+    metadata:
+      labels:
+        app: bot-bff
+        tier: gateway
+    spec:
+      containers:
+      - name: bot-bff
+        image: pogo/bot-bff:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 6001
+          name: http
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: common-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: ASPNETCORE_URLS
+          value: "http://+:6001"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 6001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 6001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
