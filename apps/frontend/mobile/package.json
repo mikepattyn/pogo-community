@@ -67,7 +67,7 @@
     "@types/react-navigation": "^3.4.0",
     "babel-preset-expo": "^9.3.0",
     "jetifier": "~2.0.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.8.3"
   },
   "jest": {
     "preset": "react-native"
