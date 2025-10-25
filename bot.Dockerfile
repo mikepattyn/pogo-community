@@ -55,13 +55,9 @@ WORKDIR /app
 # Copy production dependencies
 COPY --from=production-deps /app/node_modules ./node_modules
 
-# Copy source code (since we're not building TypeScript)
-COPY --from=build /app/apps/frontend/bot/src ./src
+# Copy built application
+COPY --from=build /app/apps/frontend/bot/lib ./lib
 COPY --from=build /app/apps/frontend/bot/package.json ./package.json
-COPY --from=build /app/apps/frontend/bot/tsconfig.json ./tsconfig.json
-
-# Install pnpm and ts-node for running TypeScript directly
-RUN npm install -g pnpm ts-node
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -79,5 +75,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD pgrep -f "node.*bot.js" > /dev/null || exit 1
 
 # Start the application
-CMD ["ts-node", "src/bot.ts"]
+CMD ["node", "lib/bot.js"]
 
