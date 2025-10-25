@@ -86,27 +86,27 @@ pogo/
 ├── apps/
 │   ├── backend/
 │   │   └── api/
-│   │       ├── api.Dockerfile
 │   │       └── .dockerignore
 │   └── frontend/
 │       ├── bot/
-│       │   ├── bot.Dockerfile
 │       │   └── .dockerignore
 │       └── mobile/
-│           ├── app.Dockerfile
 │           └── .dockerignore
 ├── databases/
 │   ├── mysql/
-│   │   ├── mysql.Dockerfile
 │   │   └── init/
 │   │       ├── 01-create-tables.sql
 │   │       └── 02-seed-data.sql
 │   └── mssql/
-│       ├── mssql.Dockerfile
 │       └── init/
 │           ├── 01-create-database.sql
 │           ├── 02-create-tables.sql
 │           └── 03-seed-data.sql
+├── api.Dockerfile
+├── bot.Dockerfile
+├── app.Dockerfile
+├── mysql.Dockerfile
+├── mssql.Dockerfile
 ├── docker-compose.yml
 ├── .env.example
 └── DOCKER.md (this file)
