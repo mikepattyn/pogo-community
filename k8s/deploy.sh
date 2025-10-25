@@ -32,8 +32,7 @@ kubectl apply -f k8s/base/namespace.yaml
 
 # Wait for namespace to be ready
 echo "  → Waiting for namespace to be ready..."
-sleep 2
-kubectl wait --for=condition=Active namespace pogo-system --timeout=30s
+sleep 3
 
 # Apply ingress after namespace is ready
 echo "  → Creating ingress..."
