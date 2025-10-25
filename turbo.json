@@ -17,8 +17,11 @@
     "lint": {
       "outputs": []
     },
-    "test": {
+    "lint:fix": {
       "outputs": []
+    },
+    "test": {
+      "outputs": ["coverage/"]
     },
     "type-check": {
       "outputs": []
