@@ -1,0 +1,73 @@
+# Dependencies
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Build output
+build/
+dist/
+web-build/
+.expo/
+.expo-shared/
+
+# Native builds
+android/
+ios/
+*.apk
+*.ipa
+
+# Environment files
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+README.md
+LICENSE
+
+# Tests
+**/__tests__/
+*.test.js
+*.test.ts
+*.test.tsx
+jest.config.js
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Gradle (Android)
+.gradle/
+local.properties
+
+# Xcode (iOS)
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace/
+Pods/
+

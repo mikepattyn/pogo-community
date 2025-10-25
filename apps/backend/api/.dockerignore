@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Build output
+lib/
+*.js.map
+*.d.ts
+
+# Environment files
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+README.md
+LICENSE
+
+# Tests
+**/__tests__/
+*.test.js
+*.test.ts
+jest.config.js
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
