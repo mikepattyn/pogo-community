@@ -34,7 +34,7 @@ export class GymScreenContainerComponent<P, S> extends Component<
     this.forceUpdate();
   }
   initMap() {
-    var location = {
+    let location = {
       latitude: 50.950228,
       longitude: 3.142707,
     };
@@ -89,7 +89,7 @@ export class GymScreenContainerComponent<P, S> extends Component<
     }));
   }
   onUserLocationChange(location) {
-    var coordinate = location.nativeEvent.coordinate;
+    const coordinate = location.nativeEvent.coordinate;
     this.setState((prevState) => ({
       ...prevState,
       userLocation: {

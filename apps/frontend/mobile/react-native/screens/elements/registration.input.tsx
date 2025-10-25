@@ -28,8 +28,8 @@ export class RegistrationInput extends Component<IRegistrationInput> {
       );
     } else {
       if (this.props.index == 6) {
-        var pickerItems = [];
-        for (var i = 1; i < 41; i++) {
+        const pickerItems = [];
+        for (let i = 1; i < 41; i++) {
           pickerItems.push(
             <Picker.Item key={i} label={i.toString()} value={i} />
           );

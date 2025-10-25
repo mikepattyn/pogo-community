@@ -12,7 +12,7 @@ export default class GymManager implements IGymManager {
     return this.myInstance;
   }
   async addGym(name: string, position: LatLng): Promise<void> {
-    var locationResponse = await ApiClient.instance.post('/locations', {
+    const locationResponse = await ApiClient.instance.post('/locations', {
       Latitude: position.latitude,
       Longtitude: position.longitude,
     });

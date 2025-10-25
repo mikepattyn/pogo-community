@@ -100,7 +100,7 @@ export class RegistrationScreen extends React.Component<
 
     // Password
     if (this.state.index == 1) {
-      var regex = new RegExp(
+      const regex = new RegExp(
         '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$'
       );
       if (text.length >= 8 && regex.test(text)) {
@@ -124,7 +124,7 @@ export class RegistrationScreen extends React.Component<
 
     // Re-Enter password
     if (this.state.index == 2) {
-      var match = text == this.state.Password;
+      const match = text == this.state.Password;
       if (match) {
         this.setState((prevState) => ({
           ...prevState,
@@ -194,7 +194,7 @@ export class RegistrationScreen extends React.Component<
 
     // Level
     if (this.state.index == 6) {
-      var level = Number(text);
+      const level = Number(text);
       if (isNaN(level)) {
         this.setState((prevState) => ({
           ...prevState,
@@ -216,7 +216,7 @@ export class RegistrationScreen extends React.Component<
 
     // Team
     if (this.state.index == 7) {
-      var team = Number(text);
+      const team = Number(text);
       if (isNaN(team)) {
         this.setState((prevState) => ({
           ...prevState,

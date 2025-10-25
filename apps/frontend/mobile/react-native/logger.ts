@@ -9,7 +9,7 @@ export class Logger {
 
   async log(data: string) {
     console.log(this.logging);
-    var log = this.logging.log(this.logName);
+    const log = this.logging.log(this.logName);
     const metadata = {
       resource: { type: 'global' },
     };

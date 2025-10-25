@@ -18,7 +18,7 @@ export default class ApiClient {
   }
 
   async post(url: string, body: any): Promise<AxiosResponse> {
-    var retVal: AxiosResponse = {
+    let retVal: AxiosResponse = {
       data: null,
       status: -1,
       statusText: 'UhOh',
@@ -43,7 +43,7 @@ export default class ApiClient {
   }
 
   async get(url: string) {
-    var retVal: AxiosResponse = {
+    let retVal: AxiosResponse = {
       data: null,
       status: -1,
       statusText: 'UhOh',
