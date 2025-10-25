@@ -4,9 +4,9 @@ export class GymInfo {
   pokemon: string | null;
   private _time_left: string | null;
   get dtEnd() {
-    var timeObjects = this._time_left!!.split(':');
-    var date = new Date();
-    var totalSecondsLeft =
+    const timeObjects = this._time_left!.split(':');
+    let date = new Date();
+    const totalSecondsLeft =
       Number(timeObjects[0]) * 60 * 60 +
       Number(timeObjects[1]) * 60 +
       Number(timeObjects[2]);

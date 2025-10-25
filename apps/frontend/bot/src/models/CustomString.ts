@@ -7,7 +7,7 @@ export class CustomString {
     return this._input[0].toUpperCase() + this._input.substring(1);
   }
   getLastArrayItemSplitOnSlashWithASlashAsLastCharacter() {
-    var array = this._input.split('/');
+    const array = this._input.split('/');
     return array[array.length - 2];
   }
 }

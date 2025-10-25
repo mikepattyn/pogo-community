@@ -33,7 +33,7 @@ export class ApiClient {
   }
 
   async post(url: string, body: any): Promise<AxiosResponse> {
-    var retVal: AxiosResponse = {
+    let retVal: AxiosResponse = {
       data: null,
       status: -1,
       statusText: 'UhOh',

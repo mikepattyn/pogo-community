@@ -38,11 +38,11 @@ export class MessageService implements IMessageService {
   }
 
   async handleRaidStart() {
-    var response = '';
+    let response = '';
     this.message!.delete();
     // set the raids to only work in specific channels
     if (allowedRaidChannels.some((x) => x === this.message!.channel.id)) {
-      let richEmbed = new RichEmbed()
+      const richEmbed = new RichEmbed()
         .setTitle(`🗡️ ${this.commandArguments.splice(2).join(' ')} 🗡️`)
         .setTimestamp()
         .setFooter(
@@ -61,10 +61,10 @@ export class MessageService implements IMessageService {
     }
   }
   async createRaidResponseMessage(message: Message, raid: IRaid) {
-    let embeds = message.embeds;
+    const embeds = message.embeds;
     if (!isNullOrUndefined(message.embeds) && !isNullOrUndefined(raid)) {
       if (embeds.length == 1 && embeds[0].title == raid.messageTitle) {
-        var description = '';
+        let description = '';
         raid.players.forEach((player: IPlayer) => {
           description += `\n${player.name}`;
           description += player.additions > 0 ? ` +${player.additions}` : '';
@@ -72,7 +72,7 @@ export class MessageService implements IMessageService {
 
         description += `\n\n${raid.closed ? '🔒 Raid is gesloten 🔒' : raidingInfo}`;
 
-        let richEmbed = new RichEmbed(embeds[0]).setDescription(description);
+        const richEmbed = new RichEmbed(embeds[0]).setDescription(description);
 
         await message.edit(richEmbed);
       }
@@ -83,7 +83,7 @@ export class MessageService implements IMessageService {
     // set the raids to only work in specific channels
     // if (allowedChannels.some(x => x === this.message!.channel.id)) {
 
-    let richEmbed = new RichEmbed()
+    const richEmbed = new RichEmbed()
       .setTitle(`Counters i have in my system`)
       .setDescription(list);
     await this.message!.channel.send(richEmbed);
@@ -93,14 +93,14 @@ export class MessageService implements IMessageService {
     // set the raids to only work in specific channels
     // if (allowedChannels.some(x => x === this.message!.channel.id)) {
 
-    let richEmbed = new RichEmbed()
+    const richEmbed = new RichEmbed()
       .setTitle(`Counters for ${data.name}`)
       .setThumbnail(data.thumbnail)
       .setColor('#31d32b');
     data.counters.forEach((x) => {
-      var attackstring = '';
+      let attackstring = '';
       x.attacks.forEach((xy) => {
-        var emoji = this.message!.channel.client.emojis.find(
+        const emoji = this.message!.channel.client.emojis.find(
           (emoji) => emoji.name == `Icon_${xy[1]}`
         );
         attackstring += emoji + ' ' + xy[0] + '\n';
@@ -116,15 +116,15 @@ export class MessageService implements IMessageService {
   }
 
   async handleRankRequest() {
-    var firstName = this.commandArguments[2];
-    var playerName = this.commandArguments[3];
-    var level = Number(this.commandArguments[4]);
-    var role = this.message!.guild.roles.filter(
+    const firstName = this.commandArguments[2];
+    const playerName = this.commandArguments[3];
+    const level = Number(this.commandArguments[4]);
+    const role = this.message!.guild.roles.filter(
       (x) => x.name.toLowerCase() == this.commandArguments[1].toLowerCase()
     ).first();
-    var emoji = EmojiHelper.getEmoji(role.name.toLowerCase());
-    var user = this.message!.guild.members.get(this.message!.author.id);
-    var bot = this.message!.guild.members.get(botId);
+    const emoji = EmojiHelper.getEmoji(role.name.toLowerCase());
+    const user = this.message!.guild.members.get(this.message!.author.id);
+    const bot = this.message!.guild.members.get(botId);
     if (!isNullOrUndefined(user) && !isNullOrUndefined(role)) {
       // if user exists
       if (
@@ -145,10 +145,10 @@ export class MessageService implements IMessageService {
   }
 
   async handleLevelUpRequest() {
-    var name = this.message!.guild.members.filter(
+    const name = this.message!.guild.members.filter(
       (m) => m.id === this.message!.author.id
     ).first().nickname;
-    var nickNameArguments = name.split('|');
+    const nickNameArguments = name.split('|');
     nickNameArguments[3] = (Number(nickNameArguments[3]) + 1).toString();
     this.message!.guild.members.get(this.message!.author.id)!.setNickname(
       `${nickNameArguments.join('|')}`

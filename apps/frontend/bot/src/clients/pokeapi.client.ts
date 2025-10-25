@@ -8,8 +8,8 @@ export class PokeapiClient {
   constructor() {}
 
   async getGeneration(gen: number) {
-    var client = new ApiClient();
-    var request = await client.get(
+    const client = new ApiClient();
+    const request = await client.get(
       `${this.baseUrl}/${PokeApiEndPoints.Generation.toString()}/${gen}`
     );
     return request;

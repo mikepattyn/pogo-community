@@ -61,7 +61,7 @@ export class DiscordClient {
   async onReady() {
     this.client.on('ready', async () => {
       console.log(`Info: Logged in as ${this.client.user.tag}!`);
-      var channel = this.getChannelById(ChannelIds.Welcome) as TextChannel;
+      const channel = this.getChannelById(ChannelIds.Welcome) as TextChannel;
       if (!isNullOrUndefined(channel)) {
         this.channels.push(channel);
       }
@@ -71,7 +71,7 @@ export class DiscordClient {
   onMessage() {
     this.client.on('message', async (message: Message) => {
       if (message.type === 'GUILD_MEMBER_JOIN') {
-        var newPlayer: IDataPlayer = {
+        const newPlayer: IDataPlayer = {
           Id: -1,
           DiscordId: message.author.id,
           DateJoined: moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),
@@ -80,7 +80,7 @@ export class DiscordClient {
           Level: null,
           Team: null,
         };
-        var result: AxiosResponse = await this.apiClient.post(
+        const result: AxiosResponse = await this.apiClient.post(
           '/players',
           newPlayer
         );

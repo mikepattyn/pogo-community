@@ -13,7 +13,7 @@ export class TestCommand {
       .onCommand('!debug')
       .minArgs(0)
       .do(async (args: string[], rawArgs: string, message: Message) => {
-        var result: AxiosResponse = await this.client.post('/scans', {
+        const result: AxiosResponse = await this.client.post('/scans', {
           url: 'https://i.ebayimg.com/images/g/1oYAAOSwPg9cONV-/s-l1600.jpg',
         });
         if (result.status == 200) {

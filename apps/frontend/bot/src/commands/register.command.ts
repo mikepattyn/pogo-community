@@ -14,7 +14,7 @@ export class RegisterRankCommand {
       .whenInvalid('ti ni goe')
       // .whenInvalid({replyToUser: true, minimumArgs: Player.RegisterRankCommandInvalidMessage(), regexPattern: Player.RegisterRankCommandInvalidMessage()})
       .do((args: string[], rawArgs: string, message: Message) => {
-        var botUser = message.guild.members
+        const botUser = message.guild.members
           .filter((x) => x.id === botId)
           .first();
         if (
@@ -22,7 +22,7 @@ export class RegisterRankCommand {
           botUser.hasPermission('MANAGE_ROLES') &&
           botUser.hasPermission('CHANGE_NICKNAME')
         ) {
-          let messageService: MessageService =
+          const messageService: MessageService =
             dependencyInjectionContainer.get(MessageService);
           if (args[0] == 'levelup') {
             messageService.handleLevelUpRequest();

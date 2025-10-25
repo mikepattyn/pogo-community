@@ -1,21 +1,19 @@
+import validator from 'email-validator';
 import * as express from 'express';
+import { inject } from 'inversify';
 import {
   controller,
+  httpPost,
+  interfaces,
   request,
   response,
-  httpPost,
-  httpGet,
-  requestParam,
-  interfaces,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
 import passwordHash from 'password-hash';
-import validator from 'email-validator';
 
-import { AuthStore } from '../../stores/account.store';
 import { isNullOrUndefined } from 'util';
 import { Logger } from '../../logger';
-var jwt = require('jsonwebtoken');
+import { AuthStore } from '../../stores/account.store';
+const jwt = require('jsonwebtoken');
 
 @controller('/api/v1/auth')
 export class authController implements interfaces.Controller {
@@ -29,7 +27,7 @@ export class authController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response
   ) {
-    var password = req.body.Password;
+    const password = req.body.Password;
     // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:
     if (
       !new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$').test(
@@ -52,9 +50,9 @@ export class authController implements interfaces.Controller {
 
     // Generate password hash
     try {
-      var hashedPassword = passwordHash.generate(password);
+      const hashedPassword = passwordHash.generate(password);
       // create body with password hash
-      var body = {
+      const body = {
         Email: req.body.Email,
         PlayerId: req.body.PlayerId,
         Password: hashedPassword,

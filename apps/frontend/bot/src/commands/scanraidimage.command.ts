@@ -22,7 +22,7 @@ const arrayWithGenerations: any[] = [
 ];
 const allowedChannels: string[] = ['668134717614456895'];
 
-var uuidv4 = require('uuid/v4');
+const uuidv4 = require('uuid/v4');
 export class ScanRaidImageCommand {
   private static messageService: MessageService =
     dependencyInjectionContainer.get<MessageService>(MessageService);
@@ -47,9 +47,9 @@ export class ScanRaidImageCommand {
       .whenInvalid('ti ni goe')
       .deleteInvocation()
       .do(async (args: string[], rawArgs: string, message: Message) => {
-        var returnMessage: RichEmbed | string = 'Ti etwa hjil skjif gegoan';
+        let returnMessage: RichEmbed | string = 'Ti etwa hjil skjif gegoan';
 
-        var tiers = 0;
+        let tiers = 0;
         if (
           !isNullOrUndefined(args) &&
           !isNullOrUndefined(args[0]) &&
@@ -72,17 +72,17 @@ export class ScanRaidImageCommand {
             'You are not allowed to do this here!'
           );
         }
-        var attachment = message.attachments.first();
+        const attachment = message.attachments.first();
         if (isNullOrUndefined(attachment.url) && attachment.url != '') {
           return this.handleError(
             message,
             'Something went wrong fetching attachement url. Please try again. If this problem persists, please contact support.'
           );
         }
-        var response: AxiosResponse = await this.client.post('/scans', {
+        const response: AxiosResponse = await this.client.post('/scans', {
           url: attachment.url,
         });
-        var textResults: string[] | null = null;
+        let textResults: string[] | null = null;
 
         if (response.status >= 200 && response.status < 300) {
           textResults = response.data.textResults;
@@ -97,8 +97,8 @@ export class ScanRaidImageCommand {
           );
         }
 
-        var resultWithNumbers: any[] = [];
-        var resultWithoutNumbers: any[] = [];
+        const resultWithNumbers: any[] = [];
+        let resultWithoutNumbers: any[] = [];
 
         // Split arrays into string with and without numbers
         textResults!.forEach((result: string) => {
@@ -107,7 +107,7 @@ export class ScanRaidImageCommand {
         });
 
         // Check if any contains EX RAID GYM
-        var exRaidGym: boolean =
+        const exRaidGym: boolean =
           resultWithoutNumbers.filter((x) => x == 'EX RAID GYM').length == 1;
         if (exRaidGym) {
           resultWithoutNumbers = resultWithoutNumbers.filter(
@@ -115,11 +115,11 @@ export class ScanRaidImageCommand {
           );
         }
         // Check if any is a pokemon name <- means if we find a match the egg is already hatched
-        var pokemonMatch: any = null;
+        let pokemonMatch: any = null;
 
         resultWithoutNumbers.forEach((textResult: string) => {
           if (pokemonMatch == null) {
-            var resultLowerCased: string = textResult.toLowerCase();
+            const resultLowerCased: string = textResult.toLowerCase();
             // checking each generation their pokemon_species
             if (pokemonMatch == null) {
               arrayWithGenerations.forEach((generation: any) => {
@@ -137,20 +137,20 @@ export class ScanRaidImageCommand {
         });
 
         // Get the time left until hatch or disapear
-        var timeLeft = resultWithNumbers
+        const timeLeft = resultWithNumbers
           .filter(
             (x) => ScanRaidImageCommand.getNthOccurencesOf(x, ':') == 2
           )[0]
           .substring(0, 8);
 
         // Determine isHatched based on found a pokemon name
-        var isHatched = !isNull(pokemonMatch);
+        const isHatched = !isNull(pokemonMatch);
 
-        var gymName = '';
+        let gymName = '';
 
         if (isHatched) {
           // asume the gym name is above the pokemon name
-          var findRes = resultWithoutNumbers.filter(
+          const findRes = resultWithoutNumbers.filter(
             (x) => x.indexOf(pokemonMatch.substring(2)) > -1
           )[0];
           var index = resultWithoutNumbers.indexOf(findRes) - 1;
@@ -160,7 +160,7 @@ export class ScanRaidImageCommand {
               : resultWithoutNumbers[index];
         } else {
           // in 4 out 5 times it was this first element so taking first
-          var searchResult: string = textResults.filter(
+          const searchResult: string = textResults.filter(
             (x) => textResults!.indexOf(timeLeft) > -1
           )[0];
           var index = resultWithoutNumbers.indexOf(searchResult);
@@ -170,7 +170,7 @@ export class ScanRaidImageCommand {
               : resultWithoutNumbers[index];
         }
 
-        var info = new GymInfo([gymName, pokemonMatch, timeLeft]);
+        const info = new GymInfo([gymName, pokemonMatch, timeLeft]);
         returnMessage = new RichEmbed();
 
         if (isHatched) {
@@ -231,7 +231,7 @@ export class ScanRaidImageCommand {
     isHatched: boolean,
     tiers: number
   ) {
-    var store: RaidStore = new RaidStore();
+    const store: RaidStore = new RaidStore();
     await store.insert({
       Guid: guid,
       DateEnd: dateEnd,
@@ -245,8 +245,8 @@ export class ScanRaidImageCommand {
     );
   }
   private static getNthOccurencesOf(input: string, match: string) {
-    var count = 0;
-    for (var i = 0; i < input.length; i++) {
+    let count = 0;
+    for (let i = 0; i < input.length; i++) {
       if (input.charAt(i) === match) {
         count++;
       }

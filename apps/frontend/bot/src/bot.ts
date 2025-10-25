@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 // Setup DiscordClient
-var client = new DiscordClient();
+const client = new DiscordClient();
 client.login();
 client.onReady();
 client.onMessage();

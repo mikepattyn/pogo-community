@@ -23,7 +23,7 @@ export class Raid implements IRaid {
     this.players.push(player);
   }
   removePlayer(player: IPlayer): void {
-    var index = this.players.indexOf(player);
+    const index = this.players.indexOf(player);
     if (index > -1) {
       this.players.splice(index, 1);
     }

@@ -15,12 +15,12 @@ export class CounterCommand {
       // .whenInvalid({ replyToUser: true, minimumArgs: "Did you forget to type in the pokemon name?", allowedChannels: "Please use this command in the help channel."})
       .whenInvalid('ti ni just')
       .do(async (args: string[], rawArgs: string, message: Message) => {
-        var pokemonService = dependencyInjectionContainer.get(PokemonService);
-        let messageService: MessageService =
+        const pokemonService = dependencyInjectionContainer.get(PokemonService);
+        const messageService: MessageService =
           dependencyInjectionContainer.get(MessageService);
         if (args.length == 1) {
           if (args[0] == 'list') {
-            var countersList = await pokemonService.getCountersList();
+            const countersList = await pokemonService.getCountersList();
             if (!isNullOrUndefined(countersList)) {
               messageService.handlePokemonCounterListMessage(countersList);
             } else {
@@ -28,7 +28,7 @@ export class CounterCommand {
               message.channel.send('Couldnt recognize that command');
             }
           } else {
-            var searchResult: any = await pokemonService.searchPokemonCounter(
+            const searchResult: any = await pokemonService.searchPokemonCounter(
               args[0]
             );
             if (!isNull(searchResult) && searchResult.length > 0) {

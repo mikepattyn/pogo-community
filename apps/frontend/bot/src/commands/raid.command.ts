@@ -14,14 +14,14 @@ export class RaidCommand {
       .whenInvalid('Ti ni goe')
       // .whenInvalid({replyToUser: true, minimumArgs: Raid.RaidCommandInvalidErrorMessage(), regexPattern: Raid.RaidCommandInvalidErrorMessage()})
       .do(async (args: string[], rawArgs: string, message: Message) => {
-        var messageService: MessageService =
+        const messageService: MessageService =
           dependencyInjectionContainer.get(MessageService);
         await messageService.handleRaidStart();
-        let embeds = messageService.message!.embeds;
+        const embeds = messageService.message!.embeds;
         if (embeds && embeds.length > 0 && embeds[0].title.indexOf('🗡️') > -1) {
-          var raidService: RaidService =
+          const raidService: RaidService =
             dependencyInjectionContainer.get(RaidService);
-          var createdRaidResult = await raidService.createRaid(
+          const createdRaidResult = await raidService.createRaid(
             messageService.message!,
             embeds[0].title.split(' '),
             message

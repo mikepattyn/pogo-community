@@ -38,8 +38,8 @@ export class RaidService {
     );
   }
   deletePlayerFromRaid(messageId: string, userId: string): void {
-    var raid = this.getRaid(messageId);
-    var player = this.getPlayerFromRaid(raid, userId);
+    const raid = this.getRaid(messageId);
+    const player = this.getPlayerFromRaid(raid, userId);
     delete raid.players[
       raid.players.findIndex(
         (raidPlayer: IPlayer) => raidPlayer.id == player.id
@@ -69,22 +69,22 @@ export class RaidService {
     commandArguments: string[],
     startedBy: Message
   ): PokeBotErrors {
-    var retVal = PokeBotErrors.UNKNOWN; // expected error if user enters wrong date
+    let retVal = PokeBotErrors.UNKNOWN; // expected error if user enters wrong date
     try {
-      var timeArgument = commandArguments.join(' ').match('\\d{2}:\\d{2}');
+      const timeArgument = commandArguments.join(' ').match('\\d{2}:\\d{2}');
       if (!timeArgument || timeArgument.length != 1) {
         return PokeBotErrors.WRONG_DATE;
       }
-      var date = new Date();
+      const date = new Date();
       date.setHours(Number(timeArgument[0].split(':')[0]));
       date.setMinutes(Number(timeArgument[0].split(':')[1]));
 
-      var now = new Date();
+      const now = new Date();
       if (date > now) {
-        var endSecs = date.getTime();
-        var nowSecs = now.getTime();
-        var timeSpan = endSecs - nowSecs;
-        var raid = new Raid(
+        const endSecs = date.getTime();
+        const nowSecs = now.getTime();
+        const timeSpan = endSecs - nowSecs;
+        const raid = new Raid(
           message.id,
           commandArguments.join(' '),
           [],
@@ -114,12 +114,12 @@ export class RaidService {
     ) {
       return await reaction.remove(user);
     }
-    var number = additionsEmojis.indexOf(reaction.emoji.name) + 1;
+    const number = additionsEmojis.indexOf(reaction.emoji.name) + 1;
     if (
       this.getPlayerFromRaid(this.getRaid(reaction.message.id), user.id)
         .additions != number
     ) {
-      var dontDelete = reaction.message.reactions.filter(
+      const dontDelete = reaction.message.reactions.filter(
         (x) => x.emoji.name === '👍' || x.emoji.name === reaction.emoji.name
       );
 
@@ -143,10 +143,10 @@ export class RaidService {
       .displayName;
   }
   async createRaidResponseMessage(message: Message, raid: IRaid) {
-    let embeds = message.embeds;
+    const embeds = message.embeds;
     if (!isNullOrUndefined(message.embeds) && !isNullOrUndefined(raid)) {
       if (embeds.length == 1 && embeds[0].title == raid.messageTitle) {
-        var description = '';
+        let description = '';
         raid.players.forEach((player: IPlayer) => {
           description += `\n${player.name}`;
           description += player.additions > 0 ? ` +${player.additions}` : '';
@@ -154,7 +154,7 @@ export class RaidService {
 
         description += `\n\n${raid.closed ? '🔒 Raid is gesloten 🔒' : raidingInfo}`;
 
-        let richEmbed = new RichEmbed(embeds[0]).setDescription(description);
+        const richEmbed = new RichEmbed(embeds[0]).setDescription(description);
 
         await message.edit(richEmbed);
       }

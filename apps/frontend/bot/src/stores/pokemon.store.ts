@@ -21,7 +21,7 @@ export class PokemonStore {
   }
 
   async searchByName(name: string) {
-    var retVal = null;
+    let retVal = null;
     const q = this.datastore.createQuery('Pokemon').filter('name', '=', name);
     await this.datastore.runQuery(q).then((result: any) => {
       // entities = An array of records.
@@ -38,7 +38,7 @@ export class PokemonStore {
     }
   }
   async getNamesFromRapiAPI() {
-    var retVal = null;
+    let retVal = null;
     await axios({
       method: 'GET',
       url: 'https://pokemon-go1.p.rapidapi.com/pokemon_names.json',

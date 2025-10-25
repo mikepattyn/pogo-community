@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 export class ApiClient {
   async get(uri: string) {
-    var options = {
+    const options = {
       uri: uri,
       headers: {
         'Content-Type': 'application/json',
@@ -10,7 +10,7 @@ export class ApiClient {
       json: true, // Automatically parses the JSON string in the response
     };
 
-    var test = await fetch(options.uri, {
+    const test = await fetch(options.uri, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
