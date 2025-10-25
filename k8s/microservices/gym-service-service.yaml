@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gym-service
+  namespace: pogo-system
+  labels:
+    app: gym-service
+    tier: microservice
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "5004"
+    prometheus.io/path: "/metrics"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5004
+    targetPort: 5004
+    protocol: TCP
+    name: http
+  selector:
+    app: gym-service
+
