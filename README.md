@@ -1,18 +1,84 @@
-# 📱 POGO Community Monorepo
+# 🚀 POGO Community - Microservices Architecture
 
-A comprehensive Pokemon GO community ecosystem with API backend, React Native mobile app, and Discord bot.
+A modern Pokemon GO community ecosystem built with .NET microservices, featuring a Discord bot, React Native mobile app, and comprehensive backend services.
+
+## 🏗️ Architecture Overview
+
+This project has been migrated from a monolithic Node.js API to a modern **microservices architecture** using .NET 10, featuring:
+
+- **5 Microservices** - Each with its own database and domain
+- **2 Backend for Frontend (BFF)** services - API gateways for client applications
+- **Clean Architecture** - Domain-driven design with CQRS pattern
+- **Containerized** - Full Docker support with health checks
+- **Scalable** - Independent scaling and deployment
+
+## 🎯 Services
+
+### 🔐 **Account Service** (Port 5001)
+
+- User authentication and account management
+- JWT token generation and validation
+- Password hashing with BCrypt
+- Account creation and login
+
+### 👤 **Player Service** (Port 5002)
+
+- Player profiles and management
+- Team assignments (Valor, Mystic, Instinct)
+- Friend codes and Discord integration
+- Player statistics and levels
+
+### 📍 **Location Service** (Port 5003)
+
+- Geographical locations and POIs
+- Spatial search with radius queries
+- Address management and geocoding
+- Location types (Gym, Pokestop, etc.)
+
+### 🏟️ **Gym Service** (Port 5004)
+
+- Pokemon Gym management
+- Team control and motivation tracking
+- Gym status and attack monitoring
+- Integration with Location service
+
+### ⚔️ **Raid Service** (Port 5005)
+
+- Pokemon Raid management
+- Raid scheduling and participation
+- Player join/leave functionality
+- Integration with Gym and Player services
+
+### 🤖 **Bot BFF** (Port 6001)
+
+- API Gateway for Discord bot
+- Ocelot routing and load balancing
+- Request aggregation and transformation
+- CORS and authentication handling
+
+### 📱 **App BFF** (Port 6002)
+
+- API Gateway for mobile app
+- Ocelot routing and load balancing
+- Request aggregation and transformation
+- CORS and authentication handling
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- pnpm >= 8.0.0
-- For mobile development: Expo CLI, Android Studio (Android), Xcode (iOS)
+- **.NET 10 SDK** - For microservices development
+- **Docker & Docker Compose** - For containerization
+- **Node.js >= 18.0.0** - For client applications
+- **pnpm >= 8.0.0** - Package manager
 
 ### Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd pogo
+
 # Install dependencies
 make install
 # or
@@ -21,273 +87,258 @@ pnpm install
 
 ### Development
 
-```bash
-# Run all apps in development mode
-make dev
-# or
-pnpm run dev
-
-# Run specific apps
-make run-api      # API backend
-make run-bot      # Discord bot
-make run-mobile-web  # Mobile app (web)
-```
-
-### Building
+#### Option 1: Full Microservices Stack
 
 ```bash
-# Build all apps
-make build
+# Start all microservices with Docker Compose
+make microservices-start
 
-# Build specific apps
-make build-api
-make build-bot
-make build-mobile
+# Check status
+make microservices-status
+
+# View logs
+make microservices-logs
+
+# Health check
+make microservices-health
 ```
 
-### Testing
+#### Option 2: Individual Services
 
 ```bash
-# Run all tests
-make test
+# Build all microservices
+make microservices-build
 
-# Run specific app tests
-make test-api
-make test-bot
-make test-mobile
+# Run specific services locally (requires databases)
+dotnet run --project apps/backend/microservices/Account.Service
+dotnet run --project apps/backend/microservices/Player.Service
+# ... etc
 ```
 
-### Linting
+#### Option 3: Client Applications
 
 ```bash
-# Lint all apps
-make lint
+# Run Discord bot
+make run-bot
 
-# Lint and auto-fix
-make lint-fix
+# Run mobile app (web)
+make run-mobile-web
+
+# Run mobile app (Android)
+make run-mobile-android
+
+# Run mobile app (iOS)
+make run-mobile-ios
 ```
+
+## 🛠️ Available Commands
+
+### General Commands
+
+| Command        | Description                      |
+| -------------- | -------------------------------- |
+| `make help`    | Show all available commands      |
+| `make install` | Install all dependencies         |
+| `make build`   | Build all applications           |
+| `make dev`     | Run all apps in development mode |
+| `make test`    | Run all tests                    |
+| `make lint`    | Lint all applications            |
+
+### Microservices Commands
+
+| Command                      | Description                         |
+| ---------------------------- | ----------------------------------- |
+| `make microservices`         | Show microservices help             |
+| `make microservices-build`   | Build all microservices and BFFs    |
+| `make microservices-start`   | Start all microservices with Docker |
+| `make microservices-stop`    | Stop all microservices              |
+| `make microservices-restart` | Restart all microservices           |
+| `make microservices-logs`    | View logs for all microservices     |
+| `make microservices-status`  | Show status of all microservices    |
+| `make microservices-health`  | Check health of all microservices   |
+| `make microservices-clean`   | Clean up microservices resources    |
+
+### Docker Commands
+
+| Command              | Description                    |
+| -------------------- | ------------------------------ |
+| `make docker-up`     | Start all services with Docker |
+| `make docker-down`   | Stop all services              |
+| `make docker-logs`   | View logs for all services     |
+| `make docker-status` | Show service status            |
 
 ## 📁 Project Structure
 
 ```
 pogo/
 ├── apps/
-│   ├── backend/api/          # Node.js API backend
+│   ├── backend/
+│   │   ├── microservices/           # .NET Microservices
+│   │   │   ├── Account.Service/     # User authentication
+│   │   │   ├── Player.Service/      # Player management
+│   │   │   ├── Location.Service/    # Location management
+│   │   │   ├── Gym.Service/         # Gym management
+│   │   │   └── Raid.Service/        # Raid management
+│   │   └── bffs/                    # Backend for Frontend
+│   │       ├── Bot.BFF/             # Discord bot gateway
+│   │       └── App.BFF/             # Mobile app gateway
 │   └── frontend/
-│       ├── bot/              # Discord bot
-│       └── mobile/           # React Native mobile app
-├── Makefile                  # Build and development commands
-├── turbo.json               # Turborepo configuration
-└── package.json             # Root package configuration
+│       ├── bot/                     # Discord bot (Node.js)
+│       └── mobile/                  # React Native mobile app
+├── packages/
+│   ├── dotnet-shared/               # Shared .NET libraries
+│   │   ├── Pogo.Shared.Kernel/      # Domain entities and base classes
+│   │   ├── Pogo.Shared.Infrastructure/ # EF Core and repositories
+│   │   ├── Pogo.Shared.Application/ # MediatR and CQRS
+│   │   └── Pogo.Shared.API/         # API utilities and extensions
+│   └── database/                    # Legacy database package
+├── archive/
+│   └── old-api/                     # Archived Node.js API
+├── docker-compose.yml               # Main Docker Compose
+├── docker-compose.microservices.yml # Microservices-only Docker Compose
+├── Makefile                         # Main build commands
+├── Makefile.microservices           # Microservices-specific commands
+└── PogoMicroservices.sln           # .NET Solution file
 ```
 
-## 🛠️ Available Commands
+## 🏗️ Technical Stack
 
-| Command        | Description                      |
-| -------------- | -------------------------------- |
-| `make help`    | Show all available commands      |
-| `make install` | Install all dependencies         |
-| `make build`   | Build all apps                   |
-| `make dev`     | Run all apps in development mode |
-| `make test`    | Run all tests                    |
-| `make lint`    | Lint all apps                    |
-| `make clean`   | Clean build artifacts            |
+### Backend (.NET 10)
+
+- **ASP.NET Core** - Web framework with minimal APIs
+- **Entity Framework Core** - ORM with separate databases per service
+- **MediatR** - CQRS pattern implementation
+- **FluentValidation** - Request validation
+- **Ocelot** - API Gateway for BFF services
+- **BCrypt.Net-Next** - Password hashing
+- **JWT Authentication** - Token-based auth
+
+### Frontend
+
+- **Discord.js** - Discord bot framework
+- **React Native** - Mobile app framework
+- **Expo** - Development platform
+- **TypeScript** - Type-safe JavaScript
+
+### Infrastructure
+
+- **Docker** - Containerization
+- **Docker Compose** - Multi-container orchestration
+- **SQL Server** - Database (separate instance per service)
+- **Health Checks** - Service monitoring
 
 ## 🔧 Development Tools
 
 ### VS Code Extensions
 
-The project includes recommended VS Code extensions for optimal development experience:
-
-- ESLint & Prettier for code quality
-- React Native Tools for mobile development
-- Jest for testing
-- GitLens for Git integration
+- **C# Dev Kit** - .NET development
+- **Docker** - Container management
+- **REST Client** - API testing
+- **GitLens** - Git integration
 
 ### Code Quality
 
-- **ESLint**: TypeScript and React linting
-- **Prettier**: Code formatting
-- **Jest**: Testing framework
-- **TypeScript**: Type checking
+- **ESLint** - JavaScript/TypeScript linting
+- **Prettier** - Code formatting
+- **Jest** - Testing framework
+- **FluentValidation** - .NET validation
+
+## 🌐 API Endpoints
+
+### Account Service
+
+- `POST /api/account` - Create account
+- `POST /api/account/login` - Login
+- `GET /api/account/email/{email}` - Get account by email
+
+### Player Service
+
+- `POST /api/player` - Create player
+- `GET /api/player/{id}` - Get player by ID
+- `GET /api/player/username/{username}` - Get player by username
+- `GET /api/player/discord/{discordId}` - Get player by Discord ID
+
+### Location Service
+
+- `POST /api/location` - Create location
+- `GET /api/location/{id}` - Get location by ID
+- `GET /api/location/search/nearby` - Search nearby locations
+
+### Gym Service
+
+- `POST /api/gym` - Create gym
+- `GET /api/gym/{id}` - Get gym by ID
+- `GET /api/gym/location/{locationId}` - Get gyms by location
+- `GET /api/gym/search/nearby` - Search nearby gyms
+
+### Raid Service
+
+- `POST /api/raid` - Create raid
+- `GET /api/raid/{id}` - Get raid by ID
+- `GET /api/raid/active` - Get active raids
+- `POST /api/raid/join` - Join raid
+- `POST /api/raid/leave` - Leave raid
+
+## 🐳 Docker Services
+
+| Service          | Port | Database         | Description         |
+| ---------------- | ---- | ---------------- | ------------------- |
+| account-service  | 5001 | account-db:1433  | User authentication |
+| player-service   | 5002 | player-db:1434   | Player management   |
+| location-service | 5003 | location-db:1435 | Location management |
+| gym-service      | 5004 | gym-db:1436      | Gym management      |
+| raid-service     | 5005 | raid-db:1437     | Raid management     |
+| bot-bff          | 6001 | -                | Discord bot gateway |
+| app-bff          | 6002 | -                | Mobile app gateway  |
+| bot              | 2000 | -                | Discord bot         |
+| app              | 3000 | -                | Mobile app          |
+
+## 🔄 Migration from Monolith
+
+This project has been successfully migrated from a monolithic Node.js API to a modern microservices architecture:
+
+### ✅ **What Was Migrated:**
+
+- **5 Core Services** - Account, Player, Location, Gym, Raid
+- **2 BFF Services** - Bot and App gateways
+- **Database Per Service** - Complete data isolation
+- **Clean Architecture** - Domain-driven design
+- **Containerization** - Full Docker support
+
+### ✅ **What Was Preserved:**
+
+- **Client Applications** - Bot and mobile app functionality
+- **Business Logic** - All core features maintained
+- **Data Models** - Equivalent entities and relationships
+- **API Contracts** - Compatible endpoints
+
+### ✅ **What Was Improved:**
+
+- **Scalability** - Independent service scaling
+- **Maintainability** - Clear separation of concerns
+- **Reliability** - Service isolation prevents cascading failures
+- **Technology Stack** - Modern .NET 10 with best practices
+- **Development Experience** - Better tooling and debugging
+
+## 📚 Documentation
+
+- [Architecture Overview](docs/architecture.md) - Detailed architecture documentation
+- [API Documentation](docs/api.md) - Complete API reference
+- [Deployment Guide](docs/deployment.md) - Production deployment instructions
+- [Development Guide](docs/development.md) - Local development setup
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-# 📱 POGO Community Apps - Framework & Package Inventory
-
-## 🏗️ **App 1: POGO Community API (Node.js Backend)**
-
-**Location:** `POGO-Community-API-with-NodeJS-master/`
-
-### **Core Framework & Runtime**
-
-- **Node.js** (v10.19.0) - JavaScript runtime
-- **TypeScript** (v3.6.4) - Type-safe JavaScript
-- **Express.js** (v4.17.1) - Web framework
-
-### **Key Dependencies**
-
-- **Authentication & Security:**
-
-  - `jsonwebtoken` (v8.5.1) - JWT token handling
-  - `password-hash` (v1.2.2) - Password hashing
-  - `express-session` (v1.17.0) - Session management
-
-- **Database & ORM:**
-
-  - `mssql` (v5.1.0) - Microsoft SQL Server client
-  - `mysql` (v2.17.1) - MySQL client
-
-- **Google Cloud Services:**
-
-  - `@google-cloud/logging` (v7.1.0) - Cloud logging
-  - `@google-cloud/vision` (v1.8.0) - Image analysis
-
-- **Dependency Injection:**
-
-  - `inversify` (v5.0.1) - IoC container
-  - `inversify-express-utils` (v6.3.2) - Express integration
-
-- **Utilities:**
-  - `axios` (v0.19.2) - HTTP client
-  - `moment` (v2.24.0) - Date manipulation
-  - `dotenv` (v8.2.0) - Environment variables
-  - `email-validator` (v2.0.4) - Email validation
-  - `pug` (v2.0.4) - Template engine
-
----
-
-## 📱 **App 2: POGO Community App (React Native Mobile)**
-
-**Location:** `POGO-Community-App-with-ReactNative-master/`
-
-### **Core Framework & Runtime**
-
-- **React Native** (v0.71.4) - Mobile app framework
-- **React** (v18.2.0) - UI library
-- **Expo** (v48.0.7) - Development platform
-- **TypeScript** (v5.0.2) - Type-safe JavaScript
-
-### **Key Dependencies**
-
-- **Navigation:**
-
-  - `@react-navigation/bottom-tabs` (v6.5.7) - Tab navigation
-  - `@react-navigation/drawer` (v6.6.2) - Drawer navigation
-  - `react-navigation` (v4.1.1) - Navigation library
-
-- **Maps & Location:**
-
-  - `react-native-maps` (v1.4.0) - Native maps
-  - `@googlemaps/google-maps-services-js` (v3.3.27) - Google Maps API
-  - `react-google-maps` (v9.4.5) - Google Maps React components
-
-- **UI Components:**
-
-  - `react-native-elements` (v3.4.3) - UI component library
-  - `react-native-vector-icons` (v9.2.0) - Icon library
-  - `@expo/vector-icons` (v13.0.0) - Expo icons
-  - `react-native-popup-dialog` (v0.18.3) - Modal dialogs
-  - `react-native-numeric-input` (v1.9.1) - Number input
-
-- **Animation & Gestures:**
-
-  - `react-native-animatable` (v1.3.3) - Animations
-  - `react-native-gesture-handler` (v2.9.0) - Gesture handling
-  - `react-native-reanimated` (v3.0.2) - Advanced animations
-
-- **Platform Support:**
-
-  - `react-native-web` (v0.18.12) - Web support
-  - `react-native-unimodules` (v0.6.0) - Universal modules
-
-- **Google Cloud & Services:**
-
-  - `@google-cloud/logging` (v10.4.0) - Cloud logging
-  - `inversify` (v6.0.1) - Dependency injection
-
-- **Development Tools:**
-  - `babel-preset-expo` (v9.3.0) - Babel configuration
-  - `jetifier` (v2.0.0) - Android compatibility
-
----
-
-## 🤖 **App 3: POGO Community Bot (Discord Bot)**
-
-**Location:** `POGO-Community-Bot-with-Discord.JS-master/`
-
-### **Core Framework & Runtime**
-
-- **Node.js** (v12.14.1) - JavaScript runtime
-- **TypeScript** (v3.7.5) - Type-safe JavaScript
-- **Discord.js** (v11.5.1) - Discord API wrapper
-
-### **Key Dependencies**
-
-- **Discord Integration:**
-
-  - `discord.js` (v11.5.1) - Discord bot framework
-  - `discord-message-handler` (v2.1.1) - Message handling
-
-- **Google Cloud Services:**
-
-  - `@google-cloud/datastore` (v5.0.3) - NoSQL database
-  - `@google-cloud/logging` (v7.1.0) - Cloud logging
-  - `@google-cloud/vision` (v1.7.2) - Image analysis
-
-- **Database & Storage:**
-
-  - `mssql` (v5.1.0) - Microsoft SQL Server client
-
-- **HTTP & API:**
-
-  - `axios` (v0.19.2) - HTTP client
-  - `node-fetch` (v2.6.0) - Fetch API for Node.js
-
-- **Utilities & Helpers:**
-
-  - `moment` (v2.24.0) - Date manipulation
-  - `uuid` (v3.4.0) - UUID generation
-  - `winston` (v3.2.1) - Logging
-  - `yamljs` (v0.3.0) - YAML parsing
-  - `geolocation` (v0.2.0) - Location services
-
-- **Development & Code Quality:**
-  - `tslint` (v5.20.1) - TypeScript linting
-  - `prettier` - Code formatting
-
----
-
-## 🔄 **Common Technologies Across All Apps**
-
-### **Shared Dependencies:**
-
-- **TypeScript** - All apps use TypeScript for type safety
-- **Inversify** - Dependency injection container (API v5.0.1, App v6.0.1, Bot v5.0.1)
-- **Axios** - HTTP client (API v0.19.2, App v1.3.4, Bot v0.19.2)
-- **Moment.js** - Date manipulation (API v2.24.0, Bot v2.24.0)
-- **Google Cloud Services** - Logging and Vision API across all apps
-- **Dotenv** - Environment variable management
-- **MSSQL** - Database connectivity (API & Bot)
-
-### **Architecture Patterns:**
-
-- **Dependency Injection** - All apps use Inversify for IoC
-- **TypeScript** - Strong typing across the entire ecosystem
-- **Modular Design** - Clean separation of concerns
-- **Google Cloud Integration** - Centralized logging and AI services
-
-### **Development Workflow:**
-
-- **TypeScript Compilation** - All apps compile TS to JS
-- **Source Maps** - Debugging support
-- **Strict Type Checking** - Enhanced code quality
-- **Decorator Support** - Modern JavaScript features
-
----
-
-Cursor:
-
-```text
-*This is a well-architected Pokemon GO community ecosystem with a Node.js API backend, React Native mobile app, and Discord bot, all sharing common technologies and design patterns! 🎮✨*
-```
+**Built with ❤️ for the Pokemon GO community!** 🎮✨
