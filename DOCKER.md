@@ -11,6 +11,8 @@ This guide explains how to run the POGO Community applications using Docker and 
 
 ## 🚀 Quick Start
 
+> **💡 Tip**: This project includes a Makefile with convenient Docker commands. Run `make help` to see all available commands.
+
 ### 1. Configure Environment Variables
 
 Copy the example environment file and fill in your credentials:
@@ -27,17 +29,30 @@ Edit `.env` and provide values for:
 
 ### 2. Build and Start Services
 
+**Using Make (Recommended):**
+```bash
+# Build and start all services
+make docker-up-build
+
+# View logs
+make docker-logs
+
+# View logs for specific service
+make docker-logs-api
+make docker-logs-bot
+make docker-logs-app
+```
+
+**Using Docker Compose directly:**
 ```bash
 # Build all images and start services
-docker-compose up -d
+docker-compose up -d --build
 
 # View logs
 docker-compose logs -f
 
 # View logs for specific service
 docker-compose logs -f api
-docker-compose logs -f bot
-docker-compose logs -f app
 ```
 
 ### 3. Access the Applications
@@ -50,12 +65,19 @@ docker-compose logs -f app
 
 ### 4. Check Service Health
 
+**Using Make:**
+```bash
+# Check status of all services
+make docker-status
+
+# Show running containers
+make docker-ps
+```
+
+**Using Docker Compose:**
 ```bash
 # Check status of all services
 docker-compose ps
-
-# Check health of specific service
-docker-compose ps api
 ```
 
 ## 🏗️ Architecture
@@ -114,8 +136,36 @@ pogo/
 
 ## 🔧 Common Commands
 
-### Starting and Stopping
+### Using Make Commands
 
+The Makefile provides convenient shortcuts for all Docker operations. Run `make help` to see all available commands.
+
+#### Starting and Stopping
+
+**Using Make:**
+```bash
+# Start all services
+make docker-up
+
+# Build and start all services
+make docker-up-build
+
+# Stop all services
+make docker-down
+
+# Stop and remove volumes (⚠️ deletes all data)
+make docker-down-volumes
+
+# Restart all services
+make docker-restart
+
+# Restart a specific service
+make docker-restart-api
+make docker-restart-bot
+make docker-restart-app
+```
+
+**Using Docker Compose:**
 ```bash
 # Start all services
 docker-compose up -d
@@ -130,8 +180,22 @@ docker-compose down -v
 docker-compose restart api
 ```
 
-### Building
+#### Building
 
+**Using Make:**
+```bash
+# Build all images
+make docker-build
+
+# Build specific service
+make docker-build-api
+make docker-build-bot
+make docker-build-app
+make docker-build-mysql
+make docker-build-mssql
+```
+
+**Using Docker Compose:**
 ```bash
 # Rebuild all images
 docker-compose build
@@ -143,8 +207,22 @@ docker-compose build api
 docker-compose build --no-cache
 ```
 
-### Logs and Debugging
+#### Logs and Debugging
 
+**Using Make:**
+```bash
+# View logs for all services
+make docker-logs
+
+# View logs for specific service
+make docker-logs-api
+make docker-logs-bot
+make docker-logs-app
+make docker-logs-mysql
+make docker-logs-mssql
+```
+
+**Using Docker Compose:**
 ```bash
 # View logs for all services
 docker-compose logs -f
@@ -157,24 +235,56 @@ docker-compose logs --tail=100 api
 
 # Execute command in running container
 docker-compose exec api sh
-docker-compose exec mysql mysql -u root -p
 ```
 
-### Database Access
+#### Database Access
 
+**Using Make:**
 ```bash
-# Access MySQL database (from host)
+# Connect to MySQL database (interactive)
+make docker-db-mysql
+
+# Connect to MSSQL database (interactive)
+make docker-db-mssql
+```
+
+**From Host Machine:**
+```bash
+# Access MySQL database
 mysql -h localhost -P 4000 -u root -p
 # Password: value of MYSQL_ROOT_PASSWORD from .env
 
+# Access MSSQL database
+sqlcmd -S localhost,5000 -U sa -P 'YOUR_SA_PASSWORD'
+```
+
+**Using Docker Compose:**
+```bash
 # Access MySQL database (from container)
 docker-compose exec mysql mysql -u root -p
 
-# Access MSSQL database (from host)
-sqlcmd -S localhost,5000 -U sa -P 'YOUR_SA_PASSWORD'
-
 # Access MSSQL database (from container)
-docker-compose exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YOUR_SA_PASSWORD'
+docker-compose exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa
+```
+
+#### Cleanup
+
+**Using Make:**
+```bash
+# Remove stopped containers and unused images
+make docker-clean
+
+# Remove all Docker resources (⚠️ destructive)
+make docker-clean-all
+```
+
+**Using Docker Compose:**
+```bash
+# Remove stopped containers
+docker-compose down --remove-orphans
+
+# Clean up system
+docker system prune -f
 ```
 
 ## 🔍 Troubleshooting
