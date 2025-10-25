@@ -46,7 +46,7 @@ metadata:
     app: cockroachdb
 spec:
   serviceName: cockroachdb
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: cockroachdb
@@ -107,7 +107,6 @@ spec:
             --insecure \
             --advertise-host $(hostname -f) \
             --http-addr 0.0.0.0 \
-            --join cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb \
             --cache 25% \
             --max-sql-memory 25%
         resources:
