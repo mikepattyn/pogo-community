@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pogo-bot
+  namespace: pogo-system
+  labels:
+    app: pogo-bot
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pogo-bot
+  template:
+    metadata:
+      labels:
+        app: pogo-bot
+        tier: frontend
+    spec:
+      containers:
+      - name: pogo-bot
+        image: pogo/bot:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 2000
+          name: http
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: common-config
+              key: NODE_ENV
+        - name: BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-secrets
+              key: BOT_TOKEN
+        - name: BOT_BFF_URL
+          valueFrom:
+            configMapKeyRef:
+              name: service-urls-config
+              key: BOT_BFF_URL
+        - name: GOOGLE_CLOUD_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: google-cloud-secrets
+              key: GOOGLE_CLOUD_PROJECT_ID
+              optional: true
+        - name: CLOUD_SQL_CONNECTION_NAME
+          valueFrom:
+            secretKeyRef:
+              name: google-cloud-secrets
+              key: CLOUD_SQL_CONNECTION_NAME
+              optional: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+
