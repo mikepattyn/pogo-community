@@ -11,6 +11,7 @@
 .PHONY: docker-clean docker-clean-all
 .PHONY: microservices microservices-build microservices-start microservices-stop microservices-restart
 .PHONY: microservices-logs microservices-status microservices-health microservices-clean
+.PHONY: k8s k8s-build k8s-deploy k8s-teardown k8s-status k8s-logs k8s-shell
 
 # Default target
 .DEFAULT_GOAL := help
@@ -346,4 +347,71 @@ microservices-clean: ## Clean up microservices resources
 	@echo "$(CYAN)Cleaning microservices resources...$(NC)"
 	@make -f Makefile.microservices clean
 	@echo "$(GREEN)Microservices cleanup complete!$(NC)"
+
+##@ Kubernetes
+
+k8s: ## Show Kubernetes help
+	@echo "$(CYAN)POGO Kubernetes - Available Commands$(NC)"
+	@echo ""
+	@echo "$(GREEN)Build Commands:$(NC)"
+	@echo "  k8s-build      Build all Docker images and load into Minikube"
+	@echo "  k8s-deploy     Deploy entire POGO platform to Kubernetes"
+	@echo "  k8s-teardown   Remove all POGO resources from Kubernetes"
+	@echo ""
+	@echo "$(GREEN)Management Commands:$(NC)"
+	@echo "  k8s-status     Show status of all Kubernetes resources"
+	@echo "  k8s-logs       View logs for all pods"
+	@echo "  k8s-shell      Open shell in a pod"
+	@echo ""
+	@echo "$(YELLOW)Prerequisites:$(NC)"
+	@echo "  - Minikube installed and running"
+	@echo "  - kubectl installed"
+	@echo "  - Docker installed"
+
+k8s-build: ## Build all Docker images and load into Minikube
+	@echo "$(CYAN)Building and loading images into Minikube...$(NC)"
+	@./k8s/build-images.sh
+	@echo "$(GREEN)Images built and loaded successfully!$(NC)"
+
+k8s-deploy: ## Deploy entire POGO platform to Kubernetes
+	@echo "$(CYAN)Deploying POGO platform to Kubernetes...$(NC)"
+	@./k8s/deploy.sh
+	@echo "$(GREEN)Deployment complete!$(NC)"
+
+k8s-teardown: ## Remove all POGO resources from Kubernetes
+	@echo "$(CYAN)Removing POGO resources from Kubernetes...$(NC)"
+	@./k8s/teardown.sh
+	@echo "$(GREEN)Teardown complete!$(NC)"
+
+k8s-status: ## Show status of all Kubernetes resources
+	@echo "$(CYAN)Kubernetes Resources Status:$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Namespaces:$(NC)"
+	@kubectl get namespaces | grep pogo || echo "No pogo namespace found"
+	@echo ""
+	@echo "$(YELLOW)Pods:$(NC)"
+	@kubectl get pods -n pogo-system 2>/dev/null || echo "No pods found in pogo-system namespace"
+	@echo ""
+	@echo "$(YELLOW)Services:$(NC)"
+	@kubectl get services -n pogo-system 2>/dev/null || echo "No services found in pogo-system namespace"
+	@echo ""
+	@echo "$(YELLOW)Ingress:$(NC)"
+	@kubectl get ingress -n pogo-system 2>/dev/null || echo "No ingress found in pogo-system namespace"
+
+k8s-logs: ## View logs for all pods
+	@echo "$(CYAN)Viewing logs for all pods...$(NC)"
+	@kubectl logs -l app.kubernetes.io/part-of=pogo -n pogo-system --tail=50 || echo "No logs found"
+
+k8s-shell: ## Open shell in a pod (interactive)
+	@echo "$(CYAN)Available pods:$(NC)"
+	@kubectl get pods -n pogo-system
+	@echo ""
+	@echo "$(YELLOW)Usage: make k8s-shell POD=<pod-name> CONTAINER=<container-name>$(NC)"
+	@echo "$(YELLOW)Example: make k8s-shell POD=account-service-xxx CONTAINER=account-service$(NC)"
+	@if [ -n "$(POD)" ]; then \
+		echo "$(CYAN)Opening shell in pod $(POD)...$(NC)"; \
+		kubectl exec -it $(POD) -n pogo-system $(if [ -n "$(CONTAINER)" ]; then echo "-c $(CONTAINER)"; fi) -- /bin/bash || /bin/sh; \
+	else \
+		echo "$(RED)Please specify POD parameter$(NC)"; \
+	fi
 
