@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  # MySQL Database for API
+  mysql:
+    build:
+      context: ./databases/mysql
+      dockerfile: mysql.Dockerfile
+    container_name: pogo-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: pogo_api
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # MSSQL Database for Bot
+  mssql:
+    build:
+      context: ./databases/mssql
+      dockerfile: mssql.Dockerfile
+    container_name: pogo-mssql
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: Express
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - pogo-network
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_SA_PASSWORD}", "-Q", "SELECT 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  # API Backend
+  api:
+    build:
+      context: ./apps/backend/api
+      dockerfile: api.Dockerfile
+    container_name: pogo-api
+    environment:
+      # Server Configuration
+      PORT: 8080
+      NODE_ENV: production
+      
+      # JWT Configuration
+      JWT_KEY: ${JWT_KEY}
+      
+      # Database Configuration
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: pogo_api
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      
+      # Google Cloud Configuration
+      CLOUD_SQL_CONNECTION_NAME: ${GOOGLE_CLOUD_PROJECT_ID}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+    ports:
+      - "1000:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    restart: unless-stopped
+
+  # Discord Bot
+  bot:
+    build:
+      context: ./apps/frontend/bot
+      dockerfile: bot.Dockerfile
+    container_name: pogo-bot
+    environment:
+      # Discord Configuration
+      BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      
+      # API Configuration
+      API_BASE_URL: http://api:8080/api/v1
+      
+      # Database Configuration (MSSQL)
+      DB_SERVER: mssql
+      DB_PORT: 1433
+      DB_DATABASE: pogo_bot
+      DB_USER: sa
+      DB_PASSWORD: ${MSSQL_SA_PASSWORD}
+      
+      # Google Cloud Configuration
+      GOOGLE_CLOUD_PROJECT_ID: ${GOOGLE_CLOUD_PROJECT_ID}
+      CLOUD_SQL_CONNECTION_NAME: ${GOOGLE_CLOUD_PROJECT_ID}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+    ports:
+      - "2000:2000"
+    depends_on:
+      api:
+        condition: service_started
+      mssql:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    restart: unless-stopped
+
+  # Mobile Web App
+  app:
+    build:
+      context: ./apps/frontend/mobile
+      dockerfile: app.Dockerfile
+    container_name: pogo-app
+    environment:
+      # API Configuration
+      REACT_APP_API_URL: http://localhost:1000/api/v1
+    ports:
+      - "3000:3000"
+    networks:
+      - pogo-network
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+    name: pogo-mysql-data
+  mssql-data:
+    name: pogo-mssql-data
+
+networks:
+  pogo-network:
+    name: pogo-network
+    driver: bridge
+
