@@ -13,4 +13,5 @@ ios/
 .expo-shared/
 pnpm-lock.yaml
 package-lock.json
+raid-storage.json
 

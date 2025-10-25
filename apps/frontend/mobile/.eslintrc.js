@@ -13,7 +13,8 @@ module.exports = {
     },
   },
   env: {
-    'react-native/react-native': true,
+    node: true,
+    es2021: true,
   },
   settings: {
     react: {
@@ -26,4 +27,3 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
   },
 };
-
