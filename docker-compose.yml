@@ -14,6 +14,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
+    ports:
+      - "4000:3306"
     networks:
       - pogo-network
     healthcheck:
@@ -36,6 +38,8 @@ services:
       MSSQL_PID: Express
     volumes:
       - mssql-data:/var/opt/mssql
+    ports:
+      - "5000:1433"
     networks:
       - pogo-network
     healthcheck:

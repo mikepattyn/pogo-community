@@ -45,6 +45,8 @@ docker-compose logs -f app
 - **API Backend**: http://localhost:1000
 - **Web App**: http://localhost:3000
 - **Discord Bot**: Running in background (connects to Discord)
+- **MySQL Database**: localhost:4000
+- **MSSQL Database**: localhost:5000
 
 ### 4. Check Service Health
 
@@ -65,8 +67,8 @@ docker-compose ps api
 | `api` | REST API Backend | 1000 → 8080 | MySQL |
 | `bot` | Discord Bot | 2000 → 2000 | MSSQL |
 | `app` | Web Application | 3000 → 3000 | - |
-| `mysql` | MySQL Database | Internal only | - |
-| `mssql` | MSSQL Database | Internal only | - |
+| `mysql` | MySQL Database | 4000 → 3306 | - |
+| `mssql` | MSSQL Database | 5000 → 1433 | - |
 
 ### Volumes
 
@@ -161,11 +163,17 @@ docker-compose exec mysql mysql -u root -p
 ### Database Access
 
 ```bash
-# Access MySQL database
-docker-compose exec mysql mysql -u root -p
+# Access MySQL database (from host)
+mysql -h localhost -P 4000 -u root -p
 # Password: value of MYSQL_ROOT_PASSWORD from .env
 
-# Access MSSQL database
+# Access MySQL database (from container)
+docker-compose exec mysql mysql -u root -p
+
+# Access MSSQL database (from host)
+sqlcmd -S localhost,5000 -U sa -P 'YOUR_SA_PASSWORD'
+
+# Access MSSQL database (from container)
 docker-compose exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YOUR_SA_PASSWORD'
 ```
 
