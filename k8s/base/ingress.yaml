@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pogo-ingress
+  namespace: pogo-system
+  labels:
+    app: pogo-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      # Mobile App - Root path
+      - path: /()(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: pogo-app
+            port:
+              number: 3000
+      
+      # Bot BFF API
+      - path: /bot-api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: bot-bff
+            port:
+              number: 6001
+      
+      # App BFF API
+      - path: /app-api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: app-bff
+            port:
+              number: 6002
+      
+      # Grafana
+      - path: /grafana(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+      
+      # Prometheus
+      - path: /prometheus(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus
+            port:
+              number: 9090
+
