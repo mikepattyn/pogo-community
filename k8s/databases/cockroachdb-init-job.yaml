@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cockroachdb-init
+  namespace: pogo-system
+  labels:
+    app: cockroachdb-init
+spec:
+  template:
+    metadata:
+      labels:
+        app: cockroachdb-init
+    spec:
+      serviceAccountName: cockroachdb
+      restartPolicy: OnFailure
+      containers:
+      - name: cockroachdb-init
+        image: cockroachdb/cockroach:v23.1.11
+        imagePullPolicy: IfNotPresent
+        command:
+          - "/bin/bash"
+          - "-ecx"
+          - |
+            # Wait for CockroachDB to be ready
+            until /cockroach/cockroach sql --insecure --host=cockroachdb-public --execute="SELECT 1"; do
+              echo "Waiting for CockroachDB to be ready..."
+              sleep 5
+            done
+            
+            echo "CockroachDB is ready. Initializing cluster..."
+            
+            # Initialize the cluster (only needed once)
+            /cockroach/cockroach init --insecure --host=cockroachdb-0.cockroachdb || true
+            
+            echo "Creating databases..."
+            
+            # Create databases for each microservice
+            /cockroach/cockroach sql --insecure --host=cockroachdb-public <<'EOSQL'
+            CREATE DATABASE IF NOT EXISTS AccountDb;
+            CREATE DATABASE IF NOT EXISTS PlayerDb;
+            CREATE DATABASE IF NOT EXISTS LocationDb;
+            CREATE DATABASE IF NOT EXISTS GymDb;
+            CREATE DATABASE IF NOT EXISTS RaidDb;
+            
+            -- Show created databases
+            SHOW DATABASES;
+            EOSQL
+            
+            echo "Database initialization complete!"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
