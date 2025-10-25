@@ -7,7 +7,7 @@ podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties
 ENV['RCT_NEW_ARCH_ENABLED'] = podfile_properties['newArchEnabled'] == 'true' ? '1' : '0'
 ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
 
-platform :ios, podfile_properties['ios.deploymentTarget'] || '13.4'
+platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 install! 'cocoapods',
   :deterministic_uuids => false
 
@@ -24,9 +24,7 @@ target 'POGOCommunityApp' do
     :path => config[:reactNativePath],
     :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/..",
-    # Note that if you have use_frameworks! enabled, Flipper will not work if enabled
-    :flipper_configuration => FlipperConfiguration.disabled
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   post_install do |installer|
@@ -40,7 +38,7 @@ target 'POGOCommunityApp' do
     # Workaround for XCode 15
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
       end
     end
   end

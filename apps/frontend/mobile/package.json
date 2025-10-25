@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "^13.6.9",
     "@react-native/babel-preset": "0.76.5",
     "@react-native/metro-config": "0.76.5",
     "@react-native/typescript-config": "0.76.5",
