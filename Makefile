@@ -134,3 +134,151 @@ type-check: ## Run TypeScript type checking for all apps
 	pnpm run type-check
 	@echo "$(GREEN)Type checking complete!$(NC)"
 
+##@ Docker - Build
+
+docker-build: ## Build all Docker images
+	@echo "$(CYAN)Building all Docker images...$(NC)"
+	docker-compose build
+	@echo "$(GREEN)All images built successfully!$(NC)"
+
+docker-build-api: ## Build API Docker image
+	@echo "$(CYAN)Building API image...$(NC)"
+	docker-compose build api
+	@echo "$(GREEN)API image built successfully!$(NC)"
+
+docker-build-bot: ## Build bot Docker image
+	@echo "$(CYAN)Building bot image...$(NC)"
+	docker-compose build bot
+	@echo "$(GREEN)Bot image built successfully!$(NC)"
+
+docker-build-app: ## Build mobile app Docker image
+	@echo "$(CYAN)Building app image...$(NC)"
+	docker-compose build app
+	@echo "$(GREEN)App image built successfully!$(NC)"
+
+docker-build-mysql: ## Build MySQL Docker image
+	@echo "$(CYAN)Building MySQL image...$(NC)"
+	docker-compose build mysql
+	@echo "$(GREEN)MySQL image built successfully!$(NC)"
+
+docker-build-mssql: ## Build MSSQL Docker image
+	@echo "$(CYAN)Building MSSQL image...$(NC)"
+	docker-compose build mssql
+	@echo "$(GREEN)MSSQL image built successfully!$(NC)"
+
+##@ Docker - Run
+
+docker-up: ## Start all services
+	@echo "$(CYAN)Starting all services...$(NC)"
+	docker-compose up -d
+	@echo "$(GREEN)All services started!$(NC)"
+	@echo "$(YELLOW)API: http://localhost:1000$(NC)"
+	@echo "$(YELLOW)App: http://localhost:3000$(NC)"
+	@echo "$(YELLOW)MySQL: localhost:4000$(NC)"
+	@echo "$(YELLOW)MSSQL: localhost:5000$(NC)"
+
+docker-up-build: ## Build and start all services
+	@echo "$(CYAN)Building and starting all services...$(NC)"
+	docker-compose up -d --build
+	@echo "$(GREEN)All services built and started!$(NC)"
+
+docker-down: ## Stop all services
+	@echo "$(CYAN)Stopping all services...$(NC)"
+	docker-compose down
+	@echo "$(GREEN)All services stopped!$(NC)"
+
+docker-down-volumes: ## Stop all services and remove volumes
+	@echo "$(RED)WARNING: This will delete all database data!$(NC)"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		docker-compose down -v; \
+		echo "$(GREEN)All services stopped and volumes removed!$(NC)"; \
+	else \
+		echo "$(YELLOW)Cancelled.$(NC)"; \
+	fi
+
+docker-restart: ## Restart all services
+	@echo "$(CYAN)Restarting all services...$(NC)"
+	docker-compose restart
+	@echo "$(GREEN)All services restarted!$(NC)"
+
+docker-restart-api: ## Restart API service
+	@echo "$(CYAN)Restarting API...$(NC)"
+	docker-compose restart api
+	@echo "$(GREEN)API restarted!$(NC)"
+
+docker-restart-bot: ## Restart bot service
+	@echo "$(CYAN)Restarting bot...$(NC)"
+	docker-compose restart bot
+	@echo "$(GREEN)Bot restarted!$(NC)"
+
+docker-restart-app: ## Restart app service
+	@echo "$(CYAN)Restarting app...$(NC)"
+	docker-compose restart app
+	@echo "$(GREEN)App restarted!$(NC)"
+
+##@ Docker - Logs
+
+docker-logs: ## View logs for all services
+	@docker-compose logs -f
+
+docker-logs-api: ## View API logs
+	@docker-compose logs -f api
+
+docker-logs-bot: ## View bot logs
+	@docker-compose logs -f bot
+
+docker-logs-app: ## View app logs
+	@docker-compose logs -f app
+
+docker-logs-mysql: ## View MySQL logs
+	@docker-compose logs -f mysql
+
+docker-logs-mssql: ## View MSSQL logs
+	@docker-compose logs -f mssql
+
+##@ Docker - Status
+
+docker-ps: ## Show running containers
+	@docker-compose ps
+
+docker-status: ## Show service status with health checks
+	@echo "$(CYAN)Service Status:$(NC)"
+	@docker-compose ps
+	@echo ""
+	@echo "$(CYAN)Health Checks:$(NC)"
+	@docker ps --filter "name=pogo-" --format "table {{.Names}}\t{{.Status}}"
+
+##@ Docker - Database
+
+docker-db-mysql: ## Connect to MySQL database
+	@echo "$(CYAN)Connecting to MySQL...$(NC)"
+	@echo "$(YELLOW)Password: value of MYSQL_ROOT_PASSWORD from .env$(NC)"
+	@docker-compose exec mysql mysql -u root -p
+
+docker-db-mssql: ## Connect to MSSQL database
+	@echo "$(CYAN)Connecting to MSSQL...$(NC)"
+	@echo "$(YELLOW)Use password from MSSQL_SA_PASSWORD in .env$(NC)"
+	@docker-compose exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa
+
+##@ Docker - Cleanup
+
+docker-clean: ## Remove stopped containers and unused images
+	@echo "$(CYAN)Cleaning up Docker resources...$(NC)"
+	docker-compose down --remove-orphans
+	docker system prune -f
+	@echo "$(GREEN)Cleanup complete!$(NC)"
+
+docker-clean-all: ## Remove all Docker resources (containers, images, volumes)
+	@echo "$(RED)WARNING: This will remove ALL Docker containers, images, and volumes!$(NC)"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		docker-compose down -v --rmi all; \
+		docker system prune -af --volumes; \
+		echo "$(GREEN)All Docker resources removed!$(NC)"; \
+	else \
+		echo "$(YELLOW)Cancelled.$(NC)"; \
+	fi
+
