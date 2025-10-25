@@ -9,13 +9,17 @@ using Pogo.Shared.API;
 using Pogo.Shared.Application;
 using MediatR;
 using FluentValidation;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Raid Service API", Version = "v1" });
+});
 
 // Add Entity Framework
 builder.Services.AddDbContext<RaidDbContext>(options =>
