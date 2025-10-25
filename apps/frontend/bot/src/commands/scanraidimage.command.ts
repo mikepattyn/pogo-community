@@ -96,8 +96,8 @@ export class ScanRaidImageCommand {
           );
         }
 
-        const resultWithNumbers: any[] = [];
-        let resultWithoutNumbers: any[] = [];
+        const resultWithNumbers: string[] = [];
+        let resultWithoutNumbers: string[] = [];
 
         // Split arrays into string with and without numbers
         textResults!.forEach((result: string) => {
@@ -114,17 +114,17 @@ export class ScanRaidImageCommand {
           );
         }
         // Check if any is a pokemon name <- means if we find a match the egg is already hatched
-        let pokemonMatch: any = null;
+        let pokemonMatch: string | null = null;
 
         resultWithoutNumbers.forEach((textResult: string) => {
           if (pokemonMatch == null) {
             const resultLowerCased: string = textResult.toLowerCase();
             // checking each generation their pokemon_species
             if (pokemonMatch == null) {
-              arrayWithGenerations.forEach((generation: any) => {
+              arrayWithGenerations.forEach((generation: { pokemon_species: Array<{ name: string }> }) => {
                 if (pokemonMatch == null) {
                   // checking every pokemon in that generation
-                  generation.pokemon_species.forEach((mon: any) => {
+                  generation.pokemon_species.forEach((mon: { name: string }) => {
                     if (mon.name === resultLowerCased) {
                       pokemonMatch = textResult;
                     }

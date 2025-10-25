@@ -1,28 +1,26 @@
+import { MessageHandler } from 'discord-message-handler';
 import {
   Client,
-  TextChannel,
   Message,
   MessageReaction,
+  TextChannel,
   User,
 } from 'discord.js';
-import { MessageHandler } from 'discord-message-handler';
-import { MessageReactionHandler } from '../message.reaction.handler';
-import { MessageService } from '../services/message.service';
-import { dependencyInjectionContainer } from '../di-container';
-import { RaidCommand } from '../commands/raid.command';
-import { RegisterRankCommand } from '../commands/register.command';
+import { injectable } from 'inversify';
+import moment from 'moment';
 import { isNullOrUndefined } from 'util';
-import { ChannelIds } from '../models/channelIds.enum';
 import { CounterCommand } from '../commands/counter.command';
 import { JoinCommand } from '../commands/join.command';
+import { RaidCommand } from '../commands/raid.command';
+import { RegisterRankCommand } from '../commands/register.command';
 import { ScanRaidImageCommand } from '../commands/scanraidimage.command';
 import { TestCommand } from '../commands/test.command';
-import { injectable } from 'inversify';
-import { ApiClient } from './apiClient';
-import { AxiosResponse } from 'axios';
-import { DataPlayer } from '../dbmodels/classes/DataPlayer';
 import { IDataPlayer } from '../dbmodels/interfaces/IDataPlayer';
-import moment from 'moment';
+import { dependencyInjectionContainer } from '../di-container';
+import { MessageReactionHandler } from '../message.reaction.handler';
+import { ChannelIds } from '../models/channelIds.enum';
+import { MessageService } from '../services/message.service';
+import { ApiClient } from './apiClient';
 const allowedEmojisRaid = ['', '', '', ''];
 const allowedEmojisRaidExtra = [
   '1⃣',
@@ -80,10 +78,7 @@ export class DiscordClient {
           Level: null,
           Team: null,
         };
-        await this.apiClient.post(
-          '/players',
-          newPlayer
-        );
+        await this.apiClient.post('/players', newPlayer);
 
         console.log(`Member with id: ${newPlayer.DiscordId} joined discord.`);
       } else if (message.type === 'DEFAULT') {

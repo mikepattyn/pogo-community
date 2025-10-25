@@ -23,7 +23,7 @@ export class PokemonStore {
   async searchByName(name: string) {
     let retVal = null;
     const q = this.datastore.createQuery('Pokemon').filter('name', '=', name);
-    await this.datastore.runQuery(q).then((result: any) => {
+    await this.datastore.runQuery(q).then((result: unknown) => {
       // entities = An array of records.
       retVal = result;
     });
@@ -48,11 +48,11 @@ export class PokemonStore {
         'x-rapidapi-key': '4e23a33e0emsh55a6269c414188fp10370djsn6d976e399e42',
       },
     })
-      .then((response: any) => {
+      .then((response: { data: unknown }) => {
         console.log(response);
         retVal = response.data;
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         console.log(error);
       });
     return retVal;

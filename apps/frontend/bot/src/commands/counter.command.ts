@@ -27,7 +27,7 @@ export class CounterCommand {
               message.channel.send('Couldnt recognize that command');
             }
           } else {
-            const searchResult: any = await pokemonService.searchPokemonCounter(
+            const searchResult: unknown = await pokemonService.searchPokemonCounter(
               args[0]
             );
             if (!isNull(searchResult) && searchResult.length > 0) {

@@ -5,7 +5,7 @@ export class PokestopInfo implements IPokestopInfo {
   description: string | null = null;
   misc: string | null = null;
   distance_alert: string | null = null;
-  unkown: any | null = null;
+  unkown: unknown | null = null;
   constructor(info: string[]) {
     this.time = info[0];
     this.titel = info[1];
