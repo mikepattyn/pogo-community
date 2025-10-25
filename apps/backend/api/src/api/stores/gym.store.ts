@@ -13,7 +13,7 @@ export class GymStore {
         poolPromise.query(
           DataGym.GetById(),
           [id],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -32,7 +32,7 @@ export class GymStore {
         poolPromise.query(
           DataGym.Insert(),
           [dataGym.Name, dataGym.LocationId],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);
@@ -50,7 +50,7 @@ export class GymStore {
         poolPromise.query(
           DataGym.GetAllWithLocations(),
           null,
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results);

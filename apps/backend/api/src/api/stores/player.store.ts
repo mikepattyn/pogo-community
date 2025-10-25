@@ -19,7 +19,7 @@ export class PlayerStore {
           dataPlayer.Team,
           dataPlayer.DateJoined,
         ],
-        (error: any, results: any, fields: any) => {
+        (error: any, results: any, _fields: any) => {
           if (error) {
             console.log('Error: ', error);
             reject(error);
@@ -36,7 +36,7 @@ export class PlayerStore {
       poolPromise.query(
         DataPlayer.GetByDiscordId(),
         [id],
-        (error: any, results: any, fields: any) => {
+        (error: any, results: any, _fields: any) => {
           if (error) {
             console.log('Error: ', error);
             reject(error);

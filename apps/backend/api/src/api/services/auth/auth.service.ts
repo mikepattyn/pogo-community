@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
 import { isNullOrUndefined } from 'util';
 

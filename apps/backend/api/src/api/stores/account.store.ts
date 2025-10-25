@@ -12,7 +12,7 @@ export class AuthStore {
         poolPromise.query(
           DataAccount.GetByPlayerId(),
           [playerId],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -31,7 +31,7 @@ export class AuthStore {
         poolPromise.query(
           DataAccount.GetByEmail(),
           [email],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results && results.length == 1) {
               resolve(results[0]);
@@ -57,7 +57,7 @@ export class AuthStore {
             dataAccount.DateJoined,
             dataAccount.Email,
           ],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);

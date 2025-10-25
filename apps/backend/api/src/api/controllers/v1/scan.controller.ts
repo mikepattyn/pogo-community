@@ -4,7 +4,6 @@ import {
   BaseHttpController,
   interfaces,
   httpPost,
-  requestParam,
   response,
   request,
 } from 'inversify-express-utils';

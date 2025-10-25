@@ -1,5 +1,4 @@
 import { Raid, HatchedRaid } from './classes/Raid';
-import { isNullOrUndefined } from 'util';
 
 export class RaidViewModel {
   Raid: Raid;

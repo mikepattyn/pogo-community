@@ -8,8 +8,8 @@ import { isNullOrUndefined } from 'util';
 export class CustomAuthProvider implements interfaces.AuthProvider {
   public async getUser(
     req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
+    _res: express.Response,
+    _next: express.NextFunction
   ): Promise<interfaces.Principal> {
     console.log(req.headers);
     let token = req.headers['authorization'];

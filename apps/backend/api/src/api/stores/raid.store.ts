@@ -15,7 +15,7 @@ export class RaidStore {
         poolPromise.query(
           DataRaid.GetByMessageId(),
           [id],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -33,7 +33,7 @@ export class RaidStore {
         poolPromise.query(
           DataRaid.AddPlayerToRaid(),
           [raidId, playerId, new Date()],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -56,7 +56,7 @@ export class RaidStore {
             dataRaid.Tiers,
             dataRaid.TimeRemaining,
           ],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);

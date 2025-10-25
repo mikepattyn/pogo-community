@@ -7,7 +7,6 @@ import {
   response,
   httpPost,
   request,
-  requestHeaders,
   BaseHttpController,
 } from 'inversify-express-utils';
 import { inject } from 'inversify';

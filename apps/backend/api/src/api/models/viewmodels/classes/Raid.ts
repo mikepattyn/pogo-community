@@ -1,6 +1,5 @@
 import { IRaid } from '../interfaces/IRaid';
 import { IGym } from '../interfaces/IGym';
-import { isNullOrUndefined } from 'util';
 
 export class Raid implements IRaid {
   Pokemon: string;

@@ -13,7 +13,7 @@ export class LocationStore {
         poolPromise.query(
           DataLocation.GetById(),
           [id],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results);
@@ -32,7 +32,7 @@ export class LocationStore {
         poolPromise.query(
           DataLocation.Insert(),
           [dataLocation.Latitude, dataLocation.Longtitude],
-          (error: any, results: any, fields: any) => {
+          (error: any, results: any, _fields: any) => {
             if (error) reject(error);
             if (results) {
               resolve(results.insertId);
