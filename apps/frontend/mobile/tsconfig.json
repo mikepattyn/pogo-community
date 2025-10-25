@@ -1,16 +1,24 @@
 {
+  "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": [
       "dom",
-      "esnext"
+      "ES2022"
     ],
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "target": "ES2020",
-    "experimentalDecorators": true
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./react-native/*"]
+    }
   }
 }
