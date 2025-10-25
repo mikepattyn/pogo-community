@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, Picker } from 'react-native';
+import { View, Picker } from 'react-native';
 import { Input } from 'react-native-elements';
 
 export interface IRegistrationInput {

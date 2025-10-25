@@ -11,7 +11,6 @@ import { IRaid } from '../interfaces/raid.interface';
 import { IPlayer } from '../interfaces/player.interface';
 import { DiscordHelper } from '../helpers/discord.helper';
 
-const botId = '655411751709310999';
 const additionsEmojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣'];
 const allowedRaidChannels: string[] = [
   ChannelIds.RaidRoeselare.toString(),

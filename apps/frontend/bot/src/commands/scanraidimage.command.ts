@@ -13,7 +13,7 @@ import { ApiClient } from '../clients/apiClient';
 import { AxiosResponse } from 'axios';
 import { Logger } from '../logger';
 
-const arrayWithGenerations: any[] = [
+const arrayWithGenerations: Array<{ pokemon_species: Array<{ name: string }> }> = [
   pokemon.gen1,
   pokemon.gen2,
   pokemon.gen3,
