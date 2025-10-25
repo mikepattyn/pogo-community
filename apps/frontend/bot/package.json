@@ -38,12 +38,6 @@
 		"winston": "^3.2.1",
 		"yamljs": "^0.3.0"
 	},
-	"prettier": {
-		"trailingComma": "es5",
-		"tabWidth": 1,
-		"semi": false,
-		"singleQuote": true
-	},
 	"devDependencies": {
 		"@types/debug": "^4.1.5",
 		"@types/dotenv": "^8.2.0",
