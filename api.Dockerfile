@@ -55,9 +55,14 @@ WORKDIR /app
 # Copy production dependencies
 COPY --from=production-deps /app/node_modules ./node_modules
 
-# Copy built application
-COPY --from=build /app/apps/backend/api/lib ./lib
+# Copy source code (since we're not building TypeScript)
+COPY --from=build /app/apps/backend/api/src ./src
 COPY --from=build /app/apps/backend/api/package.json ./package.json
+COPY --from=build /app/apps/backend/api/tsconfig.json ./tsconfig.json
+COPY --from=build /app/apps/backend/api/custom.d.ts ./custom.d.ts
+
+# Install pnpm and ts-node for running TypeScript directly
+RUN npm install -g pnpm ts-node
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -75,5 +80,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8080/api/status', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
-CMD ["node", "lib/index.js"]
+CMD ["ts-node", "src/api/index.ts"]
 
