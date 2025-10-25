@@ -153,7 +153,7 @@ export class ScanRaidImageCommand {
           const findRes = resultWithoutNumbers.filter(
             (x) => x.indexOf(pokemonMatch.substring(2)) > -1
           )[0];
-          var index = resultWithoutNumbers.indexOf(findRes) - 1;
+          const index = resultWithoutNumbers.indexOf(findRes) - 1;
           gymName =
             index > 0
               ? `${resultWithoutNumbers[index - 1]} ${resultWithoutNumbers[index]}`
@@ -161,9 +161,9 @@ export class ScanRaidImageCommand {
         } else {
           // in 4 out 5 times it was this first element so taking first
           const searchResult: string = textResults.filter(
-            (x) => textResults!.indexOf(timeLeft) > -1
+            (_x) => textResults!.indexOf(timeLeft) > -1
           )[0];
-          var index = resultWithoutNumbers.indexOf(searchResult);
+          const index = resultWithoutNumbers.indexOf(searchResult);
           gymName =
             index > 0
               ? `${resultWithoutNumbers[index - 1]} ${resultWithoutNumbers[index]}`
