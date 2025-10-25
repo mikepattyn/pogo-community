@@ -7,6 +7,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### Code Quality & Formatting
 
 #### **ESLint** (`dbaeumer.vscode-eslint`)
+
 - **Purpose**: JavaScript/TypeScript linting and code quality enforcement
 - **Use Cases**:
   - Catches syntax errors and code quality issues
@@ -16,6 +17,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **Why Essential**: Ensures consistent code quality across API, Bot, and Mobile apps
 
 #### **Prettier** (`esbenp.prettier-vscode`)
+
 - **Purpose**: Code formatting and style consistency
 - **Use Cases**:
   - Automatically formats code on save
@@ -27,6 +29,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### React Native & Mobile Development
 
 #### **React Native Tools** (`msjsdiag.vscode-react-native`)
+
 - **Purpose**: React Native development support and debugging
 - **Use Cases**:
   - Debug React Native apps directly in VS Code
@@ -37,6 +40,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **Why Essential**: Critical for mobile app development and debugging
 
 #### **Expo Tools** (`expo.vscode-expo-tools`)
+
 - **Purpose**: Expo development workflow integration
 - **Use Cases**:
   - Quick access to Expo commands
@@ -48,6 +52,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### Testing
 
 #### **Jest** (`orta.vscode-jest`)
+
 - **Purpose**: Jest testing framework integration
 - **Use Cases**:
   - Run tests directly from VS Code
@@ -60,6 +65,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### Git & Version Control
 
 #### **GitLens** (`eamodio.gitlens`)
+
 - **Purpose**: Enhanced Git capabilities and code history
 - **Use Cases**:
   - Inline blame annotations
@@ -72,6 +78,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### Development Productivity
 
 #### **Turbo Console Log** (`chakrounanas.turbo-console-log`)
+
 - **Purpose**: Automated console.log statement generation
 - **Use Cases**:
   - Quick debugging with console statements
@@ -81,6 +88,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **Why Essential**: Speeds up debugging across all apps
 
 #### **Path Intellisense** (`christian-kohler.path-intellisense`)
+
 - **Purpose**: File path autocompletion
 - **Use Cases**:
   - Auto-complete file paths in imports
@@ -92,6 +100,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### UI & Styling
 
 #### **Tailwind CSS IntelliSense** (`bradlc.vscode-tailwindcss`)
+
 - **Purpose**: Tailwind CSS class autocompletion and validation
 - **Use Cases**:
   - Auto-complete Tailwind classes
@@ -103,6 +112,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ### TypeScript & JavaScript
 
 #### **TypeScript Importer** (Built-in)
+
 - **Purpose**: Enhanced TypeScript support
 - **Use Cases**:
   - Auto-import TypeScript modules
@@ -112,6 +122,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **Why Essential**: Core TypeScript development across all apps
 
 #### **Auto Rename Tag** (`formulahendry.auto-rename-tag`)
+
 - **Purpose**: Automatically rename paired HTML/JSX tags
 - **Use Cases**:
   - Rename opening and closing tags simultaneously
@@ -120,6 +131,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **Why Essential**: Prevents JSX tag mismatches in mobile app
 
 #### **JSON** (`ms-vscode.vscode-json`)
+
 - **Purpose**: JSON file support and validation
 - **Use Cases**:
   - JSON syntax highlighting
@@ -131,6 +143,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 ## 🎯 Extension Categories by App
 
 ### API Backend Development
+
 - **ESLint** - Code quality
 - **Prettier** - Code formatting
 - **Jest** - Testing
@@ -138,6 +151,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **TypeScript** - Type safety
 
 ### Discord Bot Development
+
 - **ESLint** - Code quality
 - **Prettier** - Code formatting
 - **Jest** - Testing
@@ -146,6 +160,7 @@ This document describes the recommended VS Code extensions for the POGO Communit
 - **Turbo Console Log** - Debugging
 
 ### Mobile App Development
+
 - **ESLint** - Code quality
 - **Prettier** - Code formatting
 - **Jest** - Testing
@@ -160,21 +175,34 @@ This document describes the recommended VS Code extensions for the POGO Communit
 1. **Install Extensions**: VS Code will prompt you to install recommended extensions when you open the workspace
 2. **Manual Installation**: Use `Ctrl+Shift+X` (or `Cmd+Shift+X` on Mac) to open the Extensions panel
 3. **Workspace Settings**: The `.vscode/settings.json` file configures these extensions automatically
+4. **Recommended Extensions**: The `.vscode/extensions.json` file contains the essential extensions for this project
 
 ## 📝 Configuration
 
 The extensions are pre-configured in `.vscode/settings.json` with:
+
 - Auto-format on save with Prettier
 - ESLint auto-fix on save
 - TypeScript validation settings
 - File associations for proper syntax highlighting
+- Organize imports on save
+- Prettier as default formatter for all supported file types
+
+### Essential Extensions (Auto-Recommended)
+
+The following extensions are automatically recommended when opening the workspace:
+
+- **Prettier** (`esbenp.prettier-vscode`) - Code formatting
+- **ESLint** (`dbaeumer.vscode-eslint`) - Linting and code quality
+- **EditorConfig** (`editorconfig.editorconfig`) - Editor configuration consistency
 
 ## 🔄 Updates
 
 Extensions will be updated automatically by VS Code. To manually update:
+
 1. Open Extensions panel (`Ctrl+Shift+X`)
 2. Click the "Update All" button or update individual extensions
 
 ---
 
-*This extension setup is optimized for the POGO Community monorepo development workflow, supporting TypeScript, React Native, Node.js, and modern development practices.*
+_This extension setup is optimized for the POGO Community monorepo development workflow, supporting TypeScript, React Native, Node.js, and modern development practices._
