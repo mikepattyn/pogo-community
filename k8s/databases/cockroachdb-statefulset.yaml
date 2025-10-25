@@ -102,7 +102,7 @@ spec:
           - "/bin/bash"
           - "-ecx"
           - |
-            exec /cockroach/cockroach start \
+            exec /cockroach/cockroach start-single-node \
             --logtostderr \
             --insecure \
             --advertise-host $(hostname -f) \
