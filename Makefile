@@ -11,7 +11,7 @@
 .PHONY: docker-clean docker-clean-all
 .PHONY: microservices microservices-build microservices-start microservices-stop microservices-restart
 .PHONY: microservices-logs microservices-status microservices-health microservices-clean
-.PHONY: k8s k8s-build k8s-deploy k8s-teardown k8s-status k8s-logs k8s-shell
+.PHONY: k8s k8s-build k8s-deploy k8s-teardown k8s-status k8s-logs k8s-shell k8s-validate
 
 # Default target
 .DEFAULT_GOAL := help
@@ -362,6 +362,7 @@ k8s: ## Show Kubernetes help
 	@echo "  k8s-status     Show status of all Kubernetes resources"
 	@echo "  k8s-logs       View logs for all pods"
 	@echo "  k8s-shell      Open shell in a pod"
+	@echo "  k8s-validate   Validate deployment and check all components"
 	@echo ""
 	@echo "$(YELLOW)Prerequisites:$(NC)"
 	@echo "  - Minikube installed and running"
@@ -414,4 +415,8 @@ k8s-shell: ## Open shell in a pod (interactive)
 	else \
 		echo "$(RED)Please specify POD parameter$(NC)"; \
 	fi
+
+k8s-validate: ## Validate deployment and check all components
+	@echo "$(CYAN)Validating POGO Community deployment...$(NC)"
+	@./k8s/validate.sh
 
