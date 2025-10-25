@@ -1,0 +1,160 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-provider
+  namespace: pogo-system
+  labels:
+    app: grafana
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+    - name: 'Default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-microservices
+  namespace: pogo-system
+  labels:
+    app: grafana
+    dashboard: microservices
+data:
+  microservices-overview.json: |
+    {
+      "dashboard": {
+        "title": "POGO Microservices Overview",
+        "tags": ["pogo", "microservices"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "HTTP Request Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_received_total[5m])) by (service)",
+                "legendFormat": "{{service}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "HTTP Request Duration",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le))",
+                "legendFormat": "{{service}} p95"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+          },
+          {
+            "id": 3,
+            "title": "Error Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_received_total{code=~\"5..\"}[5m])) by (service)",
+                "legendFormat": "{{service}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+          },
+          {
+            "id": 4,
+            "title": "Active Connections",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(http_requests_in_progress) by (service)",
+                "legendFormat": "{{service}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+          }
+        ],
+        "schemaVersion": 16,
+        "version": 1
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-cockroachdb
+  namespace: pogo-system
+  labels:
+    app: grafana
+    dashboard: cockroachdb
+data:
+  cockroachdb-overview.json: |
+    {
+      "dashboard": {
+        "title": "CockroachDB Overview",
+        "tags": ["pogo", "database", "cockroachdb"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "SQL Queries per Second",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(sql_query_count[5m]))",
+                "legendFormat": "Queries/sec"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "SQL Query Latency",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.99, sum(rate(sql_exec_latency_bucket[5m])) by (le))",
+                "legendFormat": "p99"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+          },
+          {
+            "id": 3,
+            "title": "Live Nodes",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "count(up{job=\"cockroachdb\"} == 1)",
+                "legendFormat": "Live Nodes"
+              }
+            ],
+            "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8}
+          },
+          {
+            "id": 4,
+            "title": "Storage Capacity",
+            "type": "gauge",
+            "targets": [
+              {
+                "expr": "sum(capacity) / sum(capacity_available) * 100",
+                "legendFormat": "Used %"
+              }
+            ],
+            "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8}
+          }
+        ],
+        "schemaVersion": 16,
+        "version": 1
+      }
+    }
+
