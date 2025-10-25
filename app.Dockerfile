@@ -4,27 +4,27 @@ FROM node:18-alpine AS base
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
+# Copy package files from mobile directory
+COPY apps/frontend/mobile/package*.json ./
+COPY apps/frontend/mobile/tsconfig.json ./
 
 # Dependencies stage
 FROM base AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci --only=production=false
+RUN npm install --legacy-peer-deps
 
 # Build stage
 FROM dependencies AS build
 
-# Copy source code and configuration
-COPY App.tsx ./
-COPY index.js ./
-COPY app.json ./
-COPY babel.config.js ./
-COPY metro.config.js ./
-COPY inversify.config.ts ./
-COPY react-native/ ./react-native/
+# Copy source code and configuration from mobile directory
+COPY apps/frontend/mobile/App.tsx ./
+COPY apps/frontend/mobile/index.js ./
+COPY apps/frontend/mobile/app.json ./
+COPY apps/frontend/mobile/babel.config.js ./
+COPY apps/frontend/mobile/metro.config.js ./
+COPY apps/frontend/mobile/inversify.config.ts ./
+COPY apps/frontend/mobile/react-native/ ./react-native/
 
 # Export web build using Expo
 RUN npx expo export --platform web

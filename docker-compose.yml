@@ -4,8 +4,8 @@ services:
   # MySQL Database for API
   mysql:
     build:
-      context: ./databases/mysql
-      dockerfile: ../mysql.Dockerfile
+      context: .
+      dockerfile: mysql.Dockerfile
     container_name: pogo-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -29,8 +29,8 @@ services:
   # MSSQL Database for Bot
   mssql:
     build:
-      context: ./databases/mssql
-      dockerfile: ../mssql.Dockerfile
+      context: .
+      dockerfile: mssql.Dockerfile
     container_name: pogo-mssql
     environment:
       ACCEPT_EULA: Y
@@ -53,8 +53,8 @@ services:
   # API Backend
   api:
     build:
-      context: ./apps/backend/api
-      dockerfile: ../../api.Dockerfile
+      context: .
+      dockerfile: api.Dockerfile
     container_name: pogo-api
     environment:
       # Server Configuration
@@ -86,8 +86,8 @@ services:
   # Discord Bot
   bot:
     build:
-      context: ./apps/frontend/bot
-      dockerfile: ../../bot.Dockerfile
+      context: .
+      dockerfile: bot.Dockerfile
     container_name: pogo-bot
     environment:
       # Discord Configuration
@@ -121,8 +121,8 @@ services:
   # Mobile Web App
   app:
     build:
-      context: ./apps/frontend/mobile
-      dockerfile: ../../app.Dockerfile
+      context: .
+      dockerfile: app.Dockerfile
     container_name: pogo-app
     environment:
       # API Configuration

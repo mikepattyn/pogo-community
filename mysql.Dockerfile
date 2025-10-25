@@ -4,8 +4,8 @@ FROM mysql:8.0
 # Set environment variables for MySQL
 ENV MYSQL_DATABASE=pogo_api
 
-# Copy initialization scripts
-COPY init/*.sql /docker-entrypoint-initdb.d/
+# Copy initialization scripts from databases/mysql/init/
+COPY databases/mysql/init/*.sql /docker-entrypoint-initdb.d/
 
 # Expose MySQL port
 EXPOSE 3306

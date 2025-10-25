@@ -4,22 +4,22 @@ FROM node:18-alpine AS base
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
+# Copy package files from API directory
+COPY apps/backend/api/package*.json ./
+COPY apps/backend/api/tsconfig.json ./
 
 # Dependencies stage
 FROM base AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci --only=production=false
+RUN npm install --legacy-peer-deps
 
 # Build stage
 FROM dependencies AS build
 
-# Copy source code
-COPY src/ ./src/
-COPY custom.d.ts ./
+# Copy source code from API directory
+COPY apps/backend/api/src/ ./src/
+COPY apps/backend/api/custom.d.ts ./
 
 # Build TypeScript
 RUN npm run build
@@ -28,7 +28,7 @@ RUN npm run build
 FROM base AS production-deps
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # Run stage
 FROM node:18-alpine AS run

@@ -4,21 +4,21 @@ FROM node:18-alpine AS base
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
+# Copy package files from bot directory
+COPY apps/frontend/bot/package*.json ./
+COPY apps/frontend/bot/tsconfig.json ./
 
 # Dependencies stage
 FROM base AS dependencies
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci --only=production=false
+RUN npm install --legacy-peer-deps
 
 # Build stage
 FROM dependencies AS build
 
-# Copy source code
-COPY src/ ./src/
+# Copy source code from bot directory
+COPY apps/frontend/bot/src/ ./src/
 
 # Build TypeScript
 RUN npm run build
@@ -27,7 +27,7 @@ RUN npm run build
 FROM base AS production-deps
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # Run stage
 FROM node:18-alpine AS run

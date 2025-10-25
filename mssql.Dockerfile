@@ -10,8 +10,8 @@ USER root
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# Copy initialization scripts
-COPY init/ ./init/
+# Copy initialization scripts from databases/mssql/init/
+COPY databases/mssql/init/ ./init/
 
 # Copy entrypoint script
 COPY <<'EOF' ./entrypoint.sh
