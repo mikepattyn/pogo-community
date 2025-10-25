@@ -29,6 +29,7 @@ export class RaidCommand {
           switch (createdRaidResult) {
             case PokeBotErrors.UNDEFINED:
               {
+                // No action needed for undefined error
               }
               break;
             case PokeBotErrors.UNKNOWN:
