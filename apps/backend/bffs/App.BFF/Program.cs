@@ -1,6 +1,7 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Pogo.Shared.API;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,9 @@ app.UseHttpsRedirection();
 
 app.UseCors("AppPolicy");
 
+// Prometheus metrics
+app.UseHttpMetrics();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -48,8 +52,12 @@ app.MapHealthChecks();
 
 app.MapControllers();
 
-// Use Ocelot only for non-health check paths
-app.MapWhen(context => !context.Request.Path.StartsWithSegments("/health"), appBuilder =>
+// Map Prometheus metrics
+app.MapMetrics();
+
+// Use Ocelot only for non-health check and non-metrics paths
+app.MapWhen(context => !context.Request.Path.StartsWithSegments("/health") && 
+                      !context.Request.Path.StartsWithSegments("/metrics"), appBuilder =>
 {
     appBuilder.UseOcelot();
 });
