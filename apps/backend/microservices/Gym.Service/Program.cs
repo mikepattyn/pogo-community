@@ -10,6 +10,7 @@ using Pogo.Shared.Application;
 using MediatR;
 using FluentValidation;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
