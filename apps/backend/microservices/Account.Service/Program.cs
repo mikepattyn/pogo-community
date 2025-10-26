@@ -16,8 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-// Swagger temporarily disabled due to .NET 10 RC compatibility issues
-// builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
+
+// Add health checks
+builder.Services.AddHealthChecks();
 
 // Add Entity Framework
 builder.Services.AddDbContext<AccountDbContext>(options =>
