@@ -1,0 +1,26 @@
+meta {
+  name: Get Locations by Type
+  type: http
+}
+
+get {
+  url: {{location_service_url}}/api/location/by-type/Park?activeOnly=true&pageNumber=1&pageSize=50
+}
+
+docs {
+  # Get Locations by Type
+
+  Retrieves locations by type with pagination.
+
+  ## Path Parameters
+  - `locationType`: Type of location to filter by
+
+  ## Query Parameters
+  - `activeOnly`: Return only active locations (default: true)
+  - `pageNumber`: Page number (default: 1)
+  - `pageSize`: Results per page (default: 50)
+
+  ## Response
+  Returns collection of locations with pagination metadata.
+}
+

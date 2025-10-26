@@ -1,0 +1,46 @@
+meta {
+  name: Create Location
+  type: http
+}
+
+post {
+  url: {{location_service_url}}/api/location
+  body: json
+}
+
+body:json {
+  {
+    "name": "Central Park",
+    "latitude": 40.785091,
+    "longitude": -73.968285,
+    "address": "Central Park",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "postalCode": "10024",
+    "locationType": "Park",
+    "notes": "Great spot for raids and gyms"
+  }
+}
+
+docs {
+  # Create Location
+
+  Creates a new location.
+
+  ## Request Body
+  - `name`: Location name
+  - `latitude`: Latitude coordinate
+  - `longitude`: Longitude coordinate
+  - `address`: Street address
+  - `city`: City name
+  - `state`: State or province
+  - `country`: Country name
+  - `postalCode`: Postal/zip code
+  - `locationType`: Type of location (Park, Gym, PokeStop, etc.)
+  - `notes`: Additional notes about the location
+
+  ## Response
+  Returns the created location information including location ID.
+}
+

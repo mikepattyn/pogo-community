@@ -1,0 +1,24 @@
+meta {
+  name: Get Locations by Name
+  type: http
+}
+
+get {
+  url: {{location_service_url}}/api/location/by-name/Central%20Park?activeOnly=true
+}
+
+docs {
+  # Get Locations by Name
+
+  Retrieves locations matching a name.
+
+  ## Path Parameters
+  - `name`: Location name to search for
+
+  ## Query Parameters
+  - `activeOnly`: Return only active locations (default: true)
+
+  ## Response
+  Returns collection of matching locations.
+}
+

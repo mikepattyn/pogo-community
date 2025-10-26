@@ -1,0 +1,21 @@
+meta {
+  name: Get Location by ID
+  type: http
+}
+
+get {
+  url: {{location_service_url}}/api/location/1
+}
+
+docs {
+  # Get Location by ID
+
+  Retrieves location information by ID.
+
+  ## Path Parameters
+  - `id`: Location ID to retrieve
+
+  ## Response
+  Returns complete location information.
+}
+
