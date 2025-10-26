@@ -42,7 +42,8 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Copy Tesseract data files
-COPY --from=build /usr/share/tesseract-ocr/5.00/tessdata /app/tessdata
+RUN find /usr/share -name "tessdata" -type d
+COPY --from=build /usr/share/tesseract-ocr/tessdata /app/tessdata
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:5001
