@@ -1,0 +1,32 @@
+meta {
+  name: Scan Image
+  type: http
+}
+
+post {
+  url: {{ocr_service_url}}/api/v1/scans
+  body: json
+}
+
+body:json {
+  {
+    "url": "https://example.com/screenshot.png"
+  }
+}
+
+docs {
+  # Scan Image
+
+  Scans an image URL using OCR to extract text.
+
+  ## Request Body
+  - `url`: URL of the image to scan
+
+  ## Response
+  Returns extracted text from the image as an array of lines.
+  
+  ## Supported Languages
+  - English (en, en-GB)
+  - Dutch (nl, nl-BE)
+}
+
