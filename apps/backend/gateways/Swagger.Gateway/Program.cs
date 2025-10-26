@@ -11,9 +11,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "POGO Swagger Gateway",
+        Title = "Please select a service from the dropdown",
         Version = "v1",
-        Description = "Unified Swagger documentation for all POGO microservices"
+        Description = "Select a microservice from the 'Select a definition' dropdown in the top right to view its API documentation."
     });
 });
 
@@ -42,7 +42,7 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Gateway API");
     c.RoutePrefix = "swagger";
-    
+
     // Add all microservice endpoints - using proxy endpoints to avoid CORS issues
     c.SwaggerEndpoint("/proxy/account-service/swagger/v1/swagger.json", "Account Service");
     c.SwaggerEndpoint("/proxy/player-service/swagger/v1/swagger.json", "Player Service");
