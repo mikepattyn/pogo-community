@@ -45,6 +45,8 @@ spec:
           mountPath: /var/lib/grafana/dashboards/microservices
         - name: grafana-dashboard-cockroachdb
           mountPath: /var/lib/grafana/dashboards/cockroachdb
+        - name: grafana-dashboard-discord-bot
+          mountPath: /var/lib/grafana/dashboards/discord-bot
         - name: grafana-storage
           mountPath: /var/lib/grafana
         resources:
@@ -79,6 +81,9 @@ spec:
       - name: grafana-dashboard-cockroachdb
         configMap:
           name: grafana-dashboard-cockroachdb
+      - name: grafana-dashboard-discord-bot
+        configMap:
+          name: grafana-dashboard-discord-bot
       - name: grafana-storage
         emptyDir: {}
 
