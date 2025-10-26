@@ -35,7 +35,6 @@ builder.Services.AddSingleton<DiscordSocketClient>(provider =>
     };
     return new DiscordSocketClient(config);
 });
-builder.Services.AddSingleton<DiscordBotService>();
 builder.Services.AddSingleton<IBotBffClient, BotBffClient>();
 builder.Services.AddSingleton<DiscordMetricsService>();
 
@@ -62,8 +61,7 @@ builder.Services.AddCors(options =>
 });
 
 // Register the hosted service
-builder.Services.AddHostedService<DiscordBotService>(
-    sp => sp.GetRequiredService<DiscordBotService>());
+builder.Services.AddHostedService<DiscordBotService>();
 
 var app = builder.Build();
 
