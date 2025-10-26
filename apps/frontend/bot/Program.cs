@@ -5,6 +5,7 @@ using Bot.Service.Infrastructure.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Pogo.Shared.API;
 using Prometheus;
+using Discord.WebSocket;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,18 @@ builder.Services.AddHealthChecks()
 builder.Services.AddHttpClient<BotBffClient>();
 
 // Add Discord bot services
+builder.Services.AddSingleton<DiscordSocketClient>(provider =>
+{
+    var config = new DiscordSocketConfig
+    {
+        GatewayIntents = GatewayIntents.Guilds |
+                       GatewayIntents.GuildMessages |
+                       GatewayIntents.GuildMessageReactions |
+                       GatewayIntents.GuildMembers |
+                       GatewayIntents.MessageContent
+    };
+    return new DiscordSocketClient(config);
+});
 builder.Services.AddSingleton<DiscordBotService>();
 builder.Services.AddSingleton<IBotBffClient, BotBffClient>();
 builder.Services.AddSingleton<DiscordMetricsService>();

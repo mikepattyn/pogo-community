@@ -21,28 +21,19 @@ public class DiscordBotService : BackgroundService
     private readonly DiscordMetricsService _metricsService;
 
     public DiscordBotService(
+        DiscordSocketClient client,
         IServiceProvider services,
         IConfiguration configuration,
         ILogger<DiscordBotService> logger,
         IBotBffClient botBffClient,
         DiscordMetricsService metricsService)
     {
+        _client = client;
         _services = services;
         _configuration = configuration;
         _logger = logger;
         _botBffClient = botBffClient;
         _metricsService = metricsService;
-
-        var config = new DiscordSocketConfig
-        {
-            GatewayIntents = GatewayIntents.Guilds |
-                           GatewayIntents.GuildMessages |
-                           GatewayIntents.GuildMessageReactions |
-                           GatewayIntents.GuildMembers |
-                           GatewayIntents.MessageContent
-        };
-
-        _client = new DiscordSocketClient(config);
         _commands = new CommandService();
         _interactions = new InteractionService(_client.Rest);
     }
