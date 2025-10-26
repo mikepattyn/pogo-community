@@ -1,5 +1,4 @@
 using OCR.Service.Application.Interfaces;
-using System.Drawing;
 using System.Net.Http;
 using Tesseract;
 
@@ -25,9 +24,7 @@ public class OCRService : IOCRService
             // Download image
             var imageBytes = await _httpClient.GetByteArrayAsync(imageUrl);
 
-            // Convert to bitmap
-            using var memoryStream = new MemoryStream(imageBytes);
-            using var bitmap = new Bitmap(memoryStream);
+            // Image bytes are ready for Tesseract processing
 
             // Initialize Tesseract engine
             using var engine = new TesseractEngine("./tessdata", "eng", EngineMode.Default);
@@ -47,7 +44,7 @@ public class OCRService : IOCRService
             }
 
             // Process image
-            using var img = PixConverter.ToPix(bitmap);
+            using var img = Pix.LoadFromMemory(imageBytes);
             using var page = engine.Process(img);
 
             var text = page.GetText();
