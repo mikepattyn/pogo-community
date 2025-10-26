@@ -1,0 +1,246 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-discord-bot
+  namespace: pogo-system
+  labels:
+    app: grafana
+    dashboard: discord-bot
+data:
+  discord-bot-overview.json: |
+    {
+      "id": null,
+      "title": "Discord Bot Overview",
+      "tags": ["pogo", "discord", "bot"],
+      "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Bot Status",
+          "type": "stat",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_connection_state",
+              "legendFormat": "Connection State",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": 0},
+                  {"color": "yellow", "value": 1},
+                  {"color": "green", "value": 2}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Disconnected"}}, "type": "value"},
+                {"options": {"1": {"text": "Connecting"}}, "type": "value"},
+                {"options": {"2": {"text": "Connected"}}, "type": "value"}
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "title": "Gateway Latency",
+          "type": "stat",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_gateway_latency_milliseconds",
+              "legendFormat": "Latency",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ms",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": 0},
+                  {"color": "yellow", "value": 500},
+                  {"color": "red", "value": 2000}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 3,
+          "title": "Guild Count",
+          "type": "stat",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_guilds_total",
+              "legendFormat": "Guilds",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+        },
+        {
+          "id": 4,
+          "title": "Total Users",
+          "type": "stat",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_bot_users_total",
+              "legendFormat": "Users",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+        },
+        {
+          "id": 5,
+          "title": "Bot Uptime",
+          "type": "stat",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_bot_uptime_seconds",
+              "legendFormat": "Uptime",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 4},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            }
+          }
+        },
+        {
+          "id": 6,
+          "title": "Event Rate",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(discord_events_total[5m])) by (event_type)",
+              "legendFormat": "{{event_type}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 6, "y": 4}
+        },
+        {
+          "id": 7,
+          "title": "Command Execution Rate",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(discord_commands_total[5m])) by (command_name, status)",
+              "legendFormat": "{{command_name}} ({{status}})",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 18, "y": 4}
+        },
+        {
+          "id": 8,
+          "title": "Command Duration (95th percentile)",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(discord_command_duration_seconds_bucket[5m])) by (command_name, le))",
+              "legendFormat": "{{command_name}} p95",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+        },
+        {
+          "id": 9,
+          "title": "Gateway Latency Trend",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_gateway_latency_milliseconds",
+              "legendFormat": "Latency (ms)",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+        },
+        {
+          "id": 10,
+          "title": "Members per Guild",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "discord_guild_members_total",
+              "legendFormat": "{{guild_name}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20}
+        },
+        {
+          "id": 11,
+          "title": "HTTP Request Rate",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_received_total[5m])) by (service)",
+              "legendFormat": "{{service}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
+        },
+        {
+          "id": 12,
+          "title": "Memory Usage",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "process_working_set_bytes / 1024 / 1024",
+              "legendFormat": "Memory (MB)",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28}
+        },
+        {
+          "id": 13,
+          "title": "CPU Usage",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "rate(process_cpu_seconds_total[5m]) * 100",
+              "legendFormat": "CPU %",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 28}
+        }
+      ],
+      "schemaVersion": 16,
+      "version": 1
+    }
