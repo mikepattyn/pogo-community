@@ -94,6 +94,36 @@ services:
       - pogo-network
     restart: unless-stopped
 
+  # Swagger Gateway
+  swagger-gateway:
+    build:
+      context: .
+      dockerfile: apps/backend/gateways/Swagger.Gateway/Dockerfile
+    container_name: swagger-gateway
+    ports:
+      - "10000:10000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:10000
+    depends_on:
+      account-service:
+        condition: service_healthy
+      player-service:
+        condition: service_healthy
+      location-service:
+        condition: service_healthy
+      gym-service:
+        condition: service_healthy
+      raid-service:
+        condition: service_healthy
+      bot-bff:
+        condition: service_healthy
+      app-bff:
+        condition: service_healthy
+    networks:
+      - pogo-network
+    restart: unless-stopped
+
   # Microservices
   account-service:
     build:
