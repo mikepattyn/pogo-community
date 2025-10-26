@@ -6,6 +6,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Pogo.Shared.API;
 using Prometheus;
 using Discord.WebSocket;
+using Discord;
 
 var builder = WebApplication.CreateBuilder(args);
 
