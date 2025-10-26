@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: pogo-bot
-          image: discord-bot:latest
+          image: pogo/discord-bot:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 2000
