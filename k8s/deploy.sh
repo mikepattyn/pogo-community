@@ -57,6 +57,10 @@ kubectl apply -f k8s/microservices/
 echo "  → Deploying BFF gateways..."
 kubectl apply -f k8s/bffs/
 
+# Apply gateways
+echo "  → Deploying gateway services..."
+kubectl apply -f k8s/gateways/
+
 # Apply frontend apps
 echo "  → Deploying frontend applications..."
 kubectl apply -f k8s/apps/

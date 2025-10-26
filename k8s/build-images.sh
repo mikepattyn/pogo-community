@@ -47,6 +47,12 @@ echo "  → Building App BFF..."
 docker build -t pogo/app-bff:latest -f apps/backend/bffs/App.BFF/Dockerfile .
 
 echo ""
+echo "📦 Building gateway images..."
+
+echo "  → Building Swagger Gateway..."
+docker build -t pogo/swagger-gateway:latest -f apps/backend/gateways/Swagger.Gateway/Dockerfile .
+
+echo ""
 echo "📦 Building frontend application images..."
 
 echo "  → Building Discord Bot..."
