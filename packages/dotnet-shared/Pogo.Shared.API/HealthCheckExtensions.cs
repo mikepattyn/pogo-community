@@ -21,7 +21,6 @@ public static class HealthCheckExtensions
     public static IServiceCollection AddHealthChecks(this IServiceCollection services, string connectionString)
     {
         services.AddHealthChecks()
-            .AddNpgSql(connectionString, name: "database", tags: new[] { "ready" })
             .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "ready" });
 
         return services;
