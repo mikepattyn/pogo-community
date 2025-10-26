@@ -315,6 +315,7 @@ microservices-start: ## Start all microservices with Docker Compose
 	@echo "$(GREEN)Microservices started!$(NC)"
 	@echo "$(YELLOW)Bot BFF: http://localhost:6001$(NC)"
 	@echo "$(YELLOW)App BFF: http://localhost:6002$(NC)"
+	@echo "$(YELLOW)Swagger Gateway: http://localhost:10000$(NC)"
 	@echo "$(YELLOW)Account Service: http://localhost:5001$(NC)"
 	@echo "$(YELLOW)Player Service: http://localhost:5002$(NC)"
 	@echo "$(YELLOW)Location Service: http://localhost:5003$(NC)"
