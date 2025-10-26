@@ -7,7 +7,7 @@ data:
   # ASP.NET Core Configuration
   ASPNETCORE_ENVIRONMENT: "Production"
 
-  # Node.js Configuration
+  # Node.js Configuration (for React frontend if needed)
   NODE_ENV: "production"
 
   # CockroachDB Configuration
@@ -15,7 +15,8 @@ data:
   DB_PORT: "26257"
   DB_SSL_MODE: "disable"
 
-  # Service Mesh Configuration
+  # Service Mesh Configuration (future use)
+  # Set to "true" if using Istio or similar service mesh
   SERVICE_MESH_ENABLED: "false"
 
   # Connection Strings for each microservice

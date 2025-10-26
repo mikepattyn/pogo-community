@@ -1,4 +1,9 @@
-version: '3.8'
+version: "3.8"
+
+# Environment Variables:
+# This file requires MSSQL_SA_PASSWORD to be set in your environment
+# For local development, create a .env file with: MSSQL_SA_PASSWORD=your_password_here
+# WARNING: Never commit .env files with real passwords to git!
 
 services:
   # Databases
@@ -7,7 +12,7 @@ services:
     container_name: account-db
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -16,7 +21,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -26,7 +35,7 @@ services:
     container_name: player-db
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1434:1433"
@@ -35,7 +44,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -45,7 +58,7 @@ services:
     container_name: location-db
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1435:1433"
@@ -54,7 +67,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -64,7 +81,7 @@ services:
     container_name: gym-db
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1436:1433"
@@ -73,7 +90,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -83,7 +104,7 @@ services:
     container_name: raid-db
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1437:1433"
@@ -92,7 +113,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5

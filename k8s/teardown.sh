@@ -8,6 +8,15 @@ set -e
 echo "🧹 Tearing down POGO Community from Kubernetes..."
 echo ""
 
+# Stop port forwarding first
+echo "🛑 Stopping port forwarding..."
+if [ -f "./k8s/port-forward.sh" ]; then
+    ./k8s/port-forward.sh stop
+else
+    echo "  ⚠️  Port forwarding script not found, skipping..."
+fi
+echo ""
+
 # Check if minikube is running
 if ! minikube status > /dev/null 2>&1; then
     echo "❌ Minikube is not running. Nothing to tear down."

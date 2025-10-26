@@ -365,6 +365,11 @@ k8s: ## Show Kubernetes help
 	@echo "  k8s-shell      Open shell in a pod"
 	@echo "  k8s-validate   Validate deployment and check all components"
 	@echo ""
+	@echo "$(GREEN)Port Forwarding Commands:$(NC)"
+	@echo "  k8s-port-forward-start   Start port forwarding for monitoring services"
+	@echo "  k8s-port-forward-stop    Stop port forwarding for monitoring services"
+	@echo "  k8s-port-forward-status  Show port forwarding status"
+	@echo ""
 	@echo "$(YELLOW)Prerequisites:$(NC)"
 	@echo "  - Minikube installed and running"
 	@echo "  - kubectl installed"
@@ -420,4 +425,16 @@ k8s-shell: ## Open shell in a pod (interactive)
 k8s-validate: ## Validate deployment and check all components
 	@echo "$(CYAN)Validating POGO Community deployment...$(NC)"
 	@./k8s/validate.sh
+
+k8s-port-forward-start: ## Start port forwarding for monitoring services
+	@echo "$(CYAN)Starting port forwarding...$(NC)"
+	@./k8s/port-forward.sh start
+
+k8s-port-forward-stop: ## Stop port forwarding for monitoring services
+	@echo "$(CYAN)Stopping port forwarding...$(NC)"
+	@./k8s/port-forward.sh stop
+
+k8s-port-forward-status: ## Show port forwarding status
+	@echo "$(CYAN)Checking port forwarding status...$(NC)"
+	@./k8s/port-forward.sh status
 

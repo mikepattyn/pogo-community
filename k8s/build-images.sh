@@ -37,6 +37,10 @@ docker build -t pogo/gym-service:latest -f apps/backend/microservices/Gym.Servic
 echo "  → Building Raid Service..."
 docker build -t pogo/raid-service:latest -f apps/backend/microservices/Raid.Service/Dockerfile .
 
+echo "  → Building OCR Service..."
+docker build -t pogo/ocr-service:latest -f apps/backend/microservices/OCR.Service/Dockerfile .
+
+
 echo ""
 echo "📦 Building BFF (Backend for Frontend) images..."
 
@@ -56,7 +60,7 @@ echo ""
 echo "📦 Building frontend application images..."
 
 echo "  → Building Discord Bot..."
-docker build -t pogo/bot:latest -f bot.Dockerfile .
+docker build -t pogo/bot:latest -f apps/frontend/bot/Dockerfile .
 
 echo "  → Building Mobile App..."
 docker build -t pogo/app:latest -f app.Dockerfile .

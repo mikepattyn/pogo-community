@@ -19,7 +19,6 @@ pnpm-lock.yaml
 # ===========================================
 # Environment & Configuration
 # ===========================================
-.env
 gsc.json
 src/api/sqlDb.ts
 

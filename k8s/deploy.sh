@@ -24,6 +24,35 @@ echo "🔧 Enabling Minikube addons..."
 minikube addons enable ingress
 
 echo ""
+echo "🔐 Checking for required secrets..."
+
+# Check if secrets exist
+SECRETS_MISSING=false
+REQUIRED_SECRETS=("discord-secrets" "jwt-secrets" "db-secrets")
+
+for secret in "${REQUIRED_SECRETS[@]}"; do
+    if ! kubectl get secret "$secret" -n pogo-system &> /dev/null; then
+        echo "  ❌ Missing secret: $secret"
+        SECRETS_MISSING=true
+    else
+        echo "  ✅ Found secret: $secret"
+    fi
+done
+
+if [ "$SECRETS_MISSING" = true ]; then
+    echo ""
+    echo "⚠️  Required secrets are missing!"
+    echo ""
+    echo "Please create secrets first by running:"
+    echo "  ./k8s/create-secrets.sh"
+    echo ""
+    echo "Or for auto-generation:"
+    echo "  ./k8s/create-secrets.sh --auto"
+    echo ""
+    exit 1
+fi
+
+echo ""
 echo "📦 Applying Kubernetes manifests..."
 
 # Apply base resources
@@ -76,10 +105,28 @@ kubectl wait --for=condition=available deployment --all -n pogo-system --timeout
 echo ""
 echo "✅ Deployment complete!"
 echo ""
-echo "📋 Access your applications:"
-echo "  Mobile App:    http://$(minikube ip):30000"
-echo "  Grafana:       http://$(minikube ip):30030"
-echo "  Prometheus:    http://$(minikube ip):30090"
+echo "🚀 Starting automatic port forwarding..."
+if ./k8s/port-forward.sh start; then
+    echo ""
+    echo "📋 Access your applications:"
+    echo "  Mobile App:      http://$(minikube ip):30000"
+    echo "  Swagger Gateway: http://localhost:10000"
+    echo "  Grafana:         http://localhost:10001"
+    echo "  Prometheus:      http://localhost:10002"
+    echo ""
+    echo "💡 Port forwarding is running in the background"
+    echo "💡 To stop port forwarding: ./k8s/port-forward.sh stop"
+    echo "💡 To check status: ./k8s/port-forward.sh status"
+else
+    echo ""
+    echo "⚠️  Port forwarding failed to start automatically"
+    echo "📋 Access your applications via NodePort:"
+    echo "  Mobile App:      http://$(minikube ip):30000"
+    echo "  Grafana:         http://$(minikube ip):30030"
+    echo "  Prometheus:      http://$(minikube ip):30090"
+    echo ""
+    echo "💡 You can manually start port forwarding with: ./k8s/port-forward.sh start"
+fi
 echo ""
 echo "🔍 Check pod status:"
 echo "  kubectl get pods -n pogo-system"

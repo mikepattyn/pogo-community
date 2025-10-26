@@ -471,8 +471,9 @@ kubectl port-forward service/grafana 3001:3000 -n pogo-system
 | cockroachdb        | ClusterIP | 26257      | Internal         | PostgreSQL Database    |
 | cockroachdb-public | ClusterIP | 26257      | Internal         | Public Database Access |
 | **Monitoring**     |
-| prometheus         | ClusterIP | 9090       | Port Forward     | Metrics Collection     |
-| grafana            | ClusterIP | 3000       | Port Forward     | Monitoring Dashboards  |
+| prometheus         | ClusterIP | 9090       | Port Forward (localhost:10002) | Metrics Collection     |
+| grafana            | ClusterIP | 3000       | Port Forward (localhost:10001) | Monitoring Dashboards  |
+| swagger-gateway    | ClusterIP | 10000      | Port Forward (localhost:10000)| API Documentation      |
 
 ### 🔧 Kubernetes Commands
 
@@ -486,6 +487,11 @@ make k8s-teardown       # Remove all resources
 make k8s-status         # Show pod status
 make k8s-logs           # View logs
 make k8s-validate       # Validate deployment
+
+# Port Forwarding
+make k8s-port-forward-start   # Start port forwarding for monitoring services
+make k8s-port-forward-stop    # Stop port forwarding
+make k8s-port-forward-status  # Show port forwarding status
 
 # Debugging
 make k8s-shell POD=<pod-name>  # Open shell in pod

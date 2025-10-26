@@ -147,6 +147,7 @@ graph TB
 | **API Gateways** |
 | Bot BFF | Deployment | Bot API gateway | 6001 | Port Forward |
 | App BFF | Deployment | App API gateway | 6002 | Port Forward |
+| Swagger Gateway | Deployment | API documentation | 10000 | Port Forward (localhost:10000) |
 | **Microservices** |
 | Account Service | Deployment | Authentication & users | 5001 | Internal |
 | Player Service | Deployment | Player management | 5002 | Internal |
@@ -156,8 +157,8 @@ graph TB
 | **Database** |
 | CockroachDB | StatefulSet | PostgreSQL database | 26257 | Internal |
 | **Monitoring** |
-| Prometheus | Deployment | Metrics collection | 9090 | Port Forward |
-| Grafana | Deployment | Monitoring dashboards | 3000 | Port Forward |
+| Prometheus | Deployment | Metrics collection | 9090 | Port Forward (localhost:10002) |
+| Grafana | Deployment | Monitoring dashboards | 3000 | Port Forward (localhost:10001) |
 
 ## Quick Start
 
@@ -195,13 +196,112 @@ make k8s-validate
 MINIKUBE_IP=$(minikube ip)
 echo "Minikube IP: $MINIKUBE_IP"
 
-# Access applications
-echo "Mobile App: http://$MINIKUBE_IP:30000"
-echo "Grafana: http://$MINIKUBE_IP:30030"
-echo "Prometheus: http://$MINIKUBE_IP:30090"
+# Access applications (port forwarding is automatic)
+echo "Mobile App:      http://$MINIKUBE_IP:30000"
+echo "Swagger Gateway: http://localhost:10000"
+echo "Grafana:         http://localhost:10001"
+echo "Prometheus:      http://localhost:10002"
 ```
 
+**Note**: Port forwarding for monitoring services (Swagger Gateway, Grafana, Prometheus) starts automatically after deployment. If port forwarding fails, you can access Grafana and Prometheus via NodePort using the Minikube IP.
+
 ## Detailed Deployment
+
+## Secret Management
+
+### Creating Secrets
+
+Before deploying the application, you must create the required Kubernetes secrets. The POGO Community project includes a secure secret generation script.
+
+#### Quick Secret Creation
+
+```bash
+# Interactive mode (prompts for all values)
+./k8s/create-secrets.sh
+
+# Auto-generate mode (generates JWT & DB secrets, prompts for Discord)
+./k8s/create-secrets.sh --auto
+
+# From environment variables
+export DISCORD_BOT_TOKEN="your_token"
+export JWT_SECRET_KEY="your_secret"
+./k8s/create-secrets.sh --from-env
+```
+
+#### Required Secrets
+
+| Secret Name | Purpose | Required Keys |
+|-------------|---------|---------------|
+| `discord-secrets` | Discord bot authentication | `DISCORD_BOT_TOKEN` |
+| `jwt-secrets` | JWT token signing | `JWT_SECRET_KEY`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_EXPIRY_MINUTES` |
+| `db-secrets` | Database credentials | `DB_USERNAME`, `DB_PASSWORD`, `MSSQL_SA_PASSWORD` |
+
+#### Secret Creation Options
+
+**Interactive Mode:**
+- Prompts for each secret value
+- Provides clear instructions for obtaining values
+- Validates input format and length
+- Never echoes secrets to terminal
+
+**Auto-Generate Mode:**
+- Generates secure random values for JWT secret and DB password
+- Uses `openssl rand -base64 32` for JWT secret
+- Uses `openssl rand -base64 24` for DB password
+- Still requires manual input for Discord token
+
+**Environment Variable Mode:**
+- Reads secrets from environment variables
+- Useful for CI/CD pipelines
+- Can use `.env` file or exported variables
+
+#### Secret Management Commands
+
+```bash
+# Create all secrets interactively
+./k8s/create-secrets.sh
+
+# Update specific secret
+./k8s/create-secrets.sh --update discord-secrets
+
+# Dry run (preview changes)
+./k8s/create-secrets.sh --dry-run
+
+# Check existing secrets
+kubectl get secrets -n pogo-system
+
+# View secret (base64 encoded)
+kubectl get secret discord-secrets -n pogo-system -o yaml
+
+# Delete secret
+kubectl delete secret discord-secrets -n pogo-system
+```
+
+#### Security Best Practices
+
+- **Never commit secrets to git**
+- **Use strong, randomly generated passwords**
+- **Rotate secrets regularly**
+- **Use Kubernetes RBAC to limit secret access**
+- **Consider using external secret management (e.g., HashiCorp Vault)**
+
+#### Getting Discord Bot Token
+
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Select your application
+3. Navigate to **Bot** section
+4. Click **Reset Token**
+5. Copy the token (starts with `MTA...`)
+
+#### Generating JWT Secret
+
+```bash
+# Generate a secure JWT secret
+openssl rand -base64 32
+
+# Or use the script's auto-generation
+./k8s/create-secrets.sh --auto
+```
 
 ### Step-by-Step Deployment
 
@@ -227,7 +327,17 @@ eval $(minikube docker-env)
 docker images | grep pogo
 ```
 
-#### 3. Deploy Services
+#### 3. Create Secrets
+
+```bash
+# Create all required secrets
+./k8s/create-secrets.sh --auto
+
+# Verify secrets were created
+kubectl get secrets -n pogo-system
+```
+
+#### 4. Deploy Services
 
 ```bash
 # Deploy all services
@@ -237,7 +347,7 @@ make k8s-deploy
 kubectl get pods -n pogo-system -w
 ```
 
-#### 4. Verify Deployment
+#### 5. Verify Deployment
 
 ```bash
 # Check all components
@@ -257,25 +367,28 @@ If you prefer manual deployment:
 # 1. Create namespace
 kubectl apply -f k8s/base/namespace.yaml
 
-# 2. Deploy database
+# 2. Create secrets
+./k8s/create-secrets.sh --auto
+
+# 3. Deploy database
 kubectl apply -f k8s/databases/
 
-# 3. Wait for database to be ready
+# 4. Wait for database to be ready
 kubectl wait --for=condition=ready pod -l app=cockroachdb -n pogo-system --timeout=300s
 
-# 4. Deploy microservices
+# 5. Deploy microservices
 kubectl apply -f k8s/microservices/
 
-# 5. Deploy BFFs
+# 6. Deploy BFFs
 kubectl apply -f k8s/bffs/
 
-# 6. Deploy frontend apps
+# 7. Deploy frontend apps
 kubectl apply -f k8s/apps/
 
-# 7. Deploy monitoring
+# 8. Deploy monitoring
 kubectl apply -f k8s/monitoring/
 
-# 8. Deploy ingress
+# 9. Deploy ingress
 kubectl apply -f k8s/base/ingress.yaml
 ```
 
@@ -294,9 +407,52 @@ make k8s-status         # Show pod status
 make k8s-logs           # View logs
 make k8s-validate       # Validate deployment
 
+# Port Forwarding
+make k8s-port-forward-start   # Start port forwarding for monitoring services
+make k8s-port-forward-stop    # Stop port forwarding
+make k8s-port-forward-status  # Show port forwarding status
+
 # Debugging
 make k8s-shell POD=<pod-name>  # Open shell in pod
 ```
+
+### Automatic Port Forwarding
+
+Port forwarding for monitoring services (Swagger Gateway, Grafana, Prometheus) starts automatically after deployment. The system uses the following local port mappings:
+
+- **Swagger Gateway**: `localhost:10000` → `service:10000`
+- **Grafana**: `localhost:10001` → `service:3000`
+- **Prometheus**: `localhost:10002` → `service:9090`
+
+#### Manual Port Forwarding Management
+
+```bash
+# Start port forwarding manually
+make k8s-port-forward-start
+# or
+./k8s/port-forward.sh start
+
+# Stop port forwarding
+make k8s-port-forward-stop
+# or
+./k8s/port-forward.sh stop
+
+# Check status
+make k8s-port-forward-status
+# or
+./k8s/port-forward.sh status
+
+# Restart port forwarding
+./k8s/port-forward.sh restart
+```
+
+#### Port Forwarding Features
+
+- **Background Process**: Port forwarding runs in the background and persists across terminal sessions
+- **Health Checks**: Verifies services are ready before starting port forwarding
+- **Process Management**: Uses PID files to track and manage background processes
+- **Automatic Cleanup**: Port forwarding is automatically stopped during teardown
+- **Status Monitoring**: Easy status checking and troubleshooting
 
 ### Service Status
 
@@ -353,24 +509,24 @@ All services include comprehensive health checks:
 ### Prometheus Metrics
 
 ```bash
-# Access Prometheus
-kubectl port-forward service/prometheus 9090:9090 -n pogo-system
+# Access Prometheus (automatic port forwarding)
+open http://localhost:10002
 
-# Open in browser
-open http://localhost:9090
+# Or manually start port forwarding
+kubectl port-forward service/prometheus 10002:9090 -n pogo-system
 
 # Query metrics
-curl http://localhost:9090/api/v1/query?query=up
+curl http://localhost:10002/api/v1/query?query=up
 ```
 
 ### Grafana Dashboards
 
 ```bash
-# Access Grafana
-kubectl port-forward service/grafana 3000:3000 -n pogo-system
+# Access Grafana (automatic port forwarding)
+open http://localhost:10001
 
-# Open in browser
-open http://localhost:3000
+# Or manually start port forwarding
+kubectl port-forward service/grafana 10001:3000 -n pogo-system
 
 # Login credentials
 # Username: admin
@@ -442,6 +598,29 @@ kubectl top nodes
 
 # Check resource limits
 kubectl describe pod <pod-name> -n pogo-system | grep -A 5 "Limits:"
+```
+
+#### 5. Port Forwarding Issues
+
+```bash
+# Check port forwarding status
+make k8s-port-forward-status
+
+# Check if services are ready
+kubectl get services -n pogo-system
+kubectl get endpoints -n pogo-system
+
+# Restart port forwarding
+make k8s-port-forward-stop
+make k8s-port-forward-start
+
+# Check for port conflicts
+lsof -i :10000  # Swagger Gateway
+lsof -i :10001  # Grafana
+lsof -i :10002  # Prometheus
+
+# Manual port forwarding test
+kubectl port-forward service/prometheus 10002:9090 -n pogo-system
 ```
 
 ### Debugging Commands
