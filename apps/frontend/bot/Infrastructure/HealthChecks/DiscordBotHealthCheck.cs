@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Discord.WebSocket;
+using Discord;
 using Microsoft.Extensions.Logging;
 
 namespace Bot.Service.Infrastructure.HealthChecks;

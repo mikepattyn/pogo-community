@@ -124,7 +124,7 @@ public class DiscordBotService : BackgroundService
                 var duration = DateTime.UtcNow - startTime;
                 
                 // Track command execution
-                var commandName = result.Command?.Name ?? "unknown";
+                var commandName = "text_command"; // We don't have access to the specific command name from IResult
                 _metricsService.TrackCommand(commandName, result.IsSuccess, duration);
                 _metricsService.TrackCommandExecuted();
             }
