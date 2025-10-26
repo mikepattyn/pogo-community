@@ -16,6 +16,10 @@ spec:
       labels:
         app: pogo-bot
         tier: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "2000"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: pogo-bot
