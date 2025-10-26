@@ -1,4 +1,5 @@
 using Pogo.Shared.API;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "POGO Swagger Gateway",
+        Version = "v1",
+        Description = "Unified Swagger documentation for all POGO microservices"
+    });
+});
+
+// Add HttpClient for fetching Swagger specs
+builder.Services.AddHttpClient();
 
 // Add health checks using custom extension
 builder.Services.AddHealthChecks("");
@@ -25,20 +37,21 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("http://account-service:5001/swagger/v1/swagger.json", "Account Service");
-        c.SwaggerEndpoint("http://player-service:5002/swagger/v1/swagger.json", "Player Service");
-        c.SwaggerEndpoint("http://location-service:5003/swagger/v1/swagger.json", "Location Service");
-        c.SwaggerEndpoint("http://gym-service:5004/swagger/v1/swagger.json", "Gym Service");
-        c.SwaggerEndpoint("http://raid-service:5005/swagger/v1/swagger.json", "Raid Service");
-        c.SwaggerEndpoint("http://bot-bff:6001/swagger/v1/swagger.json", "Bot BFF");
-        c.SwaggerEndpoint("http://app-bff:6002/swagger/v1/swagger.json", "App BFF");
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Gateway API");
+    c.RoutePrefix = string.Empty;
+    
+    // Add all microservice endpoints
+    c.SwaggerEndpoint("http://account-service:5001/swagger/v1/swagger.json", "Account Service");
+    c.SwaggerEndpoint("http://player-service:5002/swagger/v1/swagger.json", "Player Service");
+    c.SwaggerEndpoint("http://location-service:5003/swagger/v1/swagger.json", "Location Service");
+    c.SwaggerEndpoint("http://gym-service:5004/swagger/v1/swagger.json", "Gym Service");
+    c.SwaggerEndpoint("http://raid-service:5005/swagger/v1/swagger.json", "Raid Service");
+    c.SwaggerEndpoint("http://bot-bff:6001/swagger/v1/swagger.json", "Bot BFF");
+    c.SwaggerEndpoint("http://app-bff:6002/swagger/v1/swagger.json", "App BFF");
+});
 
 app.UseHttpsRedirection();
 
