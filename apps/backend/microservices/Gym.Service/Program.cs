@@ -48,9 +48,6 @@ builder.Services.AddHttpClient<ILocationServiceClient, LocationServiceClient>(cl
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Add health checks
-builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("DefaultConnection")!);
-
 // Add CORS
 builder.Services.AddCors(options =>
 {

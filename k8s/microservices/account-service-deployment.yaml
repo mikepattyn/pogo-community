@@ -7,7 +7,7 @@ metadata:
     app: account-service
     tier: microservice
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: account-service
@@ -18,81 +18,80 @@ spec:
         tier: microservice
     spec:
       containers:
-      - name: account-service
-        image: pogo/account-service:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 5001
-          name: http
-        env:
-        - name: ASPNETCORE_ENVIRONMENT
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: ASPNETCORE_ENVIRONMENT
-        - name: ASPNETCORE_URLS
-          value: "http://+:5001"
-        - name: ConnectionStrings__DefaultConnection
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: ACCOUNT_CONNECTION_STRING
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: DB_HOST
-        - name: DB_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: DB_PORT
-        - name: DB_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: DB_USERNAME
-        - name: DB_SSL_MODE
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: DB_SSL_MODE
-        - name: Jwt__SecretKey
-          valueFrom:
-            secretKeyRef:
-              name: jwt-secrets
-              key: JWT_SECRET_KEY
-        - name: Jwt__Issuer
-          valueFrom:
-            secretKeyRef:
-              name: jwt-secrets
-              key: JWT_ISSUER
-        - name: Jwt__Audience
-          valueFrom:
-            secretKeyRef:
-              name: jwt-secrets
-              key: JWT_AUDIENCE
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5001
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5001
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 2
-        resources:
-          requests:
-            cpu: 250m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-
+        - name: account-service
+          image: pogo/account-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5001
+              name: http
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: ASPNETCORE_URLS
+              value: 'http://+:5001'
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: ACCOUNT_CONNECTION_STRING
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: DB_PORT
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_USERNAME
+            - name: DB_SSL_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: DB_SSL_MODE
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: JWT_SECRET_KEY
+            - name: Jwt__Issuer
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: JWT_ISSUER
+            - name: Jwt__Audience
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: JWT_AUDIENCE
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 5001
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

@@ -7,7 +7,7 @@ metadata:
     app: raid-service
     tier: microservice
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: raid-service
@@ -18,76 +18,75 @@ spec:
         tier: microservice
     spec:
       containers:
-      - name: raid-service
-        image: pogo/raid-service:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 5005
-          name: http
-        env:
-        - name: ASPNETCORE_ENVIRONMENT
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: ASPNETCORE_ENVIRONMENT
-        - name: ASPNETCORE_URLS
-          value: "http://+:5005"
-        - name: ConnectionStrings__DefaultConnection
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: RAID_CONNECTION_STRING
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: DB_HOST
-        - name: DB_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: DB_PORT
-        - name: DB_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: DB_USERNAME
-        - name: DB_SSL_MODE
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: DB_SSL_MODE
-        - name: GymService__BaseUrl
-          valueFrom:
-            configMapKeyRef:
-              name: service-urls-config
-              key: GymService__BaseUrl
-        - name: PlayerService__BaseUrl
-          valueFrom:
-            configMapKeyRef:
-              name: service-urls-config
-              key: PlayerService__BaseUrl
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5005
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5005
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 2
-        resources:
-          requests:
-            cpu: 250m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-
+        - name: raid-service
+          image: pogo/raid-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5005
+              name: http
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: ASPNETCORE_URLS
+              value: 'http://+:5005'
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: RAID_CONNECTION_STRING
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: DB_PORT
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_USERNAME
+            - name: DB_SSL_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: common-config
+                  key: DB_SSL_MODE
+            - name: GymService__BaseUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: service-urls-config
+                  key: GymService__BaseUrl
+            - name: PlayerService__BaseUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: service-urls-config
+                  key: PlayerService__BaseUrl
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 5005
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 5005
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

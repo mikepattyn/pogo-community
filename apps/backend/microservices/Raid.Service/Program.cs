@@ -54,9 +54,6 @@ builder.Services.AddHttpClient<IPlayerServiceClient, PlayerServiceClient>(client
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Add health checks
-builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("DefaultConnection")!);
-
 // Add CORS
 builder.Services.AddCors(options =>
 {

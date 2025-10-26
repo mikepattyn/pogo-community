@@ -47,9 +47,6 @@ builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddJwtAuthorization();
 
-// Add health checks
-builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("DefaultConnection")!);
-
 // Add CORS
 builder.Services.AddCors(options =>
 {

@@ -40,9 +40,6 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 // Add repositories and services
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 
-// Add health checks
-builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("DefaultConnection")!);
-
 // Add CORS
 builder.Services.AddCors(options =>
 {
