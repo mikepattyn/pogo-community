@@ -18,17 +18,20 @@ public class DiscordBotService : BackgroundService
     private readonly IConfiguration _configuration;
     private readonly ILogger<DiscordBotService> _logger;
     private readonly IBotBffClient _botBffClient;
+    private readonly DiscordMetricsService _metricsService;
 
     public DiscordBotService(
         IServiceProvider services,
         IConfiguration configuration,
         ILogger<DiscordBotService> logger,
-        IBotBffClient botBffClient)
+        IBotBffClient botBffClient,
+        DiscordMetricsService metricsService)
     {
         _services = services;
         _configuration = configuration;
         _logger = logger;
         _botBffClient = botBffClient;
+        _metricsService = metricsService;
 
         var config = new DiscordSocketConfig
         {
@@ -55,6 +58,8 @@ public class DiscordBotService : BackgroundService
         _client.ReactionAdded += OnReactionAddedAsync;
         _client.ReactionRemoved += OnReactionRemovedAsync;
         _client.UserJoined += OnUserJoinedAsync;
+        _client.Connected += OnConnectedAsync;
+        _client.Disconnected += OnDisconnectedAsync;
 
         // Register command modules
         await _commands.AddModulesAsync(typeof(Program).Assembly, _services);
@@ -72,16 +77,27 @@ public class DiscordBotService : BackgroundService
 
         _logger.LogInformation("Discord bot started successfully");
 
-        // Keep the service running
+        // Keep the service running and update metrics periodically
         while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(1000, stoppingToken);
+            // Update metrics every 30 seconds
+            _metricsService.UpdateGatewayLatency(_client.Latency);
+            _metricsService.UpdateConnectionState(_client.ConnectionState);
+            _metricsService.UpdateGuildMetrics(_client.Guilds);
+            _metricsService.UpdateUptime();
+            
+            await Task.Delay(30000, stoppingToken);
         }
     }
 
     private async Task OnReadyAsync()
     {
         _logger.LogInformation($"Bot logged in as {_client.CurrentUser?.Username}#{_client.CurrentUser?.Discriminator}");
+
+        // Update metrics
+        _metricsService.UpdateGatewayLatency(_client.Latency);
+        _metricsService.UpdateConnectionState(_client.ConnectionState);
+        _metricsService.UpdateGuildMetrics(_client.Guilds);
 
         // Register slash commands
         await _interactions.RegisterCommandsGloballyAsync();
@@ -92,13 +108,32 @@ public class DiscordBotService : BackgroundService
         if (message is not SocketUserMessage userMessage || message.Author.IsBot)
             return;
 
+        // Track message received event
+        _metricsService.TrackMessageReceived();
+
         var context = new SocketCommandContext(_client, userMessage);
 
         // Handle text commands
         int argPos = 0;
         if (userMessage.HasCharPrefix('!', ref argPos))
         {
-            await _commands.ExecuteAsync(context, argPos, _services);
+            var startTime = DateTime.UtcNow;
+            try
+            {
+                var result = await _commands.ExecuteAsync(context, argPos, _services);
+                var duration = DateTime.UtcNow - startTime;
+                
+                // Track command execution
+                var commandName = result.Command?.Name ?? "unknown";
+                _metricsService.TrackCommand(commandName, result.IsSuccess, duration);
+                _metricsService.TrackCommandExecuted();
+            }
+            catch (Exception ex)
+            {
+                var duration = DateTime.UtcNow - startTime;
+                _logger.LogError(ex, "Error executing command");
+                _metricsService.TrackCommand("error", false, duration);
+            }
         }
 
         // Handle interactions
@@ -113,6 +148,9 @@ public class DiscordBotService : BackgroundService
     {
         if (reaction.User.Value?.IsBot == true)
             return;
+
+        // Track reaction added event
+        _metricsService.TrackReactionAdded();
 
         // Handle raid reactions
         var allowedEmojisRaid = new[] { "👍" };
@@ -143,6 +181,9 @@ public class DiscordBotService : BackgroundService
         if (reaction.User.Value?.IsBot == true)
             return;
 
+        // Track reaction removed event
+        _metricsService.TrackReactionRemoved();
+
         // Handle leaving raid
         _logger.LogInformation($"User {reaction.User.Value.Username} left raid");
     }
@@ -150,6 +191,9 @@ public class DiscordBotService : BackgroundService
     private async Task OnUserJoinedAsync(SocketGuildUser user)
     {
         _logger.LogInformation($"New user joined: {user.Username}");
+
+        // Track user joined event
+        _metricsService.TrackUserJoined();
 
         // Create player in database
         var player = new CreatePlayerDto
@@ -186,6 +230,20 @@ public class DiscordBotService : BackgroundService
             _ => LogLevel.Information
         }, log.Message);
 
+        return Task.CompletedTask;
+    }
+
+    private Task OnConnectedAsync()
+    {
+        _logger.LogInformation("Discord bot connected");
+        _metricsService.UpdateConnectionState(_client.ConnectionState);
+        return Task.CompletedTask;
+    }
+
+    private Task OnDisconnectedAsync(Exception? exception)
+    {
+        _logger.LogWarning(exception, "Discord bot disconnected");
+        _metricsService.UpdateConnectionState(_client.ConnectionState);
         return Task.CompletedTask;
     }
 
