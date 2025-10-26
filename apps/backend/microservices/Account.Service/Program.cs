@@ -19,9 +19,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add health checks (explicitly configure to avoid automatic database checks)
-builder.Services.AddHealthChecks()
-    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "self" });
+// Add health checks using custom extension
+builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 // Add Entity Framework
 builder.Services.AddDbContext<AccountDbContext>(options =>
