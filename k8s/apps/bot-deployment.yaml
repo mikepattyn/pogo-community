@@ -18,45 +18,43 @@ spec:
         tier: frontend
     spec:
       containers:
-      - name: pogo-bot
-        image: pogo/bot:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 2000
-          name: http
-        env:
-        - name: NODE_ENV
-          valueFrom:
-            configMapKeyRef:
-              name: common-config
-              key: NODE_ENV
-        - name: BOT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: discord-secrets
-              key: BOT_TOKEN
-        - name: BOT_BFF_URL
-          valueFrom:
-            configMapKeyRef:
-              name: service-urls-config
-              key: BOT_BFF_URL
-        - name: GOOGLE_CLOUD_PROJECT_ID
-          valueFrom:
-            secretKeyRef:
-              name: google-cloud-secrets
-              key: GOOGLE_CLOUD_PROJECT_ID
-              optional: true
-        - name: CLOUD_SQL_CONNECTION_NAME
-          valueFrom:
-            secretKeyRef:
-              name: google-cloud-secrets
-              key: CLOUD_SQL_CONNECTION_NAME
-              optional: true
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 250m
-            memory: 256Mi
-
+        - name: pogo-bot
+          image: pogo/bot:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 2000
+              name: http
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_URLS
+              value: "http://+:2000"
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: discord-secrets
+                  key: DISCORD_BOT_TOKEN
+            - name: BOT_BFF_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: service-urls-config
+                  key: BOT_BFF_URL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 2000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 2000
+            initialDelaySeconds: 5
+            periodSeconds: 5
