@@ -35,29 +35,20 @@ data:
             action: keep
             regex: http
 
-      # Microservices metrics
-      - job_name: 'microservices'
+      # POGO Microservices metrics
+      - job_name: 'pogo-microservices'
         kubernetes_sd_configs:
           - role: endpoints
             namespaces:
               names:
                 - pogo-system
         relabel_configs:
-          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+          - source_labels: [__meta_kubernetes_service_name]
             action: keep
-            regex: true
-          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
-            action: replace
-            target_label: __metrics_path__
-            regex: (.+)
-          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
-            action: replace
-            regex: ([^:]+)(?::\d+)?;(\d+)
-            replacement: $1:$2
-            target_label: __address__
-          - source_labels: [__meta_kubernetes_service_label_tier]
+            regex: account-service|player-service|location-service|gym-service|raid-service
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
             action: keep
-            regex: microservice|gateway
+            regex: http
           - source_labels: [__meta_kubernetes_service_name]
             action: replace
             target_label: service
@@ -67,6 +58,32 @@ data:
           - source_labels: [__meta_kubernetes_pod_name]
             action: replace
             target_label: pod
+        metrics_path: /metrics
+
+      # POGO BFF metrics
+      - job_name: 'pogo-bffs'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - pogo-system
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: bot-bff|app-bff
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: http
+          - source_labels: [__meta_kubernetes_service_name]
+            action: replace
+            target_label: service
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+        metrics_path: /metrics
 
       # Kubernetes API server
       - job_name: 'kubernetes-apiservers'
