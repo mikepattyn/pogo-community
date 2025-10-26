@@ -1,4 +1,5 @@
 using Discord;
+using Discord.WebSocket;
 using Bot.Service.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 

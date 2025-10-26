@@ -104,7 +104,8 @@ public class DiscordBotService : BackgroundService
         // Handle interactions
         if (userMessage.HasMentionPrefix(_client.CurrentUser, ref argPos))
         {
-            await _interactions.ExecuteCommandAsync(context, _services);
+            // Note: Slash commands are handled automatically by Discord.Net.Interactions
+            // This is for legacy mention-based commands if needed
         }
     }
 

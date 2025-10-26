@@ -1,4 +1,5 @@
 using Discord;
+using Discord.WebSocket;
 
 namespace Bot.Service.Application.Interfaces;
 

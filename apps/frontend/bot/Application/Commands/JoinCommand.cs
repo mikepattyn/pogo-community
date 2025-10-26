@@ -33,21 +33,14 @@ public class JoinCommandModule : ModuleBase<SocketCommandContext>
                 return;
             }
 
-            var success = await _raidService.AddPlayerToRaidAsync(
+            await _raidService.AddPlayerToRaidAsync(
                 messageId,
                 Context.User.Id.ToString(),
                 Context.User.Username
             );
 
-            if (success)
-            {
-                await ReplyAsync($"✅ You've joined the raid!");
-                _logger.LogInformation("User {User} joined raid {MessageId}", Context.User.Username, messageId);
-            }
-            else
-            {
-                await ReplyAsync("❌ Failed to join the raid. The raid might not exist or be closed.");
-            }
+            await ReplyAsync($"✅ You've joined the raid!");
+            _logger.LogInformation("User {User} joined raid {MessageId}", Context.User.Username, messageId);
         }
         catch (Exception ex)
         {
