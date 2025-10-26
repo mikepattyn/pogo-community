@@ -122,6 +122,33 @@ data:
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+        },
+        {
+          "id": 7,
+          "title": "Service Health Status",
+          "type": "stat",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "up{job=~\"pogo-microservices|pogo-bffs\"}",
+              "legendFormat": "{{service}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 4, "w": 24, "x": 0, "y": 24},
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": 0},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          }
         }
       ],
       "schemaVersion": 16,
