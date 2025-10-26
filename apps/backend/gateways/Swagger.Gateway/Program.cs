@@ -15,6 +15,17 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "Select a microservice from the 'Select a definition' dropdown in the top right to view its API documentation."
     });
+    
+    c.SwaggerDoc("system", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "System Endpoints - Health & Metrics",
+        Version = "v1",
+        Description = "Health checks and Prometheus metrics for all services"
+    });
+    
+    // Configure tags to group endpoints by Swagger document
+    c.TagActionsBy(api => new[] { api.GroupName ?? "v1" });
+    c.DocInclusionPredicate((name, api) => true);
 });
 
 // Add HttpClient for fetching Swagger specs with timeout configuration
