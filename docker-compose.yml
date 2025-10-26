@@ -1,25 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
-
-
-  # Discord Bot
+  # Discord Bot (C#)
   bot:
     build:
       context: .
-      dockerfile: bot.Dockerfile
+      dockerfile: apps/frontend/bot/Dockerfile
     container_name: pogo-bot
     environment:
       # Discord Configuration
-      BOT_TOKEN: ${DISCORD_BOT_TOKEN}
-      
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+
       # Bot BFF Configuration
       BOT_BFF_URL: http://bot-bff:6001
-      
-      # Google Cloud Configuration
-      GOOGLE_CLOUD_PROJECT_ID: ${GOOGLE_CLOUD_PROJECT_ID}
-      CLOUD_SQL_CONNECTION_NAME: ${GOOGLE_CLOUD_PROJECT_ID}
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+
+      # ASP.NET Core Configuration
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:2000
     ports:
       - "2000:2000"
     depends_on:
@@ -53,6 +50,8 @@ services:
       context: .
       dockerfile: apps/backend/bffs/Bot.BFF/Dockerfile
     container_name: bot-bff
+    environment:
+      - OCRServiceUrl=http://ocr-service:5001
     ports:
       - "6001:6001"
     depends_on:
@@ -66,6 +65,8 @@ services:
         condition: service_healthy
       raid-service:
         condition: service_healthy
+      ocr-service:
+        condition: service_started
     networks:
       - pogo-network
     restart: unless-stopped
@@ -193,6 +194,30 @@ services:
       - pogo-network
     restart: unless-stopped
 
+  ocr-service:
+    build:
+      context: .
+      dockerfile: apps/backend/microservices/OCR.Service/Dockerfile
+    container_name: ocr-service
+    ports:
+      - "5006:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5001
+    networks:
+      - pogo-network
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - pogo-network
+    restart: unless-stopped
+
   # Microservice Databases
   account-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -208,7 +233,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -228,7 +257,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -248,7 +281,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -268,7 +305,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -288,7 +329,11 @@ services:
     networks:
       - pogo-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -310,4 +355,3 @@ networks:
   pogo-network:
     name: pogo-network
     driver: bridge
-
