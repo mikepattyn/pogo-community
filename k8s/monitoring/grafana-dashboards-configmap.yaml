@@ -29,18 +29,26 @@ metadata:
 data:
   microservices-overview.json: |
     {
+      "id": null,
       "title": "POGO Microservices Overview",
       "tags": ["pogo", "microservices"],
       "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
       "panels": [
         {
           "id": 1,
           "title": "HTTP Request Rate",
           "type": "graph",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "sum(rate(http_requests_received_total[5m])) by (service)",
-              "legendFormat": "{{service}}"
+              "legendFormat": "{{service}}",
+              "refId": "A"
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
@@ -49,10 +57,12 @@ data:
           "id": 2,
           "title": "HTTP Request Duration (95th percentile)",
           "type": "graph",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le))",
-              "legendFormat": "{{service}} p95"
+              "legendFormat": "{{service}} p95",
+              "refId": "A"
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
@@ -61,10 +71,12 @@ data:
           "id": 3,
           "title": "Error Rate (4xx/5xx)",
           "type": "graph",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "sum(rate(http_requests_received_total{code=~\"[45]..\"}[5m])) by (service)",
-              "legendFormat": "{{service}}"
+              "legendFormat": "{{service}}",
+              "refId": "A"
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
@@ -73,10 +85,12 @@ data:
           "id": 4,
           "title": "Active Requests",
           "type": "graph",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "sum(http_requests_in_progress) by (service)",
-              "legendFormat": "{{service}}"
+              "legendFormat": "{{service}}",
+              "refId": "A"
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
@@ -85,10 +99,12 @@ data:
           "id": 5,
           "title": "Memory Usage",
           "type": "graph",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "process_working_set_bytes / 1024 / 1024",
-              "legendFormat": "{{service}} MB"
+              "legendFormat": "{{service}} MB",
+              "refId": "A"
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
@@ -97,10 +113,12 @@ data:
           "id": 6,
           "title": "CPU Usage",
           "type": "graph",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "rate(process_cpu_seconds_total[5m]) * 100",
-              "legendFormat": "{{service}} %"
+              "legendFormat": "{{service}} %",
+              "refId": "A"
             }
           ],
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
@@ -121,36 +139,99 @@ metadata:
 data:
   cockroachdb-overview.json: |
     {
+      "id": null,
       "title": "CockroachDB Overview",
       "tags": ["pogo", "database", "cockroachdb"],
       "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
       "panels": [
         {
           "id": 1,
           "title": "Live Nodes",
           "type": "stat",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "count(up{job=\"cockroachdb\"} == 1)",
-              "legendFormat": "Live Nodes"
+              "legendFormat": "Live Nodes",
+              "refId": "A"
             }
           ],
-          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": 0},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          }
         },
         {
           "id": 2,
-          "title": "Database Health",
+          "title": "Node Health",
           "type": "stat",
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "up{job=\"cockroachdb\"}",
-              "legendFormat": "Node {{instance}}"
+              "legendFormat": "Node {{instance}}",
+              "refId": "A"
             }
           ],
-          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": 0},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 3,
+          "title": "Raft Commands Applied",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "rate(raft_commandsapplied[5m])",
+              "legendFormat": "Commands/sec",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+        },
+        {
+          "id": 4,
+          "title": "Raft Entry Cache Hit Rate",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "rate(raft_entrycache_hits[5m]) / rate(raft_entrycache_accesses[5m]) * 100",
+              "legendFormat": "Hit Rate %",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
         }
       ],
       "schemaVersion": 16,
       "version": 1
     }
-

@@ -27,6 +27,7 @@ data:
             namespaces:
               names:
                 - pogo-system
+        metrics_path: /_status/vars
         relabel_configs:
           - source_labels: [__meta_kubernetes_service_name]
             action: keep
@@ -138,4 +139,3 @@ data:
           - source_labels: [__meta_kubernetes_pod_name]
             action: replace
             target_label: kubernetes_pod_name
-
