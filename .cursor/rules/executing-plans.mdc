@@ -4,4 +4,4 @@ alwaysApply: true
 
 # When executing plans always:
 
-Make clear commit message without prefix
+For each todo, make a clear commit message without prefix
