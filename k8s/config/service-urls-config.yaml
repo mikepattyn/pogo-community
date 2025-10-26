@@ -16,6 +16,9 @@ data:
   BOT_BFF_URL: "http://bot-bff:6001"
   APP_BFF_URL: "http://app-bff:6002"
 
+  # Gateway URLs
+  SWAGGER_GATEWAY_URL: "http://swagger-gateway:10000"
+
   # Service-specific configuration
   LocationService__BaseUrl: "http://location-service:5003"
   GymService__BaseUrl: "http://gym-service:5004"
