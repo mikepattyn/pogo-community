@@ -27,9 +27,11 @@ public class DiscordBotHealthCheck : IHealthCheck
             var latency = _discordClient.Latency;
 
             // Check connection state
+            // Use Degraded instead of Unhealthy for Discord connection issues
+            // This allows the pod to be ready even if Discord isn't connected
             if (connectionState != ConnectionState.Connected)
             {
-                return Task.FromResult(HealthCheckResult.Unhealthy(
+                return Task.FromResult(HealthCheckResult.Degraded(
                     $"Discord bot is not connected. Current state: {connectionState}",
                     data: new Dictionary<string, object>
                     {
