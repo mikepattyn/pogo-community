@@ -55,18 +55,18 @@ graph TB
         Discord[Discord API]
         Mobile[Mobile App Users]
     end
-    
+
     subgraph "Kubernetes Cluster (pogo-system namespace)"
         subgraph "Frontend Layer"
             Bot[Discord Bot<br/>Port 2000]
             App[Mobile App<br/>Port 3000<br/>NodePort 30000]
         end
-        
+
         subgraph "API Gateway Layer"
             BotBFF[Bot BFF<br/>Port 6001<br/>Ocelot Gateway]
             AppBFF[App BFF<br/>Port 6002<br/>Ocelot Gateway]
         end
-        
+
         subgraph "Microservices Layer"
             Account[Account Service<br/>Port 5001<br/>Authentication]
             Player[Player Service<br/>Port 5002<br/>User Management]
@@ -74,45 +74,45 @@ graph TB
             Gym[Gym Service<br/>Port 5004<br/>Gym Management]
             Raid[Raid Service<br/>Port 5005<br/>Raid Management]
         end
-        
+
         subgraph "Data Layer"
             CockroachDB[(CockroachDB<br/>Port 26257<br/>PostgreSQL Compatible)]
         end
-        
+
         subgraph "Monitoring Layer"
             Prometheus[Prometheus<br/>Port 9090<br/>Metrics Collection]
             Grafana[Grafana<br/>Port 3000<br/>Dashboards]
         end
     end
-    
+
     %% External connections
     Discord --> Bot
     Mobile --> App
-    
+
     %% Frontend to BFF connections
     Bot --> BotBFF
     App --> AppBFF
-    
+
     %% BFF to Microservices connections
     BotBFF --> Account
     BotBFF --> Player
     BotBFF --> Location
     BotBFF --> Gym
     BotBFF --> Raid
-    
+
     AppBFF --> Account
     AppBFF --> Player
     AppBFF --> Location
     AppBFF --> Gym
     AppBFF --> Raid
-    
+
     %% Microservices to Database connections
     Account --> CockroachDB
     Player --> CockroachDB
     Location --> CockroachDB
     Gym --> CockroachDB
     Raid --> CockroachDB
-    
+
     %% Monitoring connections
     Prometheus --> Account
     Prometheus --> Player
@@ -122,14 +122,14 @@ graph TB
     Prometheus --> BotBFF
     Prometheus --> AppBFF
     Grafana --> Prometheus
-    
+
     %% Styling
     classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef gateway fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef microservice fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     classDef database fill:#fff3e0,stroke:#e65100,stroke-width:2px
     classDef monitoring fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    
+
     class Bot,App frontend
     class BotBFF,AppBFF gateway
     class Account,Player,Location,Gym,Raid microservice
@@ -139,26 +139,26 @@ graph TB
 
 ### Component Overview
 
-| Component | Type | Purpose | Port | External Access |
-|-----------|------|---------|------|------------------|
+| Component                 | Type        | Purpose                | Port  | External Access                |
+| ------------------------- | ----------- | ---------------------- | ----- | ------------------------------ |
 | **Frontend Applications** |
-| Discord Bot | Deployment | Discord integration | 2000 | Port Forward |
-| Mobile App | Deployment | React Native web app | 3000 | NodePort 30000 |
-| **API Gateways** |
-| Bot BFF | Deployment | Bot API gateway | 6001 | Port Forward |
-| App BFF | Deployment | App API gateway | 6002 | Port Forward |
-| Swagger Gateway | Deployment | API documentation | 10000 | Port Forward (localhost:10000) |
-| **Microservices** |
-| Account Service | Deployment | Authentication & users | 5001 | Internal |
-| Player Service | Deployment | Player management | 5002 | Internal |
-| Location Service | Deployment | POI management | 5003 | Internal |
-| Gym Service | Deployment | Gym management | 5004 | Internal |
-| Raid Service | Deployment | Raid management | 5005 | Internal |
-| **Database** |
-| CockroachDB | StatefulSet | PostgreSQL database | 26257 | Internal |
-| **Monitoring** |
-| Prometheus | Deployment | Metrics collection | 9090 | Port Forward (localhost:10002) |
-| Grafana | Deployment | Monitoring dashboards | 3000 | Port Forward (localhost:10001) |
+| Discord Bot               | Deployment  | Discord integration    | 2000  | Port Forward                   |
+| Mobile App                | Deployment  | React Native web app   | 3000  | NodePort 30000                 |
+| **API Gateways**          |
+| Bot BFF                   | Deployment  | Bot API gateway        | 6001  | Port Forward                   |
+| App BFF                   | Deployment  | App API gateway        | 6002  | Port Forward                   |
+| Swagger Gateway           | Deployment  | API documentation      | 10000 | Port Forward (localhost:10000) |
+| **Microservices**         |
+| Account Service           | Deployment  | Authentication & users | 5001  | Internal                       |
+| Player Service            | Deployment  | Player management      | 5002  | Internal                       |
+| Location Service          | Deployment  | POI management         | 5003  | Internal                       |
+| Gym Service               | Deployment  | Gym management         | 5004  | Internal                       |
+| Raid Service              | Deployment  | Raid management        | 5005  | Internal                       |
+| **Database**              |
+| CockroachDB               | StatefulSet | PostgreSQL database    | 26257 | Internal                       |
+| **Monitoring**            |
+| Prometheus                | Deployment  | Metrics collection     | 9090  | Port Forward (localhost:10002) |
+| Grafana                   | Deployment  | Monitoring dashboards  | 3000  | Port Forward (localhost:10001) |
 
 ## Quick Start
 
@@ -230,27 +230,30 @@ export JWT_SECRET_KEY="your_secret"
 
 #### Required Secrets
 
-| Secret Name | Purpose | Required Keys |
-|-------------|---------|---------------|
-| `discord-secrets` | Discord bot authentication | `DISCORD_BOT_TOKEN` |
-| `jwt-secrets` | JWT token signing | `JWT_SECRET_KEY`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_EXPIRY_MINUTES` |
-| `db-secrets` | Database credentials | `DB_USERNAME`, `DB_PASSWORD`, `MSSQL_SA_PASSWORD` |
+| Secret Name       | Purpose                    | Required Keys                                                        |
+| ----------------- | -------------------------- | -------------------------------------------------------------------- |
+| `discord-secrets` | Discord bot authentication | `DISCORD_BOT_TOKEN`                                                  |
+| `jwt-secrets`     | JWT token signing          | `JWT_SECRET_KEY`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_EXPIRY_MINUTES` |
+| `db-secrets`      | Database credentials       | `DB_USERNAME`, `DB_PASSWORD`, `MSSQL_SA_PASSWORD`                    |
 
 #### Secret Creation Options
 
 **Interactive Mode:**
+
 - Prompts for each secret value
 - Provides clear instructions for obtaining values
 - Validates input format and length
 - Never echoes secrets to terminal
 
 **Auto-Generate Mode:**
+
 - Generates secure random values for JWT secret and DB password
 - Uses `openssl rand -base64 32` for JWT secret
 - Uses `openssl rand -base64 24` for DB password
 - Still requires manual input for Discord token
 
 **Environment Variable Mode:**
+
 - Reads secrets from environment variables
 - Useful for CI/CD pipelines
 - Can use `.env` file or exported variables

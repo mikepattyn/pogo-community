@@ -44,6 +44,7 @@ minikube ssh "free -h && df -h"
 ### 1. Minikube Not Starting
 
 **Symptoms:**
+
 - `minikube start` fails
 - Error messages about insufficient resources
 
@@ -64,6 +65,7 @@ minikube start --memory=8192 --cpus=4
 ### 2. Images Not Building
 
 **Symptoms:**
+
 - `make k8s-build` fails
 - Docker build errors
 
@@ -86,6 +88,7 @@ make k8s-build
 ### 3. Pods Stuck in Pending
 
 **Symptoms:**
+
 - Pods show `Pending` status
 - No nodes available
 
@@ -105,6 +108,7 @@ kubectl top nodes
 ### 4. Deployment Timeout
 
 **Symptoms:**
+
 - `make k8s-deploy` times out
 - Services not ready after deployment
 
@@ -128,6 +132,7 @@ kubectl wait --for=condition=available deployment/account-service -n pogo-system
 #### Account Service Problems
 
 **Symptoms:**
+
 - Account service pods not ready
 - Authentication failures
 
@@ -157,6 +162,7 @@ kubectl exec -it cockroachdb-0 -n pogo-system -- cockroach sql --insecure -e "SE
 #### BFF Gateway Issues
 
 **Symptoms:**
+
 - BFF pods not ready
 - API gateway routing failures
 
@@ -188,6 +194,7 @@ kubectl exec -it <bff-pod> -n pogo-system -- cat /app/ocelot.json
 #### Discord Bot Issues
 
 **Symptoms:**
+
 - Bot pod in CrashLoopBackOff
 - Bot not responding to Discord
 
@@ -221,6 +228,7 @@ kubectl get secret discord-secrets -n pogo-system -o yaml
 #### Mobile App Issues
 
 **Symptoms:**
+
 - App pod not ready
 - App not accessible via NodePort
 
@@ -254,6 +262,7 @@ minikube service pogo-app -n pogo-system
 #### Database Not Starting
 
 **Symptoms:**
+
 - CockroachDB pods not ready
 - Database initialization failures
 
@@ -287,6 +296,7 @@ kubectl apply -f k8s/databases/
 #### Connection Issues
 
 **Symptoms:**
+
 - Microservices can't connect to database
 - Connection timeout errors
 
@@ -318,6 +328,7 @@ kubectl get configmap common-config -n pogo-system -o yaml
 ### Prometheus Issues
 
 **Symptoms:**
+
 - Prometheus not collecting metrics
 - Metrics endpoints not accessible
 
@@ -348,6 +359,7 @@ kubectl get configmap prometheus-config -n pogo-system -o yaml
 ### Grafana Issues
 
 **Symptoms:**
+
 - Grafana not accessible
 - Dashboards not loading
 
@@ -380,6 +392,7 @@ kubectl get configmap grafana-datasources -n pogo-system -o yaml
 ### Service Discovery Problems
 
 **Symptoms:**
+
 - Services can't reach each other
 - DNS resolution failures
 
@@ -409,6 +422,7 @@ kubectl get networkpolicies -n pogo-system
 ### Ingress Issues
 
 **Symptoms:**
+
 - Ingress not routing traffic
 - External access not working
 
@@ -440,6 +454,7 @@ kubectl describe ingress pogo-ingress -n pogo-system
 ### Memory Issues
 
 **Symptoms:**
+
 - Pods being killed (OOMKilled)
 - Slow performance
 
@@ -468,6 +483,7 @@ minikube start --memory=16384 --cpus=8
 ### CPU Issues
 
 **Symptoms:**
+
 - High CPU usage
 - Slow response times
 
@@ -616,13 +632,13 @@ kubectl logs -l app=cockroachdb -n pogo-system --tail=100
 
 ### Common Error Messages
 
-| Error Message | Cause | Solution |
-|---------------|-------|----------|
-| `ImagePullBackOff` | Image not found | Run `make k8s-build` |
-| `CrashLoopBackOff` | Application error | Check logs with `kubectl logs` |
-| `Pending` | No resources available | Check node capacity |
-| `OOMKilled` | Out of memory | Increase memory limits |
-| `Readiness probe failed` | Health check failing | Check application health endpoint |
+| Error Message            | Cause                  | Solution                          |
+| ------------------------ | ---------------------- | --------------------------------- |
+| `ImagePullBackOff`       | Image not found        | Run `make k8s-build`              |
+| `CrashLoopBackOff`       | Application error      | Check logs with `kubectl logs`    |
+| `Pending`                | No resources available | Check node capacity               |
+| `OOMKilled`              | Out of memory          | Increase memory limits            |
+| `Readiness probe failed` | Health check failing   | Check application health endpoint |
 
 ---
 

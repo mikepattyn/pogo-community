@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
-import {
-  GymScreenContainerComponent,
-} from './gym.screen.container.component';
+import { GymScreenContainerComponent } from './gym.screen.container.component';
 import { GymScreenStyles } from './resources/styles';
 import { InputDialog } from './../../../elements/input.dialog';
 

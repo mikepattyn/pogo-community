@@ -27,4 +27,3 @@ export class Account implements IAccount {
     this.Email = data.Email;
   }
 }
-

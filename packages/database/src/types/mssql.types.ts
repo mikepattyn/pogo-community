@@ -14,4 +14,3 @@ export interface QueryOptions {
   timeout?: number;
   stream?: boolean;
 }
-

@@ -33,4 +33,3 @@ export class Raid implements IRaid {
     this.UpdatedAt = data.UpdatedAt;
   }
 }
-

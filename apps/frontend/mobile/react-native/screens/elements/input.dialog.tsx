@@ -21,7 +21,10 @@ export interface InputDialogProps {
 
 // TODO: Test the custom InputDialog - Check if state is maintained and correctly passed to and from the child component;
 
-export class InputDialog extends Component<InputDialogProps, Record<string, never>> {
+export class InputDialog extends Component<
+  InputDialogProps,
+  Record<string, never>
+> {
   render() {
     return (
       <Dialog

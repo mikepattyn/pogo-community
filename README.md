@@ -453,27 +453,27 @@ kubectl port-forward service/grafana 3001:3000 -n pogo-system
 
 ### 📊 Kubernetes Services Overview
 
-| Service            | Type      | Port       | External Access  | Description            |
-| ------------------ | --------- | ---------- | ---------------- | ---------------------- |
+| Service            | Type      | Port       | External Access                | Description            |
+| ------------------ | --------- | ---------- | ------------------------------ | ---------------------- |
 | **Frontend**       |
-| pogo-bot           | ClusterIP | 2000       | Port Forward     | Discord Bot            |
-| pogo-app           | NodePort  | 3000:30000 | minikube service | Mobile App             |
+| pogo-bot           | ClusterIP | 2000       | Port Forward                   | Discord Bot            |
+| pogo-app           | NodePort  | 3000:30000 | minikube service               | Mobile App             |
 | **API Gateways**   |
-| bot-bff            | ClusterIP | 6001       | Port Forward     | Bot API Gateway        |
-| app-bff            | ClusterIP | 6002       | Port Forward     | App API Gateway        |
+| bot-bff            | ClusterIP | 6001       | Port Forward                   | Bot API Gateway        |
+| app-bff            | ClusterIP | 6002       | Port Forward                   | App API Gateway        |
 | **Microservices**  |
-| account-service    | ClusterIP | 5001       | Internal         | Authentication         |
-| player-service     | ClusterIP | 5002       | Internal         | User Management        |
-| location-service   | ClusterIP | 5003       | Internal         | POI Management         |
-| gym-service        | ClusterIP | 5004       | Internal         | Gym Management         |
-| raid-service       | ClusterIP | 5005       | Internal         | Raid Management        |
+| account-service    | ClusterIP | 5001       | Internal                       | Authentication         |
+| player-service     | ClusterIP | 5002       | Internal                       | User Management        |
+| location-service   | ClusterIP | 5003       | Internal                       | POI Management         |
+| gym-service        | ClusterIP | 5004       | Internal                       | Gym Management         |
+| raid-service       | ClusterIP | 5005       | Internal                       | Raid Management        |
 | **Database**       |
-| cockroachdb        | ClusterIP | 26257      | Internal         | PostgreSQL Database    |
-| cockroachdb-public | ClusterIP | 26257      | Internal         | Public Database Access |
+| cockroachdb        | ClusterIP | 26257      | Internal                       | PostgreSQL Database    |
+| cockroachdb-public | ClusterIP | 26257      | Internal                       | Public Database Access |
 | **Monitoring**     |
 | prometheus         | ClusterIP | 9090       | Port Forward (localhost:10002) | Metrics Collection     |
 | grafana            | ClusterIP | 3000       | Port Forward (localhost:10001) | Monitoring Dashboards  |
-| swagger-gateway    | ClusterIP | 10000      | Port Forward (localhost:10000)| API Documentation      |
+| swagger-gateway    | ClusterIP | 10000      | Port Forward (localhost:10000) | API Documentation      |
 
 ### 🔧 Kubernetes Commands
 

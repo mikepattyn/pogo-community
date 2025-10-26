@@ -38,18 +38,22 @@ The `Local.bru` environment defines the following service URLs:
 ## Services Overview
 
 ### Account Service (`account-service`)
+
 Authentication and account management.
 
 **Endpoints:**
+
 - `Create Account` - POST /api/account
 - `Login` - POST /api/account/login
 - `Get Account by Email` - GET /api/account/by-email/{email}
 - `Get Account by Player ID` - GET /api/account/by-player/{playerId}
 
 ### Player Service (`player-service`)
+
 Player profile management.
 
 **Endpoints:**
+
 - `Create Player` - POST /api/player
 - `Update Player` - PUT /api/player/{id}
 - `Deactivate Player` - DELETE /api/player/{id}
@@ -59,9 +63,11 @@ Player profile management.
 - `Get All Players` - GET /api/player
 
 ### Location Service (`location-service`)
+
 Location and geography management.
 
 **Endpoints:**
+
 - `Create Location` - POST /api/location
 - `Update Location` - PUT /api/location/{id}
 - `Deactivate Location` - DELETE /api/location/{id}
@@ -72,9 +78,11 @@ Location and geography management.
 - `Get All Locations` - GET /api/location
 
 ### Gym Service (`gym-service`)
+
 Gym management and status tracking.
 
 **Endpoints:**
+
 - `Create Gym` - POST /api/gym
 - `Update Gym` - PUT /api/gym/{id}
 - `Update Gym Status` - PUT /api/gym/{id}/status
@@ -86,9 +94,11 @@ Gym management and status tracking.
 - `Search Gyms Nearby` - GET /api/gym/search/nearby
 
 ### Raid Service (`raid-service`)
+
 Raid scheduling and participation management.
 
 **Endpoints:**
+
 - `Create Raid` - POST /api/raid
 - `Update Raid` - PUT /api/raid/{id}
 - `Join Raid` - POST /api/raid/{id}/join
@@ -102,9 +112,11 @@ Raid scheduling and participation management.
 - `Search Raids Nearby` - GET /api/raid/search/nearby
 
 ### OCR Service (`ocr-service`)
+
 Optical Character Recognition for image text extraction.
 
 **Endpoints:**
+
 - `Scan Image` - POST /api/v1/scans
 
 ### BFFs (Backend for Frontend)
@@ -112,9 +124,11 @@ Optical Character Recognition for image text extraction.
 Both BFFs act as API gateways using Ocelot to proxy requests to microservices.
 
 #### App BFF (`app-bff`)
+
 Routes for the mobile app frontend.
 
 **Proxied Services:**
+
 - Account Service: `/api/account/{everything}`
 - Player Service: `/api/player/{everything}`
 - Location Service: `/api/location/{everything}`
@@ -124,9 +138,11 @@ Routes for the mobile app frontend.
 **Base URL:** http://localhost:6002
 
 #### Bot BFF (`bot-bff`)
+
 Routes for the Discord bot frontend.
 
 **Proxied Services:**
+
 - Account Service: `/api/account/{everything}`
 - Player Service: `/api/player/{everything}`
 - Location Service: `/api/location/{everything}`
@@ -151,4 +167,3 @@ When adding new endpoints:
 2. Use environment variables for URLs: `{{service_name_url}}`
 3. Include documentation in the `docs` block
 4. Use descriptive names for request files
-

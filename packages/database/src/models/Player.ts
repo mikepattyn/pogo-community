@@ -36,4 +36,3 @@ export class Player implements IPlayer {
     this.UpdatedAt = data.UpdatedAt;
   }
 }
-

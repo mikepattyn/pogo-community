@@ -7,14 +7,17 @@ The POGO Community platform provides a comprehensive REST API through microservi
 ## 🌐 Base URLs
 
 ### Production
+
 - **Bot BFF:** `https://api.pogo-community.com/bot`
 - **App BFF:** `https://api.pogo-community.com/app`
 
 ### Development
+
 - **Bot BFF:** `http://localhost:6001`
 - **App BFF:** `http://localhost:6002`
 
 ### Direct Microservices (Internal)
+
 - **Account Service:** `http://localhost:5001`
 - **Player Service:** `http://localhost:5002`
 - **Location Service:** `http://localhost:5003`
@@ -30,6 +33,7 @@ Authorization: Bearer <your-jwt-token>
 ```
 
 ### Getting a Token
+
 ```http
 POST /api/account/login
 Content-Type: application/json
@@ -41,6 +45,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -72,6 +77,7 @@ All API responses follow this format:
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,
@@ -89,6 +95,7 @@ All API responses follow this format:
 ## 🔐 Account Service API
 
 ### Create Account
+
 ```http
 POST /api/account
 Content-Type: application/json
@@ -101,6 +108,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -116,6 +124,7 @@ Content-Type: application/json
 ```
 
 ### Login
+
 ```http
 POST /api/account/login
 Content-Type: application/json
@@ -127,12 +136,14 @@ Content-Type: application/json
 ```
 
 ### Get Account by Email
+
 ```http
 GET /api/account/email/{email}
 Authorization: Bearer <token>
 ```
 
 ### Get Account by Player ID
+
 ```http
 GET /api/account/player/{playerId}
 Authorization: Bearer <token>
@@ -141,6 +152,7 @@ Authorization: Bearer <token>
 ## 👤 Player Service API
 
 ### Create Player
+
 ```http
 POST /api/player
 Content-Type: application/json
@@ -155,6 +167,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -173,30 +186,35 @@ Content-Type: application/json
 ```
 
 ### Get Player by ID
+
 ```http
 GET /api/player/{id}
 Authorization: Bearer <token>
 ```
 
 ### Get Player by Username
+
 ```http
 GET /api/player/username/{username}
 Authorization: Bearer <token>
 ```
 
 ### Get Player by Discord ID
+
 ```http
 GET /api/player/discord/{discordId}
 Authorization: Bearer <token>
 ```
 
 ### Get All Players
+
 ```http
 GET /api/player?page=1&pageSize=10&includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Update Player
+
 ```http
 PUT /api/player/{id}
 Content-Type: application/json
@@ -211,6 +229,7 @@ Authorization: Bearer <token>
 ```
 
 ### Deactivate Player
+
 ```http
 DELETE /api/player/{id}
 Authorization: Bearer <token>
@@ -219,6 +238,7 @@ Authorization: Bearer <token>
 ## 📍 Location Service API
 
 ### Create Location
+
 ```http
 POST /api/location
 Content-Type: application/json
@@ -237,6 +257,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -259,36 +280,42 @@ Content-Type: application/json
 ```
 
 ### Get Location by ID
+
 ```http
 GET /api/location/{id}
 Authorization: Bearer <token>
 ```
 
 ### Get Locations by Name
+
 ```http
 GET /api/location/name/{name}?includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Get Locations by Type
+
 ```http
 GET /api/location/type/{type}?page=1&pageSize=10&includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Search Locations Nearby
+
 ```http
 GET /api/location/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&type=Gym&maxResults=50
 Authorization: Bearer <token>
 ```
 
 ### Get All Locations
+
 ```http
 GET /api/location?page=1&pageSize=10&includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Update Location
+
 ```http
 PUT /api/location/{id}
 Content-Type: application/json
@@ -301,6 +328,7 @@ Authorization: Bearer <token>
 ```
 
 ### Deactivate Location
+
 ```http
 DELETE /api/location/{id}
 Authorization: Bearer <token>
@@ -309,6 +337,7 @@ Authorization: Bearer <token>
 ## 🏟️ Gym Service API
 
 ### Create Gym
+
 ```http
 POST /api/gym
 Content-Type: application/json
@@ -322,6 +351,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -344,36 +374,42 @@ Content-Type: application/json
 ```
 
 ### Get Gym by ID
+
 ```http
 GET /api/gym/{id}
 Authorization: Bearer <token>
 ```
 
 ### Get Gyms by Location
+
 ```http
 GET /api/gym/location/{locationId}?page=1&pageSize=10&includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Get Gyms by Team
+
 ```http
 GET /api/gym/team/{team}?page=1&pageSize=10&includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Search Gyms Nearby
+
 ```http
 GET /api/gym/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&maxResults=50
 Authorization: Bearer <token>
 ```
 
 ### Get All Gyms
+
 ```http
 GET /api/gym?page=1&pageSize=10&includeDeleted=false
 Authorization: Bearer <token>
 ```
 
 ### Update Gym
+
 ```http
 PUT /api/gym/{id}
 Content-Type: application/json
@@ -386,6 +422,7 @@ Authorization: Bearer <token>
 ```
 
 ### Update Gym Status
+
 ```http
 PUT /api/gym/{id}/status
 Content-Type: application/json
@@ -400,6 +437,7 @@ Authorization: Bearer <token>
 ```
 
 ### Deactivate Gym
+
 ```http
 DELETE /api/gym/{id}
 Authorization: Bearer <token>
@@ -408,6 +446,7 @@ Authorization: Bearer <token>
 ## ⚔️ Raid Service API
 
 ### Create Raid
+
 ```http
 POST /api/raid
 Content-Type: application/json
@@ -426,6 +465,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -451,36 +491,42 @@ Content-Type: application/json
 ```
 
 ### Get Raid by ID
+
 ```http
 GET /api/raid/{id}
 Authorization: Bearer <token>
 ```
 
 ### Get Raids by Gym
+
 ```http
 GET /api/raid/gym/{gymId}?activeOnly=true
 Authorization: Bearer <token>
 ```
 
 ### Get Active Raids
+
 ```http
 GET /api/raid/active?page=1&pageSize=10
 Authorization: Bearer <token>
 ```
 
 ### Search Raids Nearby
+
 ```http
 GET /api/raid/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&maxResults=50
 Authorization: Bearer <token>
 ```
 
 ### Get Raid Participants
+
 ```http
 GET /api/raid/{id}/participants
 Authorization: Bearer <token>
 ```
 
 ### Join Raid
+
 ```http
 POST /api/raid/join
 Content-Type: application/json
@@ -493,6 +539,7 @@ Authorization: Bearer <token>
 ```
 
 ### Leave Raid
+
 ```http
 POST /api/raid/leave
 Content-Type: application/json
@@ -505,12 +552,14 @@ Authorization: Bearer <token>
 ```
 
 ### Complete Raid
+
 ```http
 POST /api/raid/{id}/complete
 Authorization: Bearer <token>
 ```
 
 ### Cancel Raid
+
 ```http
 POST /api/raid/{id}/cancel
 Authorization: Bearer <token>
@@ -519,11 +568,13 @@ Authorization: Bearer <token>
 ## 🔍 Health Check Endpoints
 
 ### Service Health
+
 ```http
 GET /health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "Healthy",
@@ -538,11 +589,13 @@ GET /health
 ```
 
 ### Ready Check
+
 ```http
 GET /health/ready
 ```
 
 ### Live Check
+
 ```http
 GET /health/live
 ```
@@ -556,6 +609,7 @@ GET /api/player?page=1&pageSize=10&includeDeleted=false
 ```
 
 **Parameters:**
+
 - `page` - Page number (default: 1)
 - `pageSize` - Items per page (default: 10, max: 100)
 - `includeDeleted` - Include soft-deleted items (default: false)
@@ -563,11 +617,13 @@ GET /api/player?page=1&pageSize=10&includeDeleted=false
 ## 🔍 Filtering and Search
 
 ### Location Search
+
 ```http
 GET /api/location/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&type=Gym&maxResults=50
 ```
 
 **Parameters:**
+
 - `latitude` - Center latitude (required)
 - `longitude` - Center longitude (required)
 - `radiusKm` - Search radius in kilometers (default: 10)
@@ -575,28 +631,30 @@ GET /api/location/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&
 - `maxResults` - Maximum results to return (default: 50)
 
 ### Gym Search
+
 ```http
 GET /api/gym/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&maxResults=50
 ```
 
 ### Raid Search
+
 ```http
 GET /api/raid/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&maxResults=50
 ```
 
 ## 🚨 Error Codes
 
-| Code | Description |
-|------|-------------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request |
-| 401 | Unauthorized |
-| 403 | Forbidden |
-| 404 | Not Found |
-| 409 | Conflict |
-| 422 | Validation Error |
-| 500 | Internal Server Error |
+| Code | Description           |
+| ---- | --------------------- |
+| 200  | Success               |
+| 201  | Created               |
+| 400  | Bad Request           |
+| 401  | Unauthorized          |
+| 403  | Forbidden             |
+| 404  | Not Found             |
+| 409  | Conflict              |
+| 422  | Validation Error      |
+| 500  | Internal Server Error |
 
 ## 📝 Rate Limiting
 
@@ -610,15 +668,16 @@ GET /api/raid/search/nearby?latitude=40.7829&longitude=-73.9654&radiusKm=10&maxR
 ## 🔧 SDKs and Examples
 
 ### JavaScript/TypeScript
+
 ```typescript
 // Using the MicroservicesClient
 const client = new MicroservicesClient();
 
 // Create a player
 const player = await client.createPlayer({
-  username: "TrainerName",
+  username: 'TrainerName',
   level: 40,
-  team: "Valor"
+  team: 'Valor',
 });
 
 // Search nearby gyms
@@ -626,6 +685,7 @@ const gyms = await client.searchGymsNearby(40.7829, -73.9654, 10);
 ```
 
 ### cURL Examples
+
 ```bash
 # Create a player
 curl -X POST http://localhost:6001/api/player \

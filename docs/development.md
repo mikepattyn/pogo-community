@@ -99,6 +99,7 @@ APP_BFF_URL=http://localhost:6002
 ### 3. Start Development Environment
 
 #### Option A: Full Stack with Docker
+
 ```bash
 # Start all services with Docker Compose
 make microservices-start
@@ -111,6 +112,7 @@ make microservices-logs
 ```
 
 #### Option B: Hybrid Development
+
 ```bash
 # Start only databases
 docker-compose up -d account-db player-db location-db gym-db raid-db
@@ -126,6 +128,7 @@ dotnet run --project apps/backend/microservices/Player.Service
 ### .NET Microservices
 
 #### Build All Services
+
 ```bash
 # Build entire solution
 dotnet build PogoMicroservices.sln
@@ -135,6 +138,7 @@ dotnet build apps/backend/microservices/Account.Service/Account.Service.csproj
 ```
 
 #### Run Individual Services
+
 ```bash
 # Run Account Service
 cd apps/backend/microservices/Account.Service
@@ -148,6 +152,7 @@ dotnet run --launch-profile "https"
 ```
 
 #### Database Migrations
+
 ```bash
 # Add migration
 dotnet ef migrations add InitialCreate --project apps/backend/microservices/Account.Service
@@ -162,6 +167,7 @@ dotnet ef migrations remove --project apps/backend/microservices/Account.Service
 ### Client Applications
 
 #### Discord Bot
+
 ```bash
 # Install dependencies
 cd apps/frontend/bot
@@ -178,6 +184,7 @@ pnpm run dev
 ```
 
 #### Mobile App
+
 ```bash
 # Install dependencies
 cd apps/frontend/mobile
@@ -373,6 +380,7 @@ curl -X POST http://localhost:5002/api/player \
 **Problem:** Services can't connect to databases
 
 **Solution:**
+
 ```bash
 # Check if databases are running
 docker ps | grep db
@@ -389,6 +397,7 @@ docker exec -it account-db /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P You
 **Problem:** Port already in use
 
 **Solution:**
+
 ```bash
 # Find process using port
 lsof -i :5001
@@ -404,6 +413,7 @@ kill -9 <PID>
 **Problem:** .NET build failures
 
 **Solution:**
+
 ```bash
 # Clean and restore
 dotnet clean
@@ -421,6 +431,7 @@ dotnet build --no-restore
 **Problem:** Docker build or run failures
 
 **Solution:**
+
 ```bash
 # Clean Docker
 docker system prune -a
@@ -437,6 +448,7 @@ docker-compose logs <service-name>
 #### 1. Slow Database Queries
 
 **Solution:**
+
 - Add database indexes
 - Optimize LINQ queries
 - Use async/await properly
@@ -445,6 +457,7 @@ docker-compose logs <service-name>
 #### 2. Memory Issues
 
 **Solution:**
+
 - Check for memory leaks
 - Optimize object disposal
 - Use connection pooling
@@ -500,7 +513,7 @@ ORDER BY avg_elapsed_time DESC;
 
 ```sql
 -- Check active connections
-SELECT 
+SELECT
     session_id,
     login_name,
     host_name,
@@ -564,17 +577,20 @@ make microservices-start
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [.NET 10 Documentation](https://docs.microsoft.com/en-us/dotnet/)
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
 - [MediatR](https://github.com/jbogard/MediatR)
 - [Ocelot API Gateway](https://ocelot.readthedocs.io/)
 
 ### Tools
+
 - [Postman](https://www.postman.com/) - API testing
 - [DBeaver](https://dbeaver.io/) - Database management
 - [RedisInsight](https://redis.com/redis-enterprise/redis-insight/) - Redis management
 
 ### Learning Resources
+
 - [Microservices Patterns](https://microservices.io/)
 - [Domain-Driven Design](https://domainlanguage.com/ddd/)
 - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)

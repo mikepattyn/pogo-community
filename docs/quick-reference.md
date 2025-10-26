@@ -135,20 +135,20 @@ kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup accoun
 
 ## 📋 Service Ports
 
-| Service | Port | Type | Access |
-|---------|------|------|--------|
-| Account Service | 5001 | ClusterIP | Internal |
-| Player Service | 5002 | ClusterIP | Internal |
-| Location Service | 5003 | ClusterIP | Internal |
-| Gym Service | 5004 | ClusterIP | Internal |
-| Raid Service | 5005 | ClusterIP | Internal |
-| Bot BFF | 6001 | ClusterIP | Port Forward |
-| App BFF | 6002 | ClusterIP | Port Forward |
-| Discord Bot | 2000 | ClusterIP | Port Forward |
-| Mobile App | 3000 | NodePort | minikube service |
-| CockroachDB | 26257 | ClusterIP | Internal |
-| Prometheus | 9090 | NodePort | Port Forward |
-| Grafana | 3000 | NodePort | Port Forward |
+| Service          | Port  | Type      | Access           |
+| ---------------- | ----- | --------- | ---------------- |
+| Account Service  | 5001  | ClusterIP | Internal         |
+| Player Service   | 5002  | ClusterIP | Internal         |
+| Location Service | 5003  | ClusterIP | Internal         |
+| Gym Service      | 5004  | ClusterIP | Internal         |
+| Raid Service     | 5005  | ClusterIP | Internal         |
+| Bot BFF          | 6001  | ClusterIP | Port Forward     |
+| App BFF          | 6002  | ClusterIP | Port Forward     |
+| Discord Bot      | 2000  | ClusterIP | Port Forward     |
+| Mobile App       | 3000  | NodePort  | minikube service |
+| CockroachDB      | 26257 | ClusterIP | Internal         |
+| Prometheus       | 9090  | NodePort  | Port Forward     |
+| Grafana          | 3000  | NodePort  | Port Forward     |
 
 ## 🎯 Health Check Endpoints
 

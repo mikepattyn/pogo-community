@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/account/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -22,7 +22,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/player/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -34,7 +34,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/location/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -46,7 +46,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/gym/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -58,7 +58,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/raid/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -70,7 +70,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/ocr/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST" ]
+      "UpstreamHttpMethod": ["GET", "POST"]
     }
   ],
   "GlobalConfiguration": {

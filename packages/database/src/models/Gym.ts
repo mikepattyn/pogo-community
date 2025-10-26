@@ -24,4 +24,3 @@ export class Gym implements IGym {
     this.UpdatedAt = data.UpdatedAt;
   }
 }
-

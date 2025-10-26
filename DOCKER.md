@@ -22,6 +22,7 @@ cp .env.example .env
 ```
 
 Edit `.env` and provide values for:
+
 - Database passwords (MySQL and MSSQL)
 - JWT secret key
 - Discord bot token
@@ -30,6 +31,7 @@ Edit `.env` and provide values for:
 ### 2. Build and Start Services
 
 **Using Make (Recommended):**
+
 ```bash
 # Build and start all services
 make docker-up-build
@@ -44,6 +46,7 @@ make docker-logs-app
 ```
 
 **Using Docker Compose directly:**
+
 ```bash
 # Build all images and start services
 docker-compose up -d --build
@@ -66,6 +69,7 @@ docker-compose logs -f api
 ### 4. Check Service Health
 
 **Using Make:**
+
 ```bash
 # Check status of all services
 make docker-status
@@ -75,6 +79,7 @@ make docker-ps
 ```
 
 **Using Docker Compose:**
+
 ```bash
 # Check status of all services
 docker-compose ps
@@ -84,13 +89,13 @@ docker-compose ps
 
 ### Services
 
-| Service | Description | Port Mapping | Database |
-|---------|-------------|--------------|----------|
-| `api` | REST API Backend | 1000 → 8080 | MySQL |
-| `bot` | Discord Bot | 2000 → 2000 | MSSQL |
-| `app` | Web Application | 3000 → 3000 | - |
-| `mysql` | MySQL Database | 4000 → 3306 | - |
-| `mssql` | MSSQL Database | 5000 → 1433 | - |
+| Service | Description      | Port Mapping | Database |
+| ------- | ---------------- | ------------ | -------- |
+| `api`   | REST API Backend | 1000 → 8080  | MySQL    |
+| `bot`   | Discord Bot      | 2000 → 2000  | MSSQL    |
+| `app`   | Web Application  | 3000 → 3000  | -        |
+| `mysql` | MySQL Database   | 4000 → 3306  | -        |
+| `mssql` | MSSQL Database   | 5000 → 1433  | -        |
 
 ### Volumes
 
@@ -143,6 +148,7 @@ The Makefile provides convenient shortcuts for all Docker operations. Run `make 
 #### Starting and Stopping
 
 **Using Make:**
+
 ```bash
 # Start all services
 make docker-up
@@ -166,6 +172,7 @@ make docker-restart-app
 ```
 
 **Using Docker Compose:**
+
 ```bash
 # Start all services
 docker-compose up -d
@@ -183,6 +190,7 @@ docker-compose restart api
 #### Building
 
 **Using Make:**
+
 ```bash
 # Build all images
 make docker-build
@@ -196,6 +204,7 @@ make docker-build-mssql
 ```
 
 **Using Docker Compose:**
+
 ```bash
 # Rebuild all images
 docker-compose build
@@ -210,6 +219,7 @@ docker-compose build --no-cache
 #### Logs and Debugging
 
 **Using Make:**
+
 ```bash
 # View logs for all services
 make docker-logs
@@ -223,6 +233,7 @@ make docker-logs-mssql
 ```
 
 **Using Docker Compose:**
+
 ```bash
 # View logs for all services
 docker-compose logs -f
@@ -240,6 +251,7 @@ docker-compose exec api sh
 #### Database Access
 
 **Using Make:**
+
 ```bash
 # Connect to MySQL database (interactive)
 make docker-db-mysql
@@ -249,6 +261,7 @@ make docker-db-mssql
 ```
 
 **From Host Machine:**
+
 ```bash
 # Access MySQL database
 mysql -h localhost -P 4000 -u root -p
@@ -259,6 +272,7 @@ sqlcmd -S localhost,5000 -U sa -P 'YOUR_SA_PASSWORD'
 ```
 
 **Using Docker Compose:**
+
 ```bash
 # Access MySQL database (from container)
 docker-compose exec mysql mysql -u root -p
@@ -270,6 +284,7 @@ docker-compose exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa
 #### Cleanup
 
 **Using Make:**
+
 ```bash
 # Remove stopped containers and unused images
 make docker-clean
@@ -279,6 +294,7 @@ make docker-clean-all
 ```
 
 **Using Docker Compose:**
+
 ```bash
 # Remove stopped containers
 docker-compose down --remove-orphans
@@ -292,6 +308,7 @@ docker system prune -f
 ### Services Won't Start
 
 1. Check if ports are already in use:
+
    ```bash
    lsof -i :1000  # API
    lsof -i :2000  # Bot
@@ -299,6 +316,7 @@ docker system prune -f
    ```
 
 2. Check service logs:
+
    ```bash
    docker-compose logs api
    docker-compose logs bot
@@ -312,21 +330,24 @@ docker system prune -f
 ### Database Connection Issues
 
 1. Ensure databases are healthy:
+
    ```bash
    docker-compose ps
    ```
 
 2. Check database logs:
+
    ```bash
    docker-compose logs mysql
    docker-compose logs mssql
    ```
 
 3. Verify database initialization:
+
    ```bash
    # MySQL
    docker-compose exec mysql mysql -u root -p -e "SHOW DATABASES;"
-   
+
    # MSSQL
    docker-compose exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YOUR_SA_PASSWORD' -Q "SELECT name FROM sys.databases"
    ```
@@ -391,4 +412,3 @@ If you encounter issues:
 2. Verify configuration: `docker-compose config`
 3. Review this documentation
 4. Check application-specific README files in each app directory
-

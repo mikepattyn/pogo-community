@@ -24,4 +24,3 @@ export class Location implements ILocation {
     this.CreatedAt = data.CreatedAt;
   }
 }
-
