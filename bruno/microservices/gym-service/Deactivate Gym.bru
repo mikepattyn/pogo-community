@@ -1,0 +1,21 @@
+meta {
+  name: Deactivate Gym
+  type: http
+}
+
+delete {
+  url: {{gym_service_url}}/api/gym/1
+}
+
+docs {
+  # Deactivate Gym
+
+  Deactivates a gym (soft delete).
+
+  ## Path Parameters
+  - `id`: Gym ID to deactivate
+
+  ## Response
+  Returns 204 No Content on success.
+}
+

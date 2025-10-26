@@ -1,0 +1,25 @@
+meta {
+  name: Search Gyms Nearby
+  type: http
+}
+
+get {
+  url: {{gym_service_url}}/api/gym/search/nearby?latitude=40.785091&longitude=-73.968285&radiusKm=10.0&activeOnly=true&maxResults=50
+}
+
+docs {
+  # Search Gyms Nearby
+
+  Searches for gyms near a specific point using coordinates.
+
+  ## Query Parameters
+  - `latitude`: Latitude coordinate
+  - `longitude`: Longitude coordinate
+  - `radiusKm`: Search radius in kilometers (default: 10.0)
+  - `activeOnly`: Return only active gyms (default: true)
+  - `maxResults`: Maximum number of results (default: 50)
+
+  ## Response
+  Returns collection of gyms with distance information.
+}
+

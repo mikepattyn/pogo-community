@@ -1,0 +1,38 @@
+meta {
+  name: Create Gym
+  type: http
+}
+
+post {
+  url: {{gym_service_url}}/api/gym
+  body: json
+}
+
+body:json {
+  {
+    "name": "Central Park Gym",
+    "locationId": 1,
+    "level": 6,
+    "controllingTeam": "Valor",
+    "motivationLevel": 100,
+    "notes": "Always active with raids"
+  }
+}
+
+docs {
+  # Create Gym
+
+  Creates a new gym at a location.
+
+  ## Request Body
+  - `name`: Gym name
+  - `locationId`: Associated location ID
+  - `level`: Gym level 1-6
+  - `controllingTeam`: Team controlling the gym (Valor, Mystic, Instinct, null)
+  - `motivationLevel`: Current motivation level 0-100
+  - `notes`: Additional notes
+
+  ## Response
+  Returns the created gym information including gym ID.
+}
+

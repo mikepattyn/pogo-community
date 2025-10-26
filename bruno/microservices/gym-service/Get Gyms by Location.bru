@@ -1,0 +1,24 @@
+meta {
+  name: Get Gyms by Location
+  type: http
+}
+
+get {
+  url: {{gym_service_url}}/api/gym/by-location/1?activeOnly=true
+}
+
+docs {
+  # Get Gyms by Location
+
+  Retrieves gyms at a specific location.
+
+  ## Path Parameters
+  - `locationId`: Location ID to get gyms for
+
+  ## Query Parameters
+  - `activeOnly`: Return only active gyms (default: true)
+
+  ## Response
+  Returns collection of gyms at the location.
+}
+

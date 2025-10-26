@@ -1,0 +1,26 @@
+meta {
+  name: Get Gyms by Team
+  type: http
+}
+
+get {
+  url: {{gym_service_url}}/api/gym/by-team/Valor?activeOnly=true&pageNumber=1&pageSize=50
+}
+
+docs {
+  # Get Gyms by Team
+
+  Retrieves gyms controlled by a specific team.
+
+  ## Path Parameters
+  - `team`: Team name (Valor, Mystic, Instinct)
+
+  ## Query Parameters
+  - `activeOnly`: Return only active gyms (default: true)
+  - `pageNumber`: Page number (default: 1)
+  - `pageSize`: Results per page (default: 50)
+
+  ## Response
+  Returns collection of gyms controlled by the team.
+}
+

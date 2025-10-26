@@ -1,0 +1,35 @@
+meta {
+  name: Update Gym Status
+  type: http
+}
+
+put {
+  url: {{gym_service_url}}/api/gym/1/status
+  body: json
+}
+
+body:json {
+  {
+    "isUnderAttack": true,
+    "isInRaid": false,
+    "motivationLevel": 75
+  }
+}
+
+docs {
+  # Update Gym Status
+
+  Updates gym status information like attack state, raid state, and motivation.
+
+  ## Path Parameters
+  - `id`: Gym ID to update
+
+  ## Request Body
+  - `isUnderAttack`: Whether gym is under attack
+  - `isInRaid`: Whether gym is in a raid
+  - `motivationLevel`: Current motivation level
+
+  ## Response
+  Returns success.
+}
+

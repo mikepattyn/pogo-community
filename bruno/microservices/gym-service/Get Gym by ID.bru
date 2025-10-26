@@ -1,0 +1,21 @@
+meta {
+  name: Get Gym by ID
+  type: http
+}
+
+get {
+  url: {{gym_service_url}}/api/gym/1
+}
+
+docs {
+  # Get Gym by ID
+
+  Retrieves gym information by ID.
+
+  ## Path Parameters
+  - `id`: Gym ID to retrieve
+
+  ## Response
+  Returns complete gym information.
+}
+
