@@ -2,7 +2,7 @@ using Bot.Service.Application.DTOs;
 using Bot.Service.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Bot.Service.Application.Services;
+namespace Bot.Service.Infrastructure.Clients;
 
 public class BotBffClient : IBotBffClient
 {
