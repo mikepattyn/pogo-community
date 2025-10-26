@@ -17,8 +17,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Add HttpClient for fetching Swagger specs
-builder.Services.AddHttpClient();
+// Add HttpClient for fetching Swagger specs with timeout configuration
+builder.Services.AddHttpClient()
+    .ConfigureHttpClientDefaults(b => 
+    {
+        b.ConfigureHttpClient(client => 
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+    });
 
 // Add health checks using custom extension
 builder.Services.AddHealthChecks("");
@@ -103,7 +110,7 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
         var response = await client.SendAsync(requestMessage);
 
         context.Response.StatusCode = (int)response.StatusCode;
-        
+
         // Copy response headers
         foreach (var header in response.Headers)
         {
@@ -112,7 +119,7 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
                 context.Response.Headers[header.Key] = header.Value.ToArray();
             }
         }
-        
+
         // Copy content headers individually
         foreach (var header in response.Content.Headers)
         {
