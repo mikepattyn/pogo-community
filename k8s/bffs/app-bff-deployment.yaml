@@ -34,7 +34,7 @@ spec:
           value: "http://+:6002"
         livenessProbe:
           httpGet:
-            path: /health
+            path: /health/live
             port: 6002
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -42,7 +42,7 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /health
+            path: /health/ready
             port: 6002
           initialDelaySeconds: 10
           periodSeconds: 5

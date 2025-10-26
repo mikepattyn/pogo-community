@@ -12,6 +12,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add health checks using custom extension
+builder.Services.AddHealthChecks("");
+
 // Add CORS for Bot
 builder.Services.AddCors(options =>
 {
@@ -23,9 +26,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
-
-// Add health checks
-builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -50,12 +50,15 @@ app.UseCors("BotPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map health checks BEFORE Ocelot
+app.MapHealthChecks();
+
 app.MapControllers();
 
-// Map health checks
-app.MapHealthChecks("/health");
-
-// Use Ocelot
-await app.UseOcelot();
+// Use Ocelot only for non-health check paths
+app.MapWhen(context => !context.Request.Path.StartsWithSegments("/health"), appBuilder =>
+{
+    appBuilder.UseOcelot();
+});
 
 app.Run();
