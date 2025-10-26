@@ -19,9 +19,9 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add HttpClient for fetching Swagger specs with timeout configuration
 builder.Services.AddHttpClient()
-    .ConfigureHttpClientDefaults(b => 
+    .ConfigureHttpClientDefaults(b =>
     {
-        b.ConfigureHttpClient(client => 
+        b.ConfigureHttpClient(client =>
         {
             client.Timeout = TimeSpan.FromSeconds(30);
         });
@@ -110,24 +110,26 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
         var response = await client.SendAsync(requestMessage);
 
         context.Response.StatusCode = (int)response.StatusCode;
-
-        // Copy response headers
+        
+        // Copy response headers - preserve CORS and other important headers
         foreach (var header in response.Headers)
         {
-            if (!header.Key.StartsWith("Content-", StringComparison.OrdinalIgnoreCase))
+            // Skip Transfer-Encoding as it's handled by ASP.NET Core
+            if (!header.Key.Equals("Transfer-Encoding", StringComparison.OrdinalIgnoreCase) &&
+                !header.Key.StartsWith("Content-", StringComparison.OrdinalIgnoreCase))
             {
                 context.Response.Headers[header.Key] = header.Value.ToArray();
             }
         }
-
+        
         // Copy content headers individually
         foreach (var header in response.Content.Headers)
         {
             if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
             {
-                context.Response.ContentType = response.Content.Headers.ContentType?.MediaType ?? "application/json";
+                context.Response.ContentType = response.Content.Headers.ContentType?.ToString() ?? "application/json";
             }
-            else if (!header.Key.StartsWith("Content-Length", StringComparison.OrdinalIgnoreCase))
+            else if (!header.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase))
             {
                 context.Response.Headers[header.Key] = header.Value.ToArray();
             }
