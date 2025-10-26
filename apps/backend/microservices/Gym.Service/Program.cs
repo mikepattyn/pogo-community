@@ -79,9 +79,6 @@ app.UseCors("AllowAll");
 // Prometheus metrics
 app.UseHttpMetrics();
 
-// Add health check middleware
-app.UseHealthChecks("/health");
-
 app.MapControllers();
 app.MapMetrics();
 

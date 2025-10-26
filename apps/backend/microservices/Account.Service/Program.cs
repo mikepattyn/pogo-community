@@ -81,9 +81,6 @@ app.UseHttpMetrics();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Add health check middleware
-app.UseHealthChecks("/health");
-
 app.MapControllers();
 app.MapMetrics();
 
