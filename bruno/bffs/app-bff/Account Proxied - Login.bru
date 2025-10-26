@@ -1,0 +1,25 @@
+meta {
+  name: Account Proxied - Login
+  type: http
+}
+
+post {
+  url: {{app_bff_url}}/api/account/login
+  body: json
+}
+
+body:json {
+  {
+    "email": "player@example.com",
+    "password": "SecurePassword123!"
+  }
+}
+
+docs {
+  # Account Proxied - Login
+
+  Logs in a user through App BFF proxy.
+
+  The App BFF routes `/api/account/{everything}` to Account Service at port 5001.
+}
+

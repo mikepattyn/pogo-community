@@ -1,0 +1,17 @@
+meta {
+  name: Raid Proxied - Get Active Raids
+  type: http
+}
+
+get {
+  url: {{bot_bff_url}}/api/raid/active?pageNumber=1&pageSize=50
+}
+
+docs {
+  # Raid Proxied - Get Active Raids
+
+  Gets active raids through Bot BFF proxy.
+
+  The Bot BFF routes `/api/raid/{everything}` to Raid Service at port 5005.
+}
+

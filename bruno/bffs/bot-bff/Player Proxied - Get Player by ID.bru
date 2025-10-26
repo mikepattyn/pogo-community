@@ -1,0 +1,17 @@
+meta {
+  name: Player Proxied - Get Player by ID
+  type: http
+}
+
+get {
+  url: {{bot_bff_url}}/api/player/1
+}
+
+docs {
+  # Player Proxied - Get Player by ID
+
+  Gets player by ID through Bot BFF proxy.
+
+  The Bot BFF routes `/api/player/{everything}` to Player Service at port 5002.
+}
+

@@ -1,0 +1,17 @@
+meta {
+  name: Location Proxied - Search Nearby
+  type: http
+}
+
+get {
+  url: {{app_bff_url}}/api/location/search/nearby?latitude=40.785091&longitude=-73.968285&radiusKm=10.0
+}
+
+docs {
+  # Location Proxied - Search Nearby
+
+  Searches for nearby locations through App BFF proxy.
+
+  The App BFF routes `/api/location/{everything}` to Location Service at port 5003.
+}
+

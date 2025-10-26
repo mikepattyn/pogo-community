@@ -1,0 +1,26 @@
+meta {
+  name: Account Proxied - Create Account
+  type: http
+}
+
+post {
+  url: {{bot_bff_url}}/api/account
+  body: json
+}
+
+body:json {
+  {
+    "email": "player@example.com",
+    "password": "SecurePassword123!",
+    "playerId": 1
+  }
+}
+
+docs {
+  # Account Proxied - Create Account
+
+  Creates a new account through Bot BFF proxy.
+
+  The Bot BFF routes `/api/account/{everything}` to Account Service at port 5001.
+}
+

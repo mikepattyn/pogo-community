@@ -1,0 +1,17 @@
+meta {
+  name: Gym Proxied - Get Gyms by Location
+  type: http
+}
+
+get {
+  url: {{app_bff_url}}/api/gym/by-location/1?activeOnly=true
+}
+
+docs {
+  # Gym Proxied - Get Gyms by Location
+
+  Gets gyms by location through App BFF proxy.
+
+  The App BFF routes `/api/gym/{everything}` to Gym Service at port 5004.
+}
+
