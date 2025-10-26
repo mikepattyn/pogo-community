@@ -480,17 +480,18 @@ kubectl port-forward service/grafana 3001:3000 -n pogo-system
 # Build and deploy
 make k8s-build          # Build all Docker images
 make k8s-deploy         # Deploy to Kubernetes
-make k8s-restart        # Restart all deployments
+make k8s-teardown       # Remove all resources
 
 # Monitoring
 make k8s-status         # Show pod status
 make k8s-logs           # View logs
-make k8s-health         # Check health endpoints
+make k8s-validate       # Validate deployment
 
-# Cleanup
-make k8s-clean          # Remove all resources
-make k8s-teardown       # Complete cleanup
+# Debugging
+make k8s-shell POD=<pod-name>  # Open shell in pod
 ```
+
+📖 **For detailed Kubernetes documentation, see [Kubernetes Deployment Guide](docs/kubernetes.md)**
 
 ### 🏥 Health Checks
 
@@ -543,6 +544,9 @@ This project has been successfully migrated from a monolithic Node.js API to a m
 
 ## 📚 Documentation
 
+- [Kubernetes Deployment Guide](docs/kubernetes.md) - Comprehensive Kubernetes deployment guide
+- [Troubleshooting Guide](docs/troubleshooting.md) - Common issues and solutions
+- [Quick Reference](docs/quick-reference.md) - Quick command reference
 - [Architecture Overview](docs/architecture.md) - Detailed architecture documentation
 - [API Documentation](docs/api.md) - Complete API reference
 - [Deployment Guide](docs/deployment.md) - Production deployment instructions

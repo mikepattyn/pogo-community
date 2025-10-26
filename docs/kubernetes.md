@@ -1,327 +1,414 @@
-# 🚀 POGO Community - Kubernetes Deployment Guide
+# POGO Community - Kubernetes Deployment Guide
 
-## Overview
+This guide provides comprehensive documentation for deploying and managing the POGO Community platform on Kubernetes using Minikube.
 
-This guide covers deploying the POGO Community platform to Kubernetes using Minikube. The platform has been migrated from Docker Compose to a full Kubernetes deployment with monitoring, persistent storage, and production-ready configurations.
+## 📋 Table of Contents
 
-## 🏗️ Architecture
+- [Prerequisites](#prerequisites)
+- [Architecture Overview](#architecture-overview)
+- [Quick Start](#quick-start)
+- [Detailed Deployment](#detailed-deployment)
+- [Service Management](#service-management)
+- [Monitoring & Observability](#monitoring--observability)
+- [Troubleshooting](#troubleshooting)
+- [Production Considerations](#production-considerations)
 
-### Kubernetes Components
+## Prerequisites
+
+### Required Software
+
+- **Minikube** v1.37.0+ - Local Kubernetes cluster
+- **kubectl** v1.28+ - Kubernetes command-line tool
+- **Docker** v24+ - Container runtime
+- **Make** - Build automation tool
+
+### System Requirements
+
+- **Memory**: Minimum 8GB RAM (16GB recommended)
+- **CPU**: Minimum 4 cores (8 cores recommended)
+- **Storage**: Minimum 20GB free disk space
+- **OS**: macOS, Linux, or Windows with WSL2
+
+### Verify Installation
+
+```bash
+# Check Minikube version
+minikube version
+
+# Check kubectl version
+kubectl version --client
+
+# Check Docker version
+docker --version
+
+# Check Make version
+make --version
+```
+
+## Architecture Overview
+
+### System Architecture
 
 ```mermaid
 graph TB
-    subgraph "Client Layer"
-        User[Users]
-        Bot[Discord Bot]
+    subgraph "External Access"
+        Discord[Discord API]
+        Mobile[Mobile App Users]
     end
-
-    subgraph "Ingress Layer"
-        Ingress[NGINX Ingress]
+    
+    subgraph "Kubernetes Cluster (pogo-system namespace)"
+        subgraph "Frontend Layer"
+            Bot[Discord Bot<br/>Port 2000]
+            App[Mobile App<br/>Port 3000<br/>NodePort 30000]
+        end
+        
+        subgraph "API Gateway Layer"
+            BotBFF[Bot BFF<br/>Port 6001<br/>Ocelot Gateway]
+            AppBFF[App BFF<br/>Port 6002<br/>Ocelot Gateway]
+        end
+        
+        subgraph "Microservices Layer"
+            Account[Account Service<br/>Port 5001<br/>Authentication]
+            Player[Player Service<br/>Port 5002<br/>User Management]
+            Location[Location Service<br/>Port 5003<br/>POI Management]
+            Gym[Gym Service<br/>Port 5004<br/>Gym Management]
+            Raid[Raid Service<br/>Port 5005<br/>Raid Management]
+        end
+        
+        subgraph "Data Layer"
+            CockroachDB[(CockroachDB<br/>Port 26257<br/>PostgreSQL Compatible)]
+        end
+        
+        subgraph "Monitoring Layer"
+            Prometheus[Prometheus<br/>Port 9090<br/>Metrics Collection]
+            Grafana[Grafana<br/>Port 3000<br/>Dashboards]
+        end
     end
-
-    subgraph "Frontend Layer"
-        App[Mobile App<br/>NodePort: 30000]
-        BotApp[Discord Bot<br/>ClusterIP]
-    end
-
-    subgraph "API Gateway Layer"
-        BotBFF[Bot BFF<br/>Port 6001]
-        AppBFF[App BFF<br/>Port 6002]
-    end
-
-    subgraph "Microservices Layer"
-        Account[Account Service<br/>Port 5001]
-        Player[Player Service<br/>Port 5002]
-        Location[Location Service<br/>Port 5003]
-        Gym[Gym Service<br/>Port 5004]
-        Raid[Raid Service<br/>Port 5005]
-    end
-
-    subgraph "Database Layer"
-        CockroachDB[(CockroachDB Cluster<br/>3 Replicas)]
-    end
-
-    subgraph "Monitoring Layer"
-        Prometheus[Prometheus<br/>NodePort: 30090]
-        Grafana[Grafana<br/>NodePort: 30030]
-    end
-
-    User --> Ingress
-    Bot --> BotApp
-    Ingress --> App
-    Ingress --> BotBFF
-    Ingress --> AppBFF
-    Ingress --> Grafana
-    Ingress --> Prometheus
-
-    BotApp --> BotBFF
+    
+    %% External connections
+    Discord --> Bot
+    Mobile --> App
+    
+    %% Frontend to BFF connections
+    Bot --> BotBFF
     App --> AppBFF
-
+    
+    %% BFF to Microservices connections
     BotBFF --> Account
     BotBFF --> Player
     BotBFF --> Location
     BotBFF --> Gym
     BotBFF --> Raid
-
+    
     AppBFF --> Account
     AppBFF --> Player
     AppBFF --> Location
     AppBFF --> Gym
     AppBFF --> Raid
-
+    
+    %% Microservices to Database connections
     Account --> CockroachDB
     Player --> CockroachDB
     Location --> CockroachDB
     Gym --> CockroachDB
     Raid --> CockroachDB
-
+    
+    %% Monitoring connections
     Prometheus --> Account
     Prometheus --> Player
     Prometheus --> Location
     Prometheus --> Gym
     Prometheus --> Raid
-    Prometheus --> CockroachDB
+    Prometheus --> BotBFF
+    Prometheus --> AppBFF
+    Grafana --> Prometheus
+    
+    %% Styling
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef gateway fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef microservice fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef database fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef monitoring fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class Bot,App frontend
+    class BotBFF,AppBFF gateway
+    class Account,Player,Location,Gym,Raid microservice
+    class CockroachDB database
+    class Prometheus,Grafana monitoring
 ```
 
-## 📋 Prerequisites
+### Component Overview
 
-### Required Software
+| Component | Type | Purpose | Port | External Access |
+|-----------|------|---------|------|------------------|
+| **Frontend Applications** |
+| Discord Bot | Deployment | Discord integration | 2000 | Port Forward |
+| Mobile App | Deployment | React Native web app | 3000 | NodePort 30000 |
+| **API Gateways** |
+| Bot BFF | Deployment | Bot API gateway | 6001 | Port Forward |
+| App BFF | Deployment | App API gateway | 6002 | Port Forward |
+| **Microservices** |
+| Account Service | Deployment | Authentication & users | 5001 | Internal |
+| Player Service | Deployment | Player management | 5002 | Internal |
+| Location Service | Deployment | POI management | 5003 | Internal |
+| Gym Service | Deployment | Gym management | 5004 | Internal |
+| Raid Service | Deployment | Raid management | 5005 | Internal |
+| **Database** |
+| CockroachDB | StatefulSet | PostgreSQL database | 26257 | Internal |
+| **Monitoring** |
+| Prometheus | Deployment | Metrics collection | 9090 | Port Forward |
+| Grafana | Deployment | Monitoring dashboards | 3000 | Port Forward |
 
-- **Minikube** - Local Kubernetes cluster
-- **kubectl** - Kubernetes command-line tool
-- **Docker** - Container runtime
-- **Git** - Version control
-
-### Installation
-
-#### macOS (using Homebrew)
-```bash
-# Install Minikube
-brew install minikube
-
-# Install kubectl
-brew install kubectl
-
-# Install Docker Desktop
-brew install --cask docker
-```
-
-#### Linux
-```bash
-# Install Minikube
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-
-# Install kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-```
-
-### Verify Installation
-```bash
-minikube version
-kubectl version --client
-docker --version
-```
-
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Start Minikube
+
 ```bash
 # Start Minikube with sufficient resources
-minikube start --memory=4096 --cpus=2
+minikube start --memory=8192 --cpus=4
 
-# Verify cluster is running
+# Enable required addons
+minikube addons enable ingress
+minikube addons enable metrics-server
+
+# Verify Minikube is running
 minikube status
 ```
 
 ### 2. Build and Deploy
+
 ```bash
 # Build all Docker images and load into Minikube
 make k8s-build
 
-# Deploy entire platform to Kubernetes
+# Deploy all services to Kubernetes
 make k8s-deploy
+
+# Validate deployment
+make k8s-validate
 ```
 
 ### 3. Access Applications
+
 ```bash
 # Get Minikube IP
-minikube ip
+MINIKUBE_IP=$(minikube ip)
+echo "Minikube IP: $MINIKUBE_IP"
 
 # Access applications
-# Mobile App: http://<minikube-ip>:30000
-# Grafana: http://<minikube-ip>:30030
-# Prometheus: http://<minikube-ip>:30090
+echo "Mobile App: http://$MINIKUBE_IP:30000"
+echo "Grafana: http://$MINIKUBE_IP:30030"
+echo "Prometheus: http://$MINIKUBE_IP:30090"
 ```
 
-## 📁 Directory Structure
+## Detailed Deployment
 
-```
-k8s/
-├── base/                    # Base Kubernetes resources
-│   ├── namespace.yaml       # Namespace definition
-│   └── ingress.yaml         # Ingress configuration
-├── config/                  # Configuration files
-│   ├── common-config.yaml   # Common environment variables
-│   ├── service-urls-config.yaml  # Service URLs
-│   ├── db-secrets.yaml      # Database secrets
-│   ├── jwt-secrets.yaml     # JWT secrets
-│   ├── discord-secrets.yaml # Discord bot secrets
-│   └── google-cloud-secrets.yaml # Google Cloud secrets
-├── databases/               # Database deployments
-│   ├── cockroachdb-statefulset.yaml
-│   ├── cockroachdb-service.yaml
-│   └── cockroachdb-init-job.yaml
-├── microservices/           # Microservice deployments
-│   ├── account-service-deployment.yaml
-│   ├── account-service-service.yaml
-│   ├── player-service-deployment.yaml
-│   ├── player-service-service.yaml
-│   ├── location-service-deployment.yaml
-│   ├── location-service-service.yaml
-│   ├── gym-service-deployment.yaml
-│   ├── gym-service-service.yaml
-│   ├── raid-service-deployment.yaml
-│   └── raid-service-service.yaml
-├── bffs/                    # BFF deployments
-│   ├── bot-bff-deployment.yaml
-│   ├── bot-bff-service.yaml
-│   ├── app-bff-deployment.yaml
-│   └── app-bff-service.yaml
-├── apps/                    # Frontend app deployments
-│   ├── bot-deployment.yaml
-│   ├── bot-service.yaml
-│   ├── app-deployment.yaml
-│   └── app-service.yaml
-├── monitoring/              # Monitoring stack
-│   ├── prometheus-configmap.yaml
-│   ├── prometheus-rbac.yaml
-│   ├── prometheus-deployment.yaml
-│   ├── prometheus-service.yaml
-│   ├── grafana-configmap.yaml
-│   ├── grafana-dashboards-configmap.yaml
-│   ├── grafana-deployment.yaml
-│   └── grafana-service.yaml
-├── build-images.sh          # Image build script
-├── deploy.sh               # Deployment script
-└── teardown.sh             # Teardown script
-```
+### Step-by-Step Deployment
 
-## 🔧 Configuration
+#### 1. Environment Setup
 
-### Environment Variables
-
-All configuration is managed through Kubernetes ConfigMaps and Secrets:
-
-#### Common Configuration (`common-config.yaml`)
-- `ASPNETCORE_ENVIRONMENT`: Production
-- `NODE_ENV`: production
-- `DB_HOST`: cockroachdb-public
-- `DB_PORT`: 26257
-- `DB_SSL_MODE`: disable
-
-#### Service URLs (`service-urls-config.yaml`)
-- Microservice internal URLs
-- BFF URLs
-- Inter-service communication URLs
-
-#### Secrets
-- **Database**: CockroachDB credentials
-- **JWT**: Token signing keys
-- **Discord**: Bot token
-- **Google Cloud**: Project credentials
-
-### Database Configuration
-
-CockroachDB is deployed as a 3-replica StatefulSet with:
-- **Storage**: 5Gi per replica (15Gi total)
-- **Memory**: 1Gi per replica
-- **CPU**: 500m per replica
-- **Persistence**: PersistentVolumeClaims
-
-Connection string format:
-```
-Host=cockroachdb-public;Port=26257;Database={DbName};Username=root;SslMode=Disable
-```
-
-## 📊 Monitoring
-
-### Prometheus
-- **URL**: `http://<minikube-ip>:30090`
-- **Scrapes**: All microservices, CockroachDB, Kubernetes metrics
-- **Retention**: 15 days (configurable)
-
-### Grafana
-- **URL**: `http://<minikube-ip>:30030`
-- **Username**: admin
-- **Password**: admin
-- **Dashboards**: Pre-configured for microservices and CockroachDB
-
-### Metrics Endpoints
-All microservices expose Prometheus metrics at `/metrics`:
-- HTTP request metrics
-- Database connection metrics
-- Custom business metrics
-
-## 🛠️ Management Commands
-
-### Using Makefile
 ```bash
-# Show all available commands
-make k8s
+# Clone repository
+git clone <repository-url>
+cd pogo
 
-# Build and load images
+# Verify prerequisites
+make k8s  # Shows available commands and prerequisites
+```
+
+#### 2. Build Images
+
+```bash
+# Build all Docker images
 make k8s-build
 
-# Deploy platform
+# Verify images are loaded
+eval $(minikube docker-env)
+docker images | grep pogo
+```
+
+#### 3. Deploy Services
+
+```bash
+# Deploy all services
 make k8s-deploy
 
-# Check status
-make k8s-status
-
-# View logs
-make k8s-logs
-
-# Open shell in pod
-make k8s-shell POD=account-service-xxx
-
-# Teardown platform
-make k8s-teardown
+# Monitor deployment progress
+kubectl get pods -n pogo-system -w
 ```
 
-### Using kubectl
+#### 4. Verify Deployment
+
 ```bash
-# Check pod status
+# Check all components
+make k8s-validate
+
+# Check specific services
+kubectl get pods -n pogo-system
+kubectl get services -n pogo-system
+kubectl get ingress -n pogo-system
+```
+
+### Manual Deployment Steps
+
+If you prefer manual deployment:
+
+```bash
+# 1. Create namespace
+kubectl apply -f k8s/base/namespace.yaml
+
+# 2. Deploy database
+kubectl apply -f k8s/databases/
+
+# 3. Wait for database to be ready
+kubectl wait --for=condition=ready pod -l app=cockroachdb -n pogo-system --timeout=300s
+
+# 4. Deploy microservices
+kubectl apply -f k8s/microservices/
+
+# 5. Deploy BFFs
+kubectl apply -f k8s/bffs/
+
+# 6. Deploy frontend apps
+kubectl apply -f k8s/apps/
+
+# 7. Deploy monitoring
+kubectl apply -f k8s/monitoring/
+
+# 8. Deploy ingress
+kubectl apply -f k8s/base/ingress.yaml
+```
+
+## Service Management
+
+### Available Commands
+
+```bash
+# Build and Deploy
+make k8s-build          # Build all Docker images
+make k8s-deploy         # Deploy to Kubernetes
+make k8s-teardown       # Remove all resources
+
+# Monitoring
+make k8s-status         # Show pod status
+make k8s-logs           # View logs
+make k8s-validate       # Validate deployment
+
+# Debugging
+make k8s-shell POD=<pod-name>  # Open shell in pod
+```
+
+### Service Status
+
+```bash
+# Check all pods
 kubectl get pods -n pogo-system
 
-# Check services
-kubectl get services -n pogo-system
+# Check specific service
+kubectl get pods -l app=account-service -n pogo-system
 
-# View logs
-kubectl logs -f deployment/account-service -n pogo-system
+# Check service endpoints
+kubectl get endpoints -n pogo-system
 
-# Port forward for debugging
-kubectl port-forward service/account-service 5001:5001 -n pogo-system
+# Check persistent volumes
+kubectl get pvc -n pogo-system
 ```
 
-## 🔍 Troubleshooting
+### Scaling Services
+
+```bash
+# Scale microservice
+kubectl scale deployment account-service --replicas=3 -n pogo-system
+
+# Scale BFF
+kubectl scale deployment bot-bff --replicas=2 -n pogo-system
+
+# Check scaling status
+kubectl get pods -l app=account-service -n pogo-system
+```
+
+### Rolling Updates
+
+```bash
+# Update deployment
+kubectl set image deployment/account-service account-service=pogo/account-service:v2.0 -n pogo-system
+
+# Check rollout status
+kubectl rollout status deployment/account-service -n pogo-system
+
+# Rollback if needed
+kubectl rollout undo deployment/account-service -n pogo-system
+```
+
+## Monitoring & Observability
+
+### Health Checks
+
+All services include comprehensive health checks:
+
+- **Readiness Probe**: `/health/ready` - Service is ready to accept traffic
+- **Liveness Probe**: `/health/live` - Service is running and healthy
+- **Custom Health Checks**: Database connectivity and external service checks
+
+### Prometheus Metrics
+
+```bash
+# Access Prometheus
+kubectl port-forward service/prometheus 9090:9090 -n pogo-system
+
+# Open in browser
+open http://localhost:9090
+
+# Query metrics
+curl http://localhost:9090/api/v1/query?query=up
+```
+
+### Grafana Dashboards
+
+```bash
+# Access Grafana
+kubectl port-forward service/grafana 3000:3000 -n pogo-system
+
+# Open in browser
+open http://localhost:3000
+
+# Login credentials
+# Username: admin
+# Password: admin
+```
+
+### Log Management
+
+```bash
+# View all logs
+make k8s-logs
+
+# View specific service logs
+kubectl logs -l app=account-service -n pogo-system --tail=100
+
+# Follow logs in real-time
+kubectl logs -l app=account-service -n pogo-system -f
+```
+
+## Troubleshooting
 
 ### Common Issues
 
 #### 1. Pods Not Starting
+
 ```bash
 # Check pod status
 kubectl get pods -n pogo-system
 
-# Describe pod for details
+# Check pod events
 kubectl describe pod <pod-name> -n pogo-system
 
-# Check logs
+# Check pod logs
 kubectl logs <pod-name> -n pogo-system
 ```
 
 #### 2. Database Connection Issues
+
 ```bash
 # Check CockroachDB status
 kubectl get pods -l app=cockroachdb -n pogo-system
@@ -329,166 +416,111 @@ kubectl get pods -l app=cockroachdb -n pogo-system
 # Check database logs
 kubectl logs -l app=cockroachdb -n pogo-system
 
-# Connect to database
-kubectl exec -it cockroachdb-0 -n pogo-system -- /cockroach/cockroach sql --insecure
+# Test database connectivity
+kubectl exec -it cockroachdb-0 -n pogo-system -- cockroach sql --insecure
 ```
 
 #### 3. Service Discovery Issues
+
 ```bash
 # Check service endpoints
 kubectl get endpoints -n pogo-system
 
-# Test service connectivity
-kubectl run test-pod --image=busybox -it --rm -- nslookup account-service.pogo-system.svc.cluster.local
+# Test DNS resolution
+kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup account-service.pogo-system.svc.cluster.local
+
+# Check service connectivity
+kubectl run test-pod --image=curlimages/curl --rm -it --restart=Never -- curl http://account-service.pogo-system.svc.cluster.local:5001/health/ready
 ```
 
-#### 4. Image Pull Issues
-```bash
-# Check if images are loaded
-eval $(minikube docker-env)
-docker images | grep pogo
+#### 4. Resource Constraints
 
-# Rebuild and load images
-make k8s-build
+```bash
+# Check resource usage
+kubectl top pods -n pogo-system
+kubectl top nodes
+
+# Check resource limits
+kubectl describe pod <pod-name> -n pogo-system | grep -A 5 "Limits:"
 ```
 
 ### Debugging Commands
 
 ```bash
-# Get all resources
-kubectl get all -n pogo-system
+# Get detailed pod information
+kubectl describe pod <pod-name> -n pogo-system
 
-# Check events
-kubectl get events -n pogo-system --sort-by='.lastTimestamp'
+# Check service configuration
+kubectl describe service <service-name> -n pogo-system
 
-# Check resource usage
-kubectl top pods -n pogo-system
-kubectl top nodes
+# Check ingress configuration
+kubectl describe ingress pogo-ingress -n pogo-system
 
-# Check persistent volumes
-kubectl get pv,pvc -n pogo-system
+# Check persistent volume claims
+kubectl describe pvc <pvc-name> -n pogo-system
 ```
 
-## 🔄 Scaling
+### Log Analysis
 
-### Horizontal Pod Autoscaling
-```yaml
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: account-service-hpa
-  namespace: pogo-system
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: account-service
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-```
-
-### Manual Scaling
 ```bash
-# Scale microservice
-kubectl scale deployment account-service --replicas=5 -n pogo-system
+# Search for errors
+kubectl logs -l app=account-service -n pogo-system | grep -i error
 
-# Scale BFF
-kubectl scale deployment bot-bff --replicas=3 -n pogo-system
+# Search for specific patterns
+kubectl logs -l app=account-service -n pogo-system | grep "connection"
+
+# Get logs from all containers
+kubectl logs -l app=account-service -n pogo-system --all-containers=true
 ```
 
-## 🔒 Security
+## Production Considerations
 
-### Network Policies
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: microservices-netpol
-  namespace: pogo-system
-spec:
-  podSelector:
-    matchLabels:
-      tier: microservice
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          tier: gateway
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: cockroachdb
+### Security
+
+- **Secrets Management**: Use Kubernetes secrets for sensitive data
+- **Network Policies**: Implement network policies for service isolation
+- **RBAC**: Configure role-based access control
+- **Image Security**: Use trusted base images and scan for vulnerabilities
+
+### Performance
+
+- **Resource Limits**: Set appropriate CPU and memory limits
+- **Horizontal Pod Autoscaling**: Implement HPA for automatic scaling
+- **Database Optimization**: Configure CockroachDB for production workloads
+- **Caching**: Implement Redis for caching frequently accessed data
+
+### High Availability
+
+- **Multi-Node Cluster**: Deploy on multiple nodes
+- **Database Replication**: Configure CockroachDB with multiple replicas
+- **Load Balancing**: Use proper load balancing strategies
+- **Backup Strategy**: Implement regular database backups
+
+### Monitoring
+
+- **Alerting**: Configure Prometheus alerts for critical metrics
+- **Log Aggregation**: Use centralized logging solution
+- **Distributed Tracing**: Implement tracing for microservices
+- **Performance Monitoring**: Monitor application performance metrics
+
+### Backup and Recovery
+
+```bash
+# Backup CockroachDB
+kubectl exec -it cockroachdb-0 -n pogo-system -- cockroach dump --insecure --database=pogo_account > account_backup.sql
+
+# Restore from backup
+kubectl exec -i cockroachdb-0 -n pogo-system -- cockroach sql --insecure < account_backup.sql
 ```
 
-### Resource Limits
-All containers have resource requests and limits:
-- **CPU**: 250m request, 500m limit
-- **Memory**: 256Mi request, 512Mi limit
-
-### Secrets Management
-- All secrets are stored in Kubernetes Secrets
-- No hardcoded credentials in manifests
-- Secrets are mounted as environment variables
-
-## 📈 Performance Optimization
-
-### Resource Tuning
-```yaml
-resources:
-  requests:
-    cpu: 500m
-    memory: 1Gi
-  limits:
-    cpu: 1000m
-    memory: 2Gi
-```
-
-### Database Optimization
-- CockroachDB cluster with 3 replicas
-- Persistent volumes for data durability
-- Connection pooling in applications
-
-### Monitoring Optimization
-- Prometheus with 15s scrape intervals
-- Grafana with pre-configured dashboards
-- Alert rules for critical metrics
-
-## 🚀 Production Considerations
-
-### Before Production
-1. **Replace secrets** with proper values
-2. **Configure ingress** with proper TLS certificates
-3. **Set up persistent storage** with appropriate storage classes
-4. **Configure resource quotas** and limits
-5. **Set up monitoring** and alerting
-6. **Configure backup** strategies for CockroachDB
-
-### Production Deployment
-1. Use a proper container registry (Docker Hub, ECR, GCR)
-2. Implement proper CI/CD pipelines
-3. Use Helm charts for deployment management
-4. Configure proper logging aggregation
-5. Set up backup and disaster recovery
-
-## 📚 Additional Resources
+## Additional Resources
 
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
 - [Minikube Documentation](https://minikube.sigs.k8s.io/docs/)
-- [CockroachDB on Kubernetes](https://www.cockroachlabs.com/docs/stable/orchestrate-cockroachdb-with-kubernetes.html)
-- [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator)
-- [Grafana Kubernetes](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/)
+- [CockroachDB Kubernetes Guide](https://www.cockroachlabs.com/docs/stable/orchestrate-cockroachdb-with-kubernetes.html)
+- [Prometheus Kubernetes Integration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
+- [Grafana Kubernetes Dashboards](https://grafana.com/docs/grafana/latest/datasources/prometheus/)
 
 ---
 
-This completes the Kubernetes deployment guide for the POGO Community platform! 🎉
+For more information, see the main [README.md](../README.md) or contact the development team.
