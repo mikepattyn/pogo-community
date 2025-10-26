@@ -1,10 +1,22 @@
+using Discord.Commands;
+using Microsoft.Extensions.Logging;
+
 namespace Bot.Service.Application.Commands;
 
-public class TestCommand
+public class TestCommandModule : ModuleBase<SocketCommandContext>
 {
-    public static async Task<bool> ExecuteAsync()
+    private readonly ILogger<TestCommandModule> _logger;
+
+    public TestCommandModule(ILogger<TestCommandModule> logger)
     {
-        // Simple test command to verify bot is working
-        return true;
+        _logger = logger;
+    }
+
+    [Command("test")]
+    [Summary("Test command to verify bot is working")]
+    public async Task TestAsync()
+    {
+        _logger.LogInformation("Test command executed by {User}", Context.User.Username);
+        await ReplyAsync("Bot is working! 🤖");
     }
 }
