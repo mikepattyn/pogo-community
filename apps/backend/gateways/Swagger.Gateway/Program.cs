@@ -103,13 +103,27 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
         var response = await client.SendAsync(requestMessage);
 
         context.Response.StatusCode = (int)response.StatusCode;
+        
+        // Copy response headers
         foreach (var header in response.Headers)
         {
-            context.Response.Headers[header.Key] = header.Value.ToArray();
+            if (!header.Key.StartsWith("Content-", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.Headers[header.Key] = header.Value.ToArray();
+            }
         }
+        
+        // Copy content headers individually
         foreach (var header in response.Content.Headers)
         {
-            context.Response.Headers[header.Key] = header.Value.ToArray();
+            if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.ContentType = response.Content.Headers.ContentType?.MediaType ?? "application/json";
+            }
+            else if (!header.Key.StartsWith("Content-Length", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.Headers[header.Key] = header.Value.ToArray();
+            }
         }
 
         await response.Content.CopyToAsync(context.Response.Body);
