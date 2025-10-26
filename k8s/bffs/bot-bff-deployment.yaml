@@ -7,7 +7,7 @@ metadata:
     app: bot-bff
     tier: gateway
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: bot-bff
