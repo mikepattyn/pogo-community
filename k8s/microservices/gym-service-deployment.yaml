@@ -33,7 +33,10 @@ spec:
         - name: ASPNETCORE_URLS
           value: "http://+:5004"
         - name: ConnectionStrings__DefaultConnection
-          value: "Host=cockroachdb-public;Port=26257;Database=GymDb;Username=root;SslMode=disable"
+          valueFrom:
+            configMapKeyRef:
+              name: common-config
+              key: GYM_CONNECTION_STRING
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:

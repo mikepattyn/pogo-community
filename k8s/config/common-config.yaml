@@ -17,4 +17,11 @@ data:
   
   # Service Mesh Configuration
   SERVICE_MESH_ENABLED: "false"
+  
+  # Connection Strings for each microservice
+  ACCOUNT_CONNECTION_STRING: "Host=cockroachdb-public;Port=26257;Database=AccountDb;Username=root;SslMode=disable"
+  PLAYER_CONNECTION_STRING: "Host=cockroachdb-public;Port=26257;Database=PlayerDb;Username=root;SslMode=disable"
+  LOCATION_CONNECTION_STRING: "Host=cockroachdb-public;Port=26257;Database=LocationDb;Username=root;SslMode=disable"
+  GYM_CONNECTION_STRING: "Host=cockroachdb-public;Port=26257;Database=GymDb;Username=root;SslMode=disable"
+  RAID_CONNECTION_STRING: "Host=cockroachdb-public;Port=26257;Database=RaidDb;Username=root;SslMode=disable"
 
