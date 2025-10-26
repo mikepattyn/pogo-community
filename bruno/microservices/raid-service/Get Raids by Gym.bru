@@ -1,0 +1,24 @@
+meta {
+  name: Get Raids by Gym
+  type: http
+}
+
+get {
+  url: {{raid_service_url}}/api/raid/by-gym/1?activeOnly=true
+}
+
+docs {
+  # Get Raids by Gym
+
+  Retrieves raids for a specific gym.
+
+  ## Path Parameters
+  - `gymId`: Gym ID to get raids for
+
+  ## Query Parameters
+  - `activeOnly`: Return only active raids (default: true)
+
+  ## Response
+  Returns collection of raids at the gym.
+}
+

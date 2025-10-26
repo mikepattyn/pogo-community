@@ -1,0 +1,21 @@
+meta {
+  name: Get Raid by ID
+  type: http
+}
+
+get {
+  url: {{raid_service_url}}/api/raid/1
+}
+
+docs {
+  # Get Raid by ID
+
+  Retrieves raid information by ID.
+
+  ## Path Parameters
+  - `id`: Raid ID to retrieve
+
+  ## Response
+  Returns complete raid information.
+}
+

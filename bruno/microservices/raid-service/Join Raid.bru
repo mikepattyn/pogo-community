@@ -1,0 +1,24 @@
+meta {
+  name: Join Raid
+  type: http
+}
+
+post {
+  url: {{raid_service_url}}/api/raid/1/join?playerId=1
+}
+
+docs {
+  # Join Raid
+
+  Adds a player to a raid's participant list.
+
+  ## Path Parameters
+  - `id`: Raid ID to join
+
+  ## Query Parameters
+  - `playerId`: Player ID joining the raid
+
+  ## Response
+  Returns success if player was added.
+}
+

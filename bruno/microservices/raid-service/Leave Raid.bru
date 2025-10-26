@@ -1,0 +1,24 @@
+meta {
+  name: Leave Raid
+  type: http
+}
+
+post {
+  url: {{raid_service_url}}/api/raid/1/leave?playerId=1
+}
+
+docs {
+  # Leave Raid
+
+  Removes a player from a raid's participant list.
+
+  ## Path Parameters
+  - `id`: Raid ID to leave
+
+  ## Query Parameters
+  - `playerId`: Player ID leaving the raid
+
+  ## Response
+  Returns success if player was removed.
+}
+

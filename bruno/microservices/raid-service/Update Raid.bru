@@ -1,0 +1,42 @@
+meta {
+  name: Update Raid
+  type: http
+}
+
+put {
+  url: {{raid_service_url}}/api/raid/1
+  body: json
+}
+
+body:json {
+  {
+    "gymId": 1,
+    "pokemonSpecies": "Mewtwo",
+    "level": 5,
+    "startTime": "2024-10-26T14:00:00Z",
+    "endTime": "2024-10-26T14:45:00Z",
+    "isActive": true,
+    "isCompleted": false,
+    "isCancelled": false,
+    "maxParticipants": 20,
+    "difficulty": "Legendary",
+    "weatherBoost": "Psychic",
+    "notes": "Weather boosted Mewtwo raid - updated"
+  }
+}
+
+docs {
+  # Update Raid
+
+  Updates an existing raid's information.
+
+  ## Path Parameters
+  - `id`: Raid ID to update
+
+  ## Request Body
+  - All raid fields can be updated
+
+  ## Response
+  Returns the updated raid information.
+}
+

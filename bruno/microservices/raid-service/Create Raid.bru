@@ -1,0 +1,44 @@
+meta {
+  name: Create Raid
+  type: http
+}
+
+post {
+  url: {{raid_service_url}}/api/raid
+  body: json
+}
+
+body:json {
+  {
+    "gymId": 1,
+    "pokemonSpecies": "Mewtwo",
+    "level": 5,
+    "startTime": "2024-10-26T14:00:00Z",
+    "endTime": "2024-10-26T14:45:00Z",
+    "maxParticipants": 20,
+    "difficulty": "Legendary",
+    "weatherBoost": "Psychic",
+    "notes": "Weather boosted Mewtwo raid"
+  }
+}
+
+docs {
+  # Create Raid
+
+  Creates a new raid.
+
+  ## Request Body
+  - `gymId`: Gym where raid is occurring
+  - `pokemonSpecies`: Pokemon species for the raid
+  - `level`: Raid level 1-5 (where 5 is legendary)
+  - `startTime`: Raid start time
+  - `endTime`: Raid end time
+  - `maxParticipants`: Maximum participants (default: 20)
+  - `difficulty`: Raid difficulty (Easy, Medium, Hard, Legendary)
+  - `weatherBoost`: Weather boost type if any
+  - `notes`: Additional notes
+
+  ## Response
+  Returns the created raid information including raid ID.
+}
+
