@@ -43,8 +43,8 @@ RUN cd apps/frontend/bot && pnpm run build
 # Production dependencies stage
 FROM pruned AS production-deps
 
-# Install only production dependencies
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts && pnpm store prune
+# Install only production dependencies (remove --ignore-scripts to ensure all deps install properly)
+RUN pnpm install --prod --frozen-lockfile && pnpm store prune
 
 # Run stage
 FROM node:22-alpine AS run
@@ -58,6 +58,10 @@ COPY --from=production-deps /app/node_modules ./node_modules
 # Copy built application
 COPY --from=build /app/apps/frontend/bot/lib ./lib
 COPY --from=build /app/apps/frontend/bot/package.json ./package.json
+
+# Copy resource files (pokemon_max_cp.json and images)
+COPY --from=build /app/apps/frontend/bot/src/pokemon_max_cp.json ./lib/pokemon_max_cp.json
+COPY --from=build /app/apps/frontend/bot/src/resources ./lib/resources
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \

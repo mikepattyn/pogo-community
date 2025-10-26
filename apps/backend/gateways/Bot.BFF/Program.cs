@@ -1,8 +1,10 @@
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -14,28 +16,37 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+// OCR Service endpoint - proxy to OCR microservice
+app.MapPost("/api/v1/scans", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    try
+    {
+        // Read the request body
+        using var reader = new StreamReader(context.Request.Body);
+        var requestBody = await reader.ReadToEndAsync();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+        // Get OCR service URL from configuration
+        var ocrServiceUrl = builder.Configuration["OCRServiceUrl"] ?? "http://ocr-service:5001";
+
+        // Forward request to OCR service
+        var httpClient = httpClientFactory.CreateClient();
+        var content = new StringContent(requestBody, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await httpClient.PostAsync($"{ocrServiceUrl}/api/v1/scans", content);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        // Return the response from OCR service
+        context.Response.StatusCode = (int)response.StatusCode;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(responseContent);
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = "Internal server error" }));
+    }
 })
-.WithName("GetWeatherForecast");
+.WithName("ScanImage");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

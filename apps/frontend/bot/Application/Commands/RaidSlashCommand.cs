@@ -26,7 +26,7 @@ public class RaidSlashCommandModule : InteractionModuleBase<SocketInteractionCon
     {
         try
         {
-            _logger.LogInformation("Slash raid command executed by {User}: T{tier} {pokemon} at {time}", 
+            _logger.LogInformation("Slash raid command executed by {User}: T{tier} {pokemon} at {time}",
                 Context.User.Username, tier, pokemonName, timeString);
 
             if (tier < 1 || tier > 5)

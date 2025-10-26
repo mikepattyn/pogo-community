@@ -1,6 +1,5 @@
-using Bot.Service.Application.Services;
-using Bot.Service.Application.Interfaces;
-using Bot.Service.Infrastructure.Clients;
+using OCR.Service.Application.Interfaces;
+using OCR.Service.Application.Services;
 using Pogo.Shared.API;
 using Prometheus;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -15,23 +14,11 @@ builder.Services.AddSwaggerGen();
 // Add health checks using custom extension
 builder.Services.AddHealthChecks();
 
-// Add HttpClient for Bot.BFF communication
-builder.Services.AddHttpClient<BotBffClient>();
+// Add HttpClient for downloading images
+builder.Services.AddHttpClient<OCRService>();
 
-// Add Discord bot services
-builder.Services.AddSingleton<DiscordBotService>();
-builder.Services.AddSingleton<IBotBffClient, BotBffClient>();
-
-// Add command and service registrations
-builder.Services.AddScoped<IRaidService, RaidService>();
-builder.Services.AddScoped<IPlayerService, PlayerService>();
-builder.Services.AddScoped<IMessageService, MessageService>();
-
-// Add MediatR
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-});
+// Add OCR service
+builder.Services.AddScoped<IOCRService, OCRService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -43,9 +30,6 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
-
-// Register the hosted service
-builder.Services.AddHostedService<DiscordBotService>(sp => sp.GetRequiredService<DiscordBotService>());
 
 var app = builder.Build();
 

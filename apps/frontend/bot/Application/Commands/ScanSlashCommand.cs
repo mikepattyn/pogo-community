@@ -26,7 +26,7 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
     {
         try
         {
-            _logger.LogInformation("Slash scan command executed by {User}: T{tier} with image {ImageUrl}", 
+            _logger.LogInformation("Slash scan command executed by {User}: T{tier} with image {ImageUrl}",
                 Context.User.Username, tier, image.Url);
 
             if (tier < 1 || tier > 5)
@@ -73,7 +73,7 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
                     .AddField("Extra Players", "0", true)
                     .Build();
 
-                await ModifyOriginalResponseAsync(m => 
+                await ModifyOriginalResponseAsync(m =>
                 {
                     m.Content = "";
                     m.Embed = embed;
@@ -88,7 +88,7 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
                 await response.AddReactionAsync(new Emoji("4⃣"));
                 await response.AddReactionAsync(new Emoji("5⃣"));
 
-                _logger.LogInformation("Slash raid scan completed successfully: T{tier} {pokemon} at {gym}", 
+                _logger.LogInformation("Slash raid scan completed successfully: T{tier} {pokemon} at {gym}",
                     tier, raidInfo.PokemonName, raidInfo.GymName);
             }
             catch (Exception ex)

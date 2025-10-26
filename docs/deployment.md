@@ -7,6 +7,7 @@ This guide covers deploying the POGO Community microservices architecture to pro
 ## 🏗️ Architecture Overview
 
 The production deployment includes:
+
 - **5 Microservices** (.NET 10)
 - **2 BFF Services** (API Gateways)
 - **5 SQL Server Databases** (one per microservice)
@@ -15,18 +16,21 @@ The production deployment includes:
 ## 📋 Prerequisites
 
 ### System Requirements
+
 - **CPU:** 8+ cores (2 cores per service minimum)
 - **RAM:** 16GB+ (2GB per service minimum)
 - **Storage:** 100GB+ SSD (20GB per database minimum)
 - **Network:** 1Gbps+ bandwidth
 
 ### Software Requirements
+
 - **Docker** 20.10+
 - **Docker Compose** 2.0+
 - **.NET 10 Runtime** (for local development)
 - **Node.js 18+** (for client applications)
 
 ### External Dependencies
+
 - **SQL Server 2022** (or Azure SQL Database)
 - **SSL Certificate** (for HTTPS)
 - **Domain Name** (for production URLs)
@@ -107,7 +111,11 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          'CMD-SHELL',
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -125,7 +133,11 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          'CMD-SHELL',
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -143,7 +155,11 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          'CMD-SHELL',
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -161,7 +177,11 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          'CMD-SHELL',
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -179,7 +199,11 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'"]
+      test:
+        [
+          'CMD-SHELL',
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -201,7 +225,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5001/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -222,7 +246,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5002/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -243,7 +267,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5003/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -267,7 +291,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5004/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -294,7 +318,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5005/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -323,7 +347,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:6001/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -351,7 +375,7 @@ services:
       - pogo-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6002/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:6002/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -363,7 +387,7 @@ services:
       dockerfile: bot.Dockerfile
     container_name: pogo-bot
     environment:
-      - BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
       - BOT_BFF_URL=http://bot-bff:6001
       - NODE_ENV=production
     depends_on:
@@ -442,9 +466,9 @@ metadata:
   name: pogo-config
   namespace: pogo-community
 data:
-  MSSQL_SA_PASSWORD: "YourStrong@Passw0rd123"
-  JWT_KEY: "your-super-secret-jwt-key-here-min-32-chars"
-  ASPNETCORE_ENVIRONMENT: "Production"
+  MSSQL_SA_PASSWORD: 'YourStrong@Passw0rd123'
+  JWT_KEY: 'your-super-secret-jwt-key-here-min-32-chars'
+  ASPNETCORE_ENVIRONMENT: 'Production'
 ```
 
 ### 3. Secret
@@ -480,34 +504,34 @@ spec:
         app: account-db
     spec:
       containers:
-      - name: mssql
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-        - name: ACCEPT_EULA
-          value: "Y"
-        - name: SA_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              name: pogo-config
-              key: MSSQL_SA_PASSWORD
-        - name: MSSQL_PID
-          value: "Standard"
-        ports:
-        - containerPort: 1433
-        volumeMounts:
-        - name: mssql-data
-          mountPath: /var/opt/mssql
-        resources:
-          requests:
-            memory: "2Gi"
-            cpu: "500m"
-          limits:
-            memory: "4Gi"
-            cpu: "1000m"
+        - name: mssql
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          env:
+            - name: ACCEPT_EULA
+              value: 'Y'
+            - name: SA_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: pogo-config
+                  key: MSSQL_SA_PASSWORD
+            - name: MSSQL_PID
+              value: 'Standard'
+          ports:
+            - containerPort: 1433
+          volumeMounts:
+            - name: mssql-data
+              mountPath: /var/opt/mssql
+          resources:
+            requests:
+              memory: '2Gi'
+              cpu: '500m'
+            limits:
+              memory: '4Gi'
+              cpu: '1000m'
       volumes:
-      - name: mssql-data
-        persistentVolumeClaim:
-          claimName: account-db-pvc
+        - name: mssql-data
+          persistentVolumeClaim:
+            claimName: account-db-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -518,8 +542,8 @@ spec:
   selector:
     app: account-db
   ports:
-  - port: 1433
-    targetPort: 1433
+    - port: 1433
+      targetPort: 1433
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -553,37 +577,37 @@ spec:
         app: account-service
     spec:
       containers:
-      - name: account-service
-        image: pogo-account-service:latest
-        ports:
-        - containerPort: 5001
-        env:
-        - name: ASPNETCORE_ENVIRONMENT
-          valueFrom:
-            configMapKeyRef:
-              name: pogo-config
-              key: ASPNETCORE_ENVIRONMENT
-        - name: ConnectionStrings__DefaultConnection
-          value: "Server=account-db,1433;Database=AccountDb;User Id=sa;Password=YourStrong@Passw0rd123;TrustServerCertificate=true;"
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5001
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health/ready
-            port: 5001
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: account-service
+          image: pogo-account-service:latest
+          ports:
+            - containerPort: 5001
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: pogo-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: ConnectionStrings__DefaultConnection
+              value: 'Server=account-db,1433;Database=AccountDb;User Id=sa;Password=YourStrong@Passw0rd123;TrustServerCertificate=true;'
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '250m'
+            limits:
+              memory: '1Gi'
+              cpu: '500m'
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
@@ -594,8 +618,8 @@ spec:
   selector:
     app: account-service
   ports:
-  - port: 5001
-    targetPort: 5001
+    - port: 5001
+      targetPort: 5001
 ```
 
 ## 🔒 SSL/TLS Configuration
@@ -673,24 +697,24 @@ Configure centralized logging with ELK Stack or similar:
 ```yaml
 # Logstash configuration
 input {
-  beats {
-    port => 5044
-  }
+beats {
+port => 5044
+}
 }
 
 filter {
-  if [fields][service] == "account-service" {
-    mutate {
-      add_field => { "service_name" => "account-service" }
-    }
-  }
+if [fields][service] == "account-service" {
+mutate {
+add_field => { "service_name" => "account-service" }
+}
+}
 }
 
 output {
-  elasticsearch {
-    hosts => ["elasticsearch:9200"]
-    index => "pogo-community-%{+YYYY.MM.dd}"
-  }
+elasticsearch {
+hosts => ["elasticsearch:9200"]
+index => "pogo-community-%{+YYYY.MM.dd}"
+}
 }
 ```
 
@@ -706,7 +730,16 @@ global:
 scrape_configs:
   - job_name: 'pogo-community'
     static_configs:
-      - targets: ['account-service:5001', 'player-service:5002', 'location-service:5003', 'gym-service:5004', 'raid-service:5005', 'bot-bff:6001', 'app-bff:6002']
+      - targets:
+          [
+            'account-service:5001',
+            'player-service:5002',
+            'location-service:5003',
+            'gym-service:5004',
+            'raid-service:5005',
+            'bot-bff:6001',
+            'app-bff:6002',
+          ]
 ```
 
 ## 🔄 Database Migrations
@@ -749,6 +782,7 @@ echo "🎉 All migrations completed successfully!"
 ## 🚀 Deployment Checklist
 
 ### Pre-deployment
+
 - [ ] Environment variables configured
 - [ ] SSL certificates obtained
 - [ ] Database servers provisioned
@@ -757,6 +791,7 @@ echo "🎉 All migrations completed successfully!"
 - [ ] Monitoring configured
 
 ### Deployment
+
 - [ ] Deploy databases first
 - [ ] Run database migrations
 - [ ] Deploy microservices
@@ -766,6 +801,7 @@ echo "🎉 All migrations completed successfully!"
 - [ ] Test all endpoints
 
 ### Post-deployment
+
 - [ ] Verify all services are healthy
 - [ ] Test client applications
 - [ ] Monitor logs and metrics
@@ -777,16 +813,18 @@ echo "🎉 All migrations completed successfully!"
 ### Common Issues
 
 1. **Database Connection Issues**
+
    ```bash
    # Check database connectivity
    docker exec -it account-db /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourPassword -Q "SELECT 1"
    ```
 
 2. **Service Health Issues**
+
    ```bash
    # Check service logs
    docker logs account-service
-   
+
    # Check health endpoint
    curl http://localhost:5001/health
    ```
@@ -801,11 +839,13 @@ echo "🎉 All migrations completed successfully!"
 ### Performance Tuning
 
 1. **Database Optimization**
+
    - Configure connection pooling
    - Set appropriate memory limits
    - Enable query optimization
 
 2. **Service Optimization**
+
    - Configure appropriate resource limits
    - Enable response caching
    - Optimize database queries

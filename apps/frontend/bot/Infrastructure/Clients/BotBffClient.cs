@@ -119,7 +119,7 @@ public class BotBffClient : IBotBffClient
         {
             var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/ocr/v1/scans", request, cancellationToken);
             response.EnsureSuccessStatusCode();
-            
+
             var result = await response.Content.ReadFromJsonAsync<ScanImageResponse>(cancellationToken: cancellationToken);
             _logger.LogInformation("Successfully scanned image");
             return result ?? new ScanImageResponse();

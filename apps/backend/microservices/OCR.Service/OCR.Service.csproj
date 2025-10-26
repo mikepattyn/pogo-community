@@ -8,21 +8,20 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
-    <PackageReference Include="Discord.Net" Version="3.18.0" />
-    <PackageReference Include="Discord.Net.Commands" Version="3.18.0" />
-    <PackageReference Include="Discord.Net.Interactions" Version="3.18.0" />
+    <PackageReference Include="Tesseract" Version="5.2.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="FluentValidation" Version="11.9.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\packages\dotnet-shared\Pogo.Shared.Kernel\Pogo.Shared.Kernel.csproj" />
-    <ProjectReference Include="..\..\..\packages\dotnet-shared\Pogo.Shared.Infrastructure\Pogo.Shared.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\packages\dotnet-shared\Pogo.Shared.Application\Pogo.Shared.Application.csproj" />
-    <ProjectReference Include="..\..\..\packages\dotnet-shared\Pogo.Shared.API\Pogo.Shared.API.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\dotnet-shared\Pogo.Shared.Kernel\Pogo.Shared.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\dotnet-shared\Pogo.Shared.Infrastructure\Pogo.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\dotnet-shared\Pogo.Shared.Application\Pogo.Shared.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\dotnet-shared\Pogo.Shared.API\Pogo.Shared.API.csproj" />
   </ItemGroup>
 
 </Project>

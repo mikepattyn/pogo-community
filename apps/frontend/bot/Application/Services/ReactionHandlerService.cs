@@ -99,7 +99,7 @@ public class ReactionHandlerService
         {
             await _raidService.AddPlayerToRaidAsync(messageId, userId, userName);
             _logger.LogInformation("User {UserName} joined raid {MessageId}", userName, messageId);
-            
+
             // Update raid embed with new participant
             await UpdateRaidEmbedAsync(messageId);
         }
@@ -115,7 +115,7 @@ public class ReactionHandlerService
         {
             await _raidService.RemovePlayerFromRaidAsync(messageId, userId);
             _logger.LogInformation("User {UserName} left raid {MessageId}", userName, messageId);
-            
+
             // Update raid embed
             await UpdateRaidEmbedAsync(messageId);
         }
@@ -131,7 +131,7 @@ public class ReactionHandlerService
         {
             await _raidService.AddPlayerExtraAsync(messageId, userId, extraCount);
             _logger.LogInformation("User {UserId} added {ExtraCount} extra players to raid {MessageId}", userId, extraCount, messageId);
-            
+
             // Update raid embed
             await UpdateRaidEmbedAsync(messageId);
         }
@@ -147,7 +147,7 @@ public class ReactionHandlerService
         {
             await _raidService.AddPlayerExtraAsync(messageId, userId, 0);
             _logger.LogInformation("User {UserId} removed extra players from raid {MessageId}", userId, messageId);
-            
+
             // Update raid embed
             await UpdateRaidEmbedAsync(messageId);
         }
@@ -164,14 +164,14 @@ public class ReactionHandlerService
             var team = emojiName switch
             {
                 "🔴" => "Valor",
-                "🔵" => "Mystic", 
+                "🔵" => "Mystic",
                 "🟡" => "Instinct",
                 "⚪" => "Harmony",
                 _ => "Unknown"
             };
 
             _logger.LogInformation("User {UserId} selected team {Team} for raid {MessageId}", userId, team, messageId);
-            
+
             // Here you could update player's team preference
             // await _playerService.UpdatePlayerTeamAsync(userId, team);
         }
@@ -224,7 +224,7 @@ public class ReactionHandlerService
 
             // This would need access to the Discord message to update the embed
             // For now, we'll just log the update
-            _logger.LogInformation("Raid embed updated for {MessageId}: {ParticipantCount} participants, {ExtraCount} extras", 
+            _logger.LogInformation("Raid embed updated for {MessageId}: {ParticipantCount} participants, {ExtraCount} extras",
                 messageId, participantList.Count, totalExtras);
         }
         catch (Exception ex)

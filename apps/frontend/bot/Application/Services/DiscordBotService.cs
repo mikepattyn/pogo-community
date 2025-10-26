@@ -32,8 +32,8 @@ public class DiscordBotService : BackgroundService
 
         var config = new DiscordSocketConfig
         {
-            GatewayIntents = GatewayIntents.Guilds | 
-                           GatewayIntents.GuildMessages | 
+            GatewayIntents = GatewayIntents.Guilds |
+                           GatewayIntents.GuildMessages |
                            GatewayIntents.GuildMessageReactions |
                            GatewayIntents.GuildMembers |
                            GatewayIntents.MessageContent
@@ -82,7 +82,7 @@ public class DiscordBotService : BackgroundService
     private async Task OnReadyAsync()
     {
         _logger.LogInformation($"Bot logged in as {_client.CurrentUser?.Username}#{_client.CurrentUser?.Discriminator}");
-        
+
         // Register slash commands
         await _interactions.RegisterCommandsGloballyAsync();
     }
@@ -93,7 +93,7 @@ public class DiscordBotService : BackgroundService
             return;
 
         var context = new SocketCommandContext(_client, userMessage);
-        
+
         // Handle text commands
         int argPos = 0;
         if (userMessage.HasCharPrefix('!', ref argPos))
@@ -120,7 +120,7 @@ public class DiscordBotService : BackgroundService
         var allowedEmojisRank = new[] { "🔴", "🔵", "🟡", "⚪" };
 
         var emojiName = reaction.Emote.Name;
-        
+
         if (allowedEmojisRaid.Contains(emojiName))
         {
             // Handle joining raid

@@ -89,7 +89,7 @@ public class ScanCommandModule : ModuleBase<SocketCommandContext>
                     .AddField("Extra Players", "0", true)
                     .Build();
 
-                await processingMessage.ModifyAsync(m => 
+                await processingMessage.ModifyAsync(m =>
                 {
                     m.Content = "";
                     m.Embed = embed;

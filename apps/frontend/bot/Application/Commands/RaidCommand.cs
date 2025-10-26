@@ -35,7 +35,7 @@ public class RaidCommandModule : ModuleBase<SocketCommandContext>
             // Parse raid command arguments
             // Expected format: !raid start TIER POKEMON_NAME TIME
             var parts = args.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            
+
             if (parts.Length < 4 || parts[0].ToLower() != "start")
             {
                 await ReplyAsync("❌ Invalid format. Use: `!raid start TIER POKEMON_NAME TIME`\nExample: `!raid start 5 Mewtwo 19:30`");

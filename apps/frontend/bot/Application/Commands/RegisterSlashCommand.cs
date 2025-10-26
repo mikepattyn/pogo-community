@@ -27,7 +27,7 @@ public class RegisterSlashCommandModule : InteractionModuleBase<SocketInteractio
     {
         try
         {
-            _logger.LogInformation("Slash register command executed by {User}: {Team} {FirstName} L{Level}", 
+            _logger.LogInformation("Slash register command executed by {User}: {Team} {FirstName} L{Level}",
                 Context.User.Username, team, firstName, level);
 
             if (level < 1 || level > 50)
@@ -62,7 +62,7 @@ public class RegisterSlashCommandModule : InteractionModuleBase<SocketInteractio
                     .Build();
 
                 await RespondAsync(embed: embed);
-                _logger.LogInformation("Slash player registered successfully: {User} - {Team} {FirstName} L{Level}", 
+                _logger.LogInformation("Slash player registered successfully: {User} - {Team} {FirstName} L{Level}",
                     Context.User.Username, team, firstName, level);
             }
             else

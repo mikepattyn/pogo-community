@@ -1,4 +1,4 @@
-namespace Bot.Service.Application.DTOs;
+namespace OCR.Service.Application.DTOs;
 
 public class ScanImageRequest
 {
