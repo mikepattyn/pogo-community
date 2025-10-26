@@ -1,0 +1,21 @@
+meta {
+  name: Get Account by Email
+  type: http
+}
+
+get {
+  url: {{account_service_url}}/api/account/by-email/player@example.com
+}
+
+docs {
+  # Get Account by Email
+
+  Retrieves account information using an email address.
+
+  ## Path Parameters
+  - `email`: Email address of the account to retrieve
+
+  ## Response
+  Returns account information including player ID and email.
+}
+

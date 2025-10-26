@@ -1,0 +1,30 @@
+meta {
+  name: Login
+  type: http
+}
+
+post {
+  url: {{account_service_url}}/api/account/login
+  body: json
+}
+
+body:json {
+  {
+    "email": "player@example.com",
+    "password": "SecurePassword123!"
+  }
+}
+
+docs {
+  # Login
+
+  Authenticates a user and returns a JWT token.
+
+  ## Request Body
+  - `email`: User's email address
+  - `password`: User's password
+
+  ## Response
+  Returns a JWT token that can be used for authenticated requests.
+}
+

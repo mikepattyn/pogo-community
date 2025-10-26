@@ -1,0 +1,21 @@
+meta {
+  name: Get Account by Player ID
+  type: http
+}
+
+get {
+  url: {{account_service_url}}/api/account/by-player/1
+}
+
+docs {
+  # Get Account by Player ID
+
+  Retrieves account information for a specific player.
+
+  ## Path Parameters
+  - `playerId`: Player ID to look up account for
+
+  ## Response
+  Returns account information including email and player ID.
+}
+

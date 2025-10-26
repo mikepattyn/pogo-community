@@ -1,0 +1,32 @@
+meta {
+  name: Create Account
+  type: http
+}
+
+post {
+  url: {{account_service_url}}/api/account
+  body: json
+}
+
+body:json {
+  {
+    "email": "player@example.com",
+    "password": "SecurePassword123!",
+    "playerId": 1
+  }
+}
+
+docs {
+  # Create Account
+
+  Creates a new account for a player.
+
+  ## Request Body
+  - `email`: Email address for the account
+  - `password`: Account password
+  - `playerId`: Associated player ID
+
+  ## Response
+  Returns the created account information including the account ID and email.
+}
+
