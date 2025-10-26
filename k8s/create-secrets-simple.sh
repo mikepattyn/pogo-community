@@ -17,6 +17,43 @@ NC='\033[0m' # No Color
 # Configuration
 NAMESPACE="pogo-system"
 
+# Command line options
+DISCORD_ONLY=false
+
+# Function to show help
+show_help() {
+    cat << EOF
+POGO Community - Kubernetes Secret Generator (Simple)
+
+USAGE:
+    $0 [--discord-only]
+
+OPTIONS:
+    --discord-only    Update only the Discord bot token secret
+    -h, --help        Show this help message
+
+EOF
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --discord-only)
+            DISCORD_ONLY=true
+            shift
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+done
+
 # Function to print colored output
 print_status() {
     local color=$1
@@ -60,6 +97,11 @@ create_secret() {
 main() {
     echo "=========================================="
     echo "🔐 POGO Community - Secret Generator"
+
+    if [ "$DISCORD_ONLY" = true ]; then
+        echo "   (Discord-only mode)"
+    fi
+
     echo "=========================================="
     echo ""
 
@@ -105,44 +147,51 @@ main() {
         fi
     done
 
-    # Generate JWT secret
-    print_status $BLUE "🔐 Generating JWT secret..."
-    local jwt_secret=$(generate_random_string 32)
-    print_status $GREEN "✅ JWT secret generated"
-
-    # Get database password
-    print_status $BLUE "🗄️  Database Password"
-    print_status $YELLOW "   Enter a strong password for SQL Server databases"
     echo ""
 
-    local db_password=""
-    while [ -z "$db_password" ]; do
-        read -s -p "Enter MSSQL SA Password: " db_password
+    # Create Discord secret
+    create_secret "discord-secrets" "DISCORD_BOT_TOKEN=$discord_token"
+
+    # Only create JWT and DB secrets if not in discord-only mode
+    if [ "$DISCORD_ONLY" = false ]; then
+        # Generate JWT secret
+        print_status $BLUE "🔐 Generating JWT secret..."
+        local jwt_secret=$(generate_random_string 32)
+        print_status $GREEN "✅ JWT secret generated"
+
+        # Get database password
+        print_status $BLUE "🗄️  Database Password"
+        print_status $YELLOW "   Enter a strong password for SQL Server databases"
         echo ""
 
-        if [ -z "$db_password" ]; then
-            print_status $RED "❌ Password cannot be empty"
-        elif [ ${#db_password} -lt 8 ]; then
-            print_status $RED "❌ Password must be at least 8 characters"
-            db_password=""
-        fi
-    done
-    print_status $GREEN "✅ Database password set"
+        local db_password=""
+        while [ -z "$db_password" ]; do
+            read -s -p "Enter MSSQL SA Password: " db_password
+            echo ""
 
-    echo ""
+            if [ -z "$db_password" ]; then
+                print_status $RED "❌ Password cannot be empty"
+            elif [ ${#db_password} -lt 8 ]; then
+                print_status $RED "❌ Password must be at least 8 characters"
+                db_password=""
+            fi
+        done
+        print_status $GREEN "✅ Database password set"
 
-    # Create secrets
-    create_secret "discord-secrets" "DISCORD_BOT_TOKEN=$discord_token"
-    create_secret "jwt-secrets" "JWT_SECRET_KEY=$jwt_secret
+        echo ""
+
+        # Create JWT and DB secrets
+        create_secret "jwt-secrets" "JWT_SECRET_KEY=$jwt_secret
 JWT_ISSUER=pogo-community
 JWT_AUDIENCE=pogo-community-users
 JWT_EXPIRY_MINUTES=60"
-    create_secret "db-secrets" "DB_USERNAME=root
+        create_secret "db-secrets" "DB_USERNAME=root
 DB_PASSWORD=
 MSSQL_SA_PASSWORD=$db_password"
+    fi
 
     echo ""
-    print_status $GREEN "🎉 All secrets created successfully!"
+    print_status $GREEN "🎉 Secret(s) created successfully!"
     echo ""
     print_status $BLUE "📋 Next steps:"
     echo "  1. Run deployment: ./k8s/deploy.sh"
