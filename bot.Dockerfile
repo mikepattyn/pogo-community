@@ -1,87 +1,40 @@
-# Multi-stage build for POGO Community Discord Bot
-FROM node:22-alpine AS base
-
-# Install pnpm and turbo
-RUN npm install -g pnpm turbo
-
-# Set working directory
+# Use the official .NET 9 runtime as base image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
-
-# Copy workspace files for turbo prune
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/ ./apps/
-
-# Prune workspace for Bot
-RUN turbo prune --scope=@pogo/bot --docker
-
-# Pruned workspace stage
-FROM node:22-alpine AS pruned
-
-# Install pnpm
-RUN npm install -g pnpm
-
-# Set working directory
-WORKDIR /app
-
-# Copy pruned workspace
-COPY --from=base /app/out/json/ ./
-COPY --from=base /app/out/full/apps/frontend/bot/ ./apps/frontend/bot/
-COPY --from=base /app/out/full/turbo.json ./
-
-# Dependencies stage
-FROM pruned AS dependencies
-
-# Install all dependencies (including dev dependencies for build)
-RUN pnpm install --frozen-lockfile
-
-# Build stage
-FROM dependencies AS build
-
-# Build TypeScript
-RUN cd apps/frontend/bot && pnpm run build
-
-# Production dependencies stage
-FROM pruned AS production-deps
-
-# Install only production dependencies (remove --ignore-scripts to ensure all deps install properly)
-RUN pnpm install --prod --frozen-lockfile && pnpm store prune
-
-# Run stage
-FROM node:22-alpine AS run
-
-# Set working directory
-WORKDIR /app
-
-# Copy production dependencies
-COPY --from=production-deps /app/node_modules ./node_modules
-
-# Copy built application
-COPY --from=build /app/apps/frontend/bot/lib ./lib
-COPY --from=build /app/apps/frontend/bot/package.json ./package.json
-
-# Copy resource files (pokemon_max_cp.json and images)
-COPY --from=build /app/apps/frontend/bot/src/pokemon_max_cp.json ./lib/pokemon_max_cp.json
-COPY --from=build /app/apps/frontend/bot/src/resources ./lib/resources
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-# Change ownership of the app directory
-RUN chown -R nodejs:nodejs /app
-USER nodejs
-
-# Set environment variables
-ENV BOT_BFF_URL=http://bot-bff:6001
-ENV NODE_ENV=production
-
-# Expose port for health checks
 EXPOSE 2000
 
-# Health check (simple process check since bot doesn't have HTTP endpoint)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD pgrep -f "node.*bot.js" > /dev/null || exit 1
+# Use the official .NET 9 SDK for building
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
 
-# Start the application
-CMD ["node", "lib/bot.js"]
+# Copy project files
+COPY ["apps/frontend/bot/Bot.Service.csproj", "apps/frontend/bot/"]
+COPY ["packages/dotnet-shared/Pogo.Shared.Kernel/Pogo.Shared.Kernel.csproj", "packages/dotnet-shared/Pogo.Shared.Kernel/"]
+COPY ["packages/dotnet-shared/Pogo.Shared.Infrastructure/Pogo.Shared.Infrastructure.csproj", "packages/dotnet-shared/Pogo.Shared.Infrastructure/"]
+COPY ["packages/dotnet-shared/Pogo.Shared.Application/Pogo.Shared.Application.csproj", "packages/dotnet-shared/Pogo.Shared.Application/"]
+COPY ["packages/dotnet-shared/Pogo.Shared.API/Pogo.Shared.API.csproj", "packages/dotnet-shared/Pogo.Shared.API/"]
 
+# Restore dependencies
+RUN dotnet restore "apps/frontend/bot/Bot.Service.csproj"
+
+# Copy source code
+COPY . .
+
+# Build the application
+WORKDIR "/src/apps/frontend/bot"
+RUN dotnet build "Bot.Service.csproj" -c Release -o /app/build
+
+# Publish the application
+FROM build AS publish
+RUN dotnet publish "Bot.Service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# Final stage
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:2000
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+ENTRYPOINT ["dotnet", "Bot.Service.dll"]
