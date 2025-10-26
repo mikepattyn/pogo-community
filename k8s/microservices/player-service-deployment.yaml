@@ -33,7 +33,7 @@ spec:
         - name: ASPNETCORE_URLS
           value: "http://+:5002"
         - name: ConnectionStrings__DefaultConnection
-          value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=PlayerDb;Username=$(DB_USERNAME);SslMode=$(DB_SSL_MODE)"
+          value: "Host=cockroachdb-public;Port=26257;Database=PlayerDb;Username=root;SslMode=disable"
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
