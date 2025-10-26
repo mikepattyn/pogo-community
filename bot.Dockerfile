@@ -46,6 +46,9 @@ FROM pruned AS production-deps
 # Install only production dependencies
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts && pnpm store prune
 
+# Ensure reflect-metadata is available
+RUN cd apps/frontend/bot && pnpm add reflect-metadata
+
 # Run stage
 FROM node:22-alpine AS run
 
