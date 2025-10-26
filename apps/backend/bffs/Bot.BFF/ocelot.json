@@ -59,6 +59,18 @@
       ],
       "UpstreamPathTemplate": "/api/raid/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocr-service",
+          "Port": 5006
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocr/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     }
   ],
   "GlobalConfiguration": {
