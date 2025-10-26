@@ -1,5 +1,6 @@
 using Prometheus;
 using Discord.WebSocket;
+using Discord;
 using Microsoft.Extensions.Logging;
 
 namespace Bot.Service.Application.Services;
