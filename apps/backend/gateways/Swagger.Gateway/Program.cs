@@ -56,6 +56,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/api/location-service/swagger/v1/swagger.json", "Location Service");
     c.SwaggerEndpoint("/api/gym-service/swagger/v1/swagger.json", "Gym Service");
     c.SwaggerEndpoint("/api/raid-service/swagger/v1/swagger.json", "Raid Service");
+    c.SwaggerEndpoint("/api/ocr-service/swagger/v1/swagger.json", "OCR Service");
     c.SwaggerEndpoint("/api/bot-bff/swagger/v1/swagger.json", "Bot BFF");
     c.SwaggerEndpoint("/api/app-bff/swagger/v1/swagger.json", "App BFF");
 });
@@ -75,6 +76,7 @@ var serviceRoutes = new Dictionary<string, string>
     { "location-service", app.Configuration["ServiceUrls:LocationService"] ?? "http://location-service:5003" },
     { "gym-service", app.Configuration["ServiceUrls:GymService"] ?? "http://gym-service:5004" },
     { "raid-service", app.Configuration["ServiceUrls:RaidService"] ?? "http://raid-service:5005" },
+    { "ocr-service", app.Configuration["ServiceUrls:OCRService"] ?? "http://ocr-service:5001" },
     { "bot-bff", app.Configuration["ServiceUrls:BotBFF"] ?? "http://bot-bff:6001" },
     { "app-bff", app.Configuration["ServiceUrls:AppBFF"] ?? "http://app-bff:6002" }
 };
@@ -110,7 +112,7 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
         var response = await client.SendAsync(requestMessage);
 
         context.Response.StatusCode = (int)response.StatusCode;
-        
+
         // Copy response headers - preserve CORS and other important headers
         foreach (var header in response.Headers)
         {
@@ -121,7 +123,7 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
                 context.Response.Headers[header.Key] = header.Value.ToArray();
             }
         }
-        
+
         // Copy content headers individually
         foreach (var header in response.Content.Headers)
         {
@@ -129,13 +131,17 @@ foreach (var (serviceName, serviceUrl) in serviceRoutes)
             {
                 context.Response.ContentType = response.Content.Headers.ContentType?.ToString() ?? "application/json";
             }
-            else if (!header.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase))
+            // Skip Content-Length and Transfer-Encoding to let ASP.NET Core handle
+            else if (!header.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase) &&
+                     !header.Key.Equals("Transfer-Encoding", StringComparison.OrdinalIgnoreCase))
             {
                 context.Response.Headers[header.Key] = header.Value.ToArray();
             }
         }
 
-        await response.Content.CopyToAsync(context.Response.Body);
+        // Read the response body as a byte array to avoid chunked encoding issues
+        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        await context.Response.Body.WriteAsync(responseBytes, 0, responseBytes.Length);
     });
 }
 
