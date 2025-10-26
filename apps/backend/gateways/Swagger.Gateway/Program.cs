@@ -60,16 +60,16 @@ app.UseCors("AllowAll");
 // Prometheus metrics
 app.UseHttpMetrics();
 
-// Reverse proxy routes for microservices
+// Reverse proxy routes for microservices - configurable via appsettings
 var serviceRoutes = new Dictionary<string, string>
 {
-    { "account-service", "http://account-service:5001" },
-    { "player-service", "http://player-service:5002" },
-    { "location-service", "http://location-service:5003" },
-    { "gym-service", "http://gym-service:5004" },
-    { "raid-service", "http://raid-service:5005" },
-    { "bot-bff", "http://bot-bff:6001" },
-    { "app-bff", "http://app-bff:6002" }
+    { "account-service", app.Configuration["ServiceUrls:AccountService"] ?? "http://account-service:5001" },
+    { "player-service", app.Configuration["ServiceUrls:PlayerService"] ?? "http://player-service:5002" },
+    { "location-service", app.Configuration["ServiceUrls:LocationService"] ?? "http://location-service:5003" },
+    { "gym-service", app.Configuration["ServiceUrls:GymService"] ?? "http://gym-service:5004" },
+    { "raid-service", app.Configuration["ServiceUrls:RaidService"] ?? "http://raid-service:5005" },
+    { "bot-bff", app.Configuration["ServiceUrls:BotBFF"] ?? "http://bot-bff:6001" },
+    { "app-bff", app.Configuration["ServiceUrls:AppBFF"] ?? "http://app-bff:6002" }
 };
 
 foreach (var (serviceName, serviceUrl) in serviceRoutes)
