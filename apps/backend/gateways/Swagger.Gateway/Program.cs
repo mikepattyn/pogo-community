@@ -41,16 +41,16 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Gateway API");
-    c.RoutePrefix = string.Empty;
+    c.RoutePrefix = "swagger";
     
-    // Add all microservice endpoints
-    c.SwaggerEndpoint("http://account-service:5001/swagger/v1/swagger.json", "Account Service");
-    c.SwaggerEndpoint("http://player-service:5002/swagger/v1/swagger.json", "Player Service");
-    c.SwaggerEndpoint("http://location-service:5003/swagger/v1/swagger.json", "Location Service");
-    c.SwaggerEndpoint("http://gym-service:5004/swagger/v1/swagger.json", "Gym Service");
-    c.SwaggerEndpoint("http://raid-service:5005/swagger/v1/swagger.json", "Raid Service");
-    c.SwaggerEndpoint("http://bot-bff:6001/swagger/v1/swagger.json", "Bot BFF");
-    c.SwaggerEndpoint("http://app-bff:6002/swagger/v1/swagger.json", "App BFF");
+    // Add all microservice endpoints - using proxy endpoints to avoid CORS issues
+    c.SwaggerEndpoint("/proxy/account-service/swagger/v1/swagger.json", "Account Service");
+    c.SwaggerEndpoint("/proxy/player-service/swagger/v1/swagger.json", "Player Service");
+    c.SwaggerEndpoint("/proxy/location-service/swagger/v1/swagger.json", "Location Service");
+    c.SwaggerEndpoint("/proxy/gym-service/swagger/v1/swagger.json", "Gym Service");
+    c.SwaggerEndpoint("/proxy/raid-service/swagger/v1/swagger.json", "Raid Service");
+    c.SwaggerEndpoint("/proxy/bot-bff/swagger/v1/swagger.json", "Bot BFF");
+    c.SwaggerEndpoint("/proxy/app-bff/swagger/v1/swagger.json", "App BFF");
 });
 
 app.UseHttpsRedirection();
@@ -59,6 +59,56 @@ app.UseCors("AllowAll");
 
 // Prometheus metrics
 app.UseHttpMetrics();
+
+// Proxy endpoints for Swagger specs (to avoid CORS issues)
+app.MapGet("/proxy/account-service/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://account-service:5001/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyAccountService");
+
+app.MapGet("/proxy/player-service/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://player-service:5002/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyPlayerService");
+
+app.MapGet("/proxy/location-service/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://location-service:5003/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyLocationService");
+
+app.MapGet("/proxy/gym-service/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://gym-service:5004/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyGymService");
+
+app.MapGet("/proxy/raid-service/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://raid-service:5005/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyRaidService");
+
+app.MapGet("/proxy/bot-bff/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://bot-bff:6001/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyBotBff");
+
+app.MapGet("/proxy/app-bff/swagger/v1/swagger.json", async (IHttpClientFactory httpClientFactory) =>
+{
+    var client = httpClientFactory.CreateClient();
+    var response = await client.GetAsync("http://app-bff:6002/swagger/v1/swagger.json");
+    return Results.Stream(await response.Content.ReadAsStreamAsync(), "application/json");
+}).WithName("ProxyAppBff");
 
 app.MapControllers();
 
