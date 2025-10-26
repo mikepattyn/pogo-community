@@ -1,0 +1,21 @@
+meta {
+  name: Get Player by Username
+  type: http
+}
+
+get {
+  url: {{player_service_url}}/api/player/by-username/PokeTrainer2024
+}
+
+docs {
+  # Get Player by Username
+
+  Retrieves player information by username.
+
+  ## Path Parameters
+  - `username`: Username to look up
+
+  ## Response
+  Returns player information if found.
+}
+

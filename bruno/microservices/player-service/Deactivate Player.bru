@@ -1,0 +1,21 @@
+meta {
+  name: Deactivate Player
+  type: http
+}
+
+delete {
+  url: {{player_service_url}}/api/player/1
+}
+
+docs {
+  # Deactivate Player
+
+  Deactivates a player account (soft delete).
+
+  ## Path Parameters
+  - `id`: Player ID to deactivate
+
+  ## Response
+  Returns 204 No Content on success.
+}
+

@@ -1,0 +1,40 @@
+meta {
+  name: Create Player
+  type: http
+}
+
+post {
+  url: {{player_service_url}}/api/player
+  body: json
+}
+
+body:json {
+  {
+    "username": "PokeTrainer2024",
+    "level": 40,
+    "team": "Valor",
+    "friendCode": "1234-5678-9012",
+    "timezone": "America/New_York",
+    "language": "en",
+    "discordUserId": "123456789012345678"
+  }
+}
+
+docs {
+  # Create Player
+
+  Creates a new player profile.
+
+  ## Request Body
+  - `username`: Player's in-game username
+  - `level`: Current trainer level (1-50)
+  - `team`: Team affiliation (Valor, Mystic, Instinct)
+  - `friendCode`: Player's friend code
+  - `timezone`: Timezone for the player
+  - `language`: Preferred language
+  - `discordUserId`: Discord user ID for bot integration
+
+  ## Response
+  Returns the created player information including player ID.
+}
+

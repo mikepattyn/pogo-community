@@ -1,0 +1,38 @@
+meta {
+  name: Update Player
+  type: http
+}
+
+put {
+  url: {{player_service_url}}/api/player/1
+  body: json
+}
+
+body:json {
+  {
+    "username": "PokeTrainer2024",
+    "level": 42,
+    "team": "Valor",
+    "friendCode": "1234-5678-9012",
+    "isActive": true,
+    "timezone": "America/New_York",
+    "language": "en",
+    "discordUserId": "123456789012345678"
+  }
+}
+
+docs {
+  # Update Player
+
+  Updates an existing player's information.
+
+  ## Path Parameters
+  - `id`: Player ID to update
+
+  ## Request Body
+  - All player fields can be updated
+
+  ## Response
+  Returns the updated player information.
+}
+

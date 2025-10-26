@@ -1,0 +1,21 @@
+meta {
+  name: Get Player by Discord ID
+  type: http
+}
+
+get {
+  url: {{player_service_url}}/api/player/by-discord/123456789012345678
+}
+
+docs {
+  # Get Player by Discord ID
+
+  Retrieves player information by Discord user ID.
+
+  ## Path Parameters
+  - `discordUserId`: Discord user ID to look up
+
+  ## Response
+  Returns player information if found.
+}
+
