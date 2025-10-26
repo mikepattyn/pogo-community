@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         - name: pogo-bot
-          image: pogo/bot:latest
-          imagePullPolicy: Never
+          image: discord-bot:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 2000
               name: http
