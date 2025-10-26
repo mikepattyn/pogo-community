@@ -59,6 +59,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Gateway API");
+    c.SwaggerEndpoint("/swagger/system/swagger.json", "🏥 System Endpoints");
     c.RoutePrefix = "swagger";
 
     // Add all microservice endpoints - using reverse proxy routes
