@@ -8,7 +8,7 @@ using Pogo.Shared.API;
 using Pogo.Shared.Application;
 using MediatR;
 using FluentValidation;
-using Prometheus;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +17,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add health checks
-builder.Services.AddHealthChecks();
+// Add health checks (explicitly configure to avoid automatic database checks)
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "self" });
 
 // Add Entity Framework
 builder.Services.AddDbContext<PlayerDbContext>(options =>
