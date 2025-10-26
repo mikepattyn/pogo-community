@@ -2,9 +2,9 @@ using Bot.Service.Application.Services;
 using Bot.Service.Application.Interfaces;
 using Bot.Service.Infrastructure.Clients;
 using Bot.Service.Infrastructure.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Pogo.Shared.API;
 using Prometheus;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,16 +39,17 @@ builder.Services.AddMediatR(cfg =>
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        });
 });
 
 // Register the hosted service
-builder.Services.AddHostedService<DiscordBotService>(sp => sp.GetRequiredService<DiscordBotService>());
+builder.Services.AddHostedService<DiscordBotService>(
+    sp => sp.GetRequiredService<DiscordBotService>());
 
 var app = builder.Build();
 
