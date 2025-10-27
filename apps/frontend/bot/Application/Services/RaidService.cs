@@ -8,7 +8,6 @@ public class RaidService : IRaidService
 {
     private readonly ILogger<RaidService> _logger;
     private readonly IBotBffClient _botBffClient;
-    private readonly Dictionary<string, RaidDto> _raids = new();
 
     public RaidService(ILogger<RaidService> logger, IBotBffClient botBffClient)
     {
@@ -20,22 +19,9 @@ public class RaidService : IRaidService
     {
         try
         {
-            var raid = new RaidDto
-            {
-                MessageId = messageId,
-                MessageTitle = title,
-                RaidTime = raidTime,
-                StartedBy = startedBy,
-                Closed = false,
-                Players = new List<PlayerDto>()
-            };
-
-            _raids[messageId] = raid;
-
-            // Optionally save to backend via Bot.BFF
-            // await _botBffClient.CreateRaidAsync(raid);
-
-            _logger.LogInformation("Raid created: {MessageId} - {Title} at {RaidTime}", messageId, title, raidTime);
+            // For now, just log the raid creation
+            // The actual raid will be created by the ScanSlashCommand when it posts to the backend
+            _logger.LogInformation("Raid created in memory: {MessageId} - {Title} at {RaidTime}", messageId, title, raidTime);
             return true;
         }
         catch (Exception ex)
@@ -45,23 +31,62 @@ public class RaidService : IRaidService
         }
     }
 
-    public Task<RaidDto?> GetRaidAsync(string messageId)
+    public async Task<RaidDto?> GetRaidAsync(string messageId)
     {
-        _raids.TryGetValue(messageId, out var raid);
-        return Task.FromResult(raid);
+        try
+        {
+            var raidResponse = await _botBffClient.GetRaidByMessageIdAsync(messageId);
+            if (raidResponse == null)
+            {
+                return null;
+            }
+
+            // Convert backend raid to bot's RaidDto format
+            var raid = new RaidDto
+            {
+                MessageId = raidResponse.DiscordMessageId,
+                MessageTitle = $"T{raidResponse.Level} {raidResponse.PokemonSpecies}",
+                RaidTime = raidResponse.StartTime,
+                Closed = !raidResponse.IsActive || raidResponse.IsCompleted || raidResponse.IsCancelled,
+                StartedBy = "", // Not available from backend
+                Players = new List<PlayerDto>() // TODO: Get from participants endpoint
+            };
+
+            return raid;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting raid by message ID: {MessageId}", messageId);
+            return null;
+        }
     }
 
     public Task UpdateRaidAsync(RaidDto raid)
     {
-        _raids[raid.MessageId] = raid;
+        // Updates are now handled by backend
         return Task.CompletedTask;
     }
 
     public async Task AddPlayerToRaidAsync(string messageId, string userId, string playerName)
     {
-        var raid = await GetRaidAsync(messageId);
-        if (raid != null)
+        try
         {
+            var raid = await GetRaidAsync(messageId);
+            if (raid == null)
+            {
+                _logger.LogWarning("No raid found for message {MessageId}", messageId);
+                return;
+            }
+
+            // Get player ID from backend first
+            var playerData = await _botBffClient.GetPlayerAsync(userId);
+            if (playerData == null)
+            {
+                _logger.LogWarning("No player found for Discord ID {UserId}", userId);
+                return;
+            }
+
+            // For now, just track locally since we don't have participant management yet
             var existingPlayer = raid.Players.FirstOrDefault(p => p.Id == userId);
             if (existingPlayer == null)
             {
@@ -71,39 +96,60 @@ public class RaidService : IRaidService
                     Name = playerName,
                     Additions = 0
                 });
-                await UpdateRaidAsync(raid);
                 _logger.LogInformation("Player {PlayerName} added to raid {MessageId}", playerName, messageId);
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error adding player to raid {MessageId}", messageId);
         }
     }
 
     public async Task RemovePlayerFromRaidAsync(string messageId, string userId)
     {
-        var raid = await GetRaidAsync(messageId);
-        if (raid != null)
+        try
         {
+            var raid = await GetRaidAsync(messageId);
+            if (raid == null)
+            {
+                _logger.LogWarning("No raid found for message {MessageId}", messageId);
+                return;
+            }
+
             var player = raid.Players.FirstOrDefault(p => p.Id == userId);
             if (player != null)
             {
                 raid.Players.Remove(player);
-                await UpdateRaidAsync(raid);
                 _logger.LogInformation("Player {PlayerName} removed from raid {MessageId}", player.Name, messageId);
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing player from raid {MessageId}", messageId);
         }
     }
 
     public async Task AddPlayerExtraAsync(string messageId, string userId, int extraCount)
     {
-        var raid = await GetRaidAsync(messageId);
-        if (raid != null)
+        try
         {
+            var raid = await GetRaidAsync(messageId);
+            if (raid == null)
+            {
+                _logger.LogWarning("No raid found for message {MessageId}", messageId);
+                return;
+            }
+
             var player = raid.Players.FirstOrDefault(p => p.Id == userId);
             if (player != null)
             {
                 player.Additions = extraCount;
-                await UpdateRaidAsync(raid);
                 _logger.LogInformation("Player {PlayerName} set extra count to {ExtraCount} for raid {MessageId}", player.Name, extraCount, messageId);
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating player extras for raid {MessageId}", messageId);
         }
     }
 }
