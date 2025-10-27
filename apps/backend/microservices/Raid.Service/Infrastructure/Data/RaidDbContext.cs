@@ -24,6 +24,7 @@ public class RaidDbContext : BaseDbContext
         modelBuilder.Entity<RaidEntity>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.DiscordMessageId).IsRequired().HasMaxLength(50);
             entity.Property(e => e.GymId).IsRequired();
             entity.Property(e => e.PokemonSpecies).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Level).IsRequired();
@@ -39,6 +40,7 @@ public class RaidDbContext : BaseDbContext
             entity.Property(e => e.Notes).HasMaxLength(1000);
 
             // Create indexes for efficient searching
+            entity.HasIndex(e => e.DiscordMessageId).IsUnique();
             entity.HasIndex(e => e.GymId);
             entity.HasIndex(e => e.PokemonSpecies);
             entity.HasIndex(e => e.Level);

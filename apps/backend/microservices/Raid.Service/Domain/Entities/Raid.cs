@@ -8,6 +8,11 @@ namespace Raid.Service.Domain.Entities;
 public class Raid : BaseEntity
 {
     /// <summary>
+    /// Discord message ID associated with this raid
+    /// </summary>
+    public string DiscordMessageId { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gym ID where the raid is taking place
     /// </summary>
     public int GymId { get; set; }
