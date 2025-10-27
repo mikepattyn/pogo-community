@@ -26,6 +26,12 @@ public class CreateRaidCommandHandler : CommandHandler<CreateRaidCommand, RaidDt
 
     protected override async Task<Result<RaidDto>> HandleCommand(CreateRaidCommand request, CancellationToken cancellationToken)
     {
+        // Validate Discord message ID
+        if (string.IsNullOrWhiteSpace(request.DiscordMessageId))
+        {
+            return Result<RaidDto>.Failure("Discord message ID is required");
+        }
+
         // Validate raid level
         if (request.Level < 1 || request.Level > 5)
         {
@@ -64,6 +70,7 @@ public class CreateRaidCommandHandler : CommandHandler<CreateRaidCommand, RaidDt
         // Create new raid
         var raid = new Domain.Entities.Raid
         {
+            DiscordMessageId = request.DiscordMessageId,
             GymId = request.GymId,
             PokemonSpecies = request.PokemonSpecies,
             Level = request.Level,
@@ -87,6 +94,7 @@ public class CreateRaidCommandHandler : CommandHandler<CreateRaidCommand, RaidDt
         return new RaidDto
         {
             Id = raid.Id,
+            DiscordMessageId = raid.DiscordMessageId,
             GymId = raid.GymId,
             PokemonSpecies = raid.PokemonSpecies,
             Level = raid.Level,
