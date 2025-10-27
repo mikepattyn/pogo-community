@@ -21,13 +21,18 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: 5001
+              containerPort: 5006
               protocol: TCP
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"
             - name: ASPNETCORE_URLS
-              value: "http://+:5001"
+              value: "http://+:5006"
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: google-secrets
+                  key: GOOGLE_API_KEY
           resources:
             requests:
               cpu: 200m

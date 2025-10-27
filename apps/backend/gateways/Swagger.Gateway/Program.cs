@@ -15,14 +15,14 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "Select a microservice from the 'Select a definition' dropdown in the top right to view its API documentation."
     });
-    
+
     c.SwaggerDoc("system", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "System Endpoints - Health & Metrics",
         Version = "v1",
         Description = "Health checks and Prometheus metrics for all services"
     });
-    
+
     // Configure tags to group endpoints by Swagger document
     c.TagActionsBy(api => new[] { api.GroupName ?? "v1" });
     c.DocInclusionPredicate((name, api) => true);
@@ -88,7 +88,7 @@ var serviceRoutes = new Dictionary<string, string>
     { "location-service", app.Configuration["ServiceUrls:LocationService"] ?? "http://location-service:5003" },
     { "gym-service", app.Configuration["ServiceUrls:GymService"] ?? "http://gym-service:5004" },
     { "raid-service", app.Configuration["ServiceUrls:RaidService"] ?? "http://raid-service:5005" },
-    { "ocr-service", app.Configuration["ServiceUrls:OCRService"] ?? "http://ocr-service:5001" },
+    { "ocr-service", app.Configuration["ServiceUrls:OCRService"] ?? "http://ocr-service:5006" },
     { "bot-bff", app.Configuration["ServiceUrls:BotBFF"] ?? "http://bot-bff:6001" },
     { "app-bff", app.Configuration["ServiceUrls:AppBFF"] ?? "http://app-bff:6002" }
 };

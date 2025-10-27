@@ -11,15 +11,18 @@ public class ReactionHandlerService
     private readonly ILogger<ReactionHandlerService> _logger;
     private readonly IRaidService _raidService;
     private readonly IPlayerService _playerService;
+    private readonly DiscordSocketClient _client;
 
     public ReactionHandlerService(
         ILogger<ReactionHandlerService> logger,
         IRaidService raidService,
-        IPlayerService playerService)
+        IPlayerService playerService,
+        DiscordSocketClient client)
     {
         _logger = logger;
         _raidService = raidService;
         _playerService = playerService;
+        _client = client;
     }
 
     public async Task HandleReactionAddedAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
@@ -40,12 +43,12 @@ public class ReactionHandlerService
 
             if (allowedEmojisRaid.Contains(emojiName))
             {
-                await HandleJoiningRaidAsync(message.Id.ToString(), userId, userName);
+                await HandleJoiningRaidAsync(message, channel, message.Id.ToString(), userId, userName);
             }
             else if (allowedEmojisRaidExtra.Contains(emojiName))
             {
                 var extraCount = Array.IndexOf(allowedEmojisRaidExtra, emojiName) + 1;
-                await HandleAddingExtraAsync(message.Id.ToString(), userId, extraCount);
+                await HandleAddingExtraAsync(message, channel, message.Id.ToString(), userId, extraCount);
             }
             else if (allowedEmojisRank.Contains(emojiName))
             {
@@ -76,11 +79,11 @@ public class ReactionHandlerService
 
             if (allowedEmojisRaid.Contains(emojiName))
             {
-                await HandleLeavingRaidAsync(message.Id.ToString(), userId, userName);
+                await HandleLeavingRaidAsync(message, channel, message.Id.ToString(), userId, userName);
             }
             else if (allowedEmojisRaidExtra.Contains(emojiName))
             {
-                await HandleRemovingExtraAsync(message.Id.ToString(), userId);
+                await HandleRemovingExtraAsync(message, channel, message.Id.ToString(), userId);
             }
             else if (allowedEmojisRank.Contains(emojiName))
             {
@@ -93,7 +96,7 @@ public class ReactionHandlerService
         }
     }
 
-    private async Task HandleJoiningRaidAsync(string messageId, string userId, string userName)
+    private async Task HandleJoiningRaidAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, string messageId, string userId, string userName)
     {
         try
         {
@@ -101,7 +104,7 @@ public class ReactionHandlerService
             _logger.LogInformation("User {UserName} joined raid {MessageId}", userName, messageId);
 
             // Update raid embed with new participant
-            await UpdateRaidEmbedAsync(messageId);
+            await UpdateRaidEmbedAsync(message, channel);
         }
         catch (Exception ex)
         {
@@ -109,7 +112,7 @@ public class ReactionHandlerService
         }
     }
 
-    private async Task HandleLeavingRaidAsync(string messageId, string userId, string userName)
+    private async Task HandleLeavingRaidAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, string messageId, string userId, string userName)
     {
         try
         {
@@ -117,7 +120,7 @@ public class ReactionHandlerService
             _logger.LogInformation("User {UserName} left raid {MessageId}", userName, messageId);
 
             // Update raid embed
-            await UpdateRaidEmbedAsync(messageId);
+            await UpdateRaidEmbedAsync(message, channel);
         }
         catch (Exception ex)
         {
@@ -125,7 +128,7 @@ public class ReactionHandlerService
         }
     }
 
-    private async Task HandleAddingExtraAsync(string messageId, string userId, int extraCount)
+    private async Task HandleAddingExtraAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, string messageId, string userId, int extraCount)
     {
         try
         {
@@ -133,7 +136,7 @@ public class ReactionHandlerService
             _logger.LogInformation("User {UserId} added {ExtraCount} extra players to raid {MessageId}", userId, extraCount, messageId);
 
             // Update raid embed
-            await UpdateRaidEmbedAsync(messageId);
+            await UpdateRaidEmbedAsync(message, channel);
         }
         catch (Exception ex)
         {
@@ -141,7 +144,7 @@ public class ReactionHandlerService
         }
     }
 
-    private async Task HandleRemovingExtraAsync(string messageId, string userId)
+    private async Task HandleRemovingExtraAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, string messageId, string userId)
     {
         try
         {
@@ -149,7 +152,7 @@ public class ReactionHandlerService
             _logger.LogInformation("User {UserId} removed extra players from raid {MessageId}", userId, messageId);
 
             // Update raid embed
-            await UpdateRaidEmbedAsync(messageId);
+            await UpdateRaidEmbedAsync(message, channel);
         }
         catch (Exception ex)
         {
@@ -193,12 +196,25 @@ public class ReactionHandlerService
         }
     }
 
-    private async Task UpdateRaidEmbedAsync(string messageId)
+    private async Task UpdateRaidEmbedAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel)
     {
         try
         {
+            var messageId = message.Id.ToString();
             var raid = await _raidService.GetRaidAsync(messageId);
-            if (raid == null) return;
+            if (raid == null)
+            {
+                _logger.LogWarning("No raid found for message {MessageId}", messageId);
+                return;
+            }
+
+            // Get the actual message
+            var actualMessage = await message.GetOrDownloadAsync();
+            if (actualMessage == null)
+            {
+                _logger.LogWarning("Could not retrieve message {MessageId}", messageId);
+                return;
+            }
 
             // Build participant list
             var participantList = new List<string>();
@@ -210,26 +226,42 @@ public class ReactionHandlerService
                 totalExtras += player.Additions;
             }
 
-            var description = $"**Participants:** {participantList.Count}\n";
-            if (participantList.Count > 0)
+            // Get the original embed and build a new one
+            var embedBuilder = new EmbedBuilder();
+
+            if (actualMessage.Embeds.Count > 0)
             {
-                description += string.Join(", ", participantList);
-                if (totalExtras > 0)
-                {
-                    description += $" (+{totalExtras} extras)";
-                }
+                var originalEmbed = actualMessage.Embeds.First();
+                embedBuilder = originalEmbed.ToEmbedBuilder();
+
+                // Clear all existing fields
+                embedBuilder.Fields.Clear();
             }
 
-            description += "\n\nReact with 👍 to join\nReact with 1⃣-9⃣ to add extra players";
+            // Build participant fields
+            var participantCount = participantList.Count;
+            var participantText = participantCount > 0
+                ? string.Join(", ", participantList)
+                : "No one yet";
 
-            // This would need access to the Discord message to update the embed
-            // For now, we'll just log the update
+            var extraText = totalExtras > 0 ? totalExtras.ToString() : "0";
+
+            // Add participant and extra player fields
+            embedBuilder.AddField($"Participants ({participantCount})", participantText, true);
+            embedBuilder.AddField(totalExtras > 0 ? $"Extra Players (+{totalExtras})" : "Extra Players", extraText, true);
+
+            // Update the message
+            await actualMessage.ModifyAsync(msg =>
+            {
+                msg.Embed = embedBuilder.Build();
+            });
+
             _logger.LogInformation("Raid embed updated for {MessageId}: {ParticipantCount} participants, {ExtraCount} extras",
-                messageId, participantList.Count, totalExtras);
+                messageId, participantCount, totalExtras);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating raid embed for {MessageId}", messageId);
+            _logger.LogError(ex, "Error updating raid embed for {MessageId}", message.Id);
         }
     }
 }

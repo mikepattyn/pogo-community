@@ -10,7 +10,7 @@ data:
   LOCATION_SERVICE_URL: "http://location-service:5003"
   GYM_SERVICE_URL: "http://gym-service:5004"
   RAID_SERVICE_URL: "http://raid-service:5005"
-  OCR_SERVICE_URL: "http://ocr-service:5001"
+  OCR_SERVICE_URL: "http://ocr-service:5006"
 
   # BFF URLs
   BOT_BFF_URL: "http://bot-bff:6001"
@@ -23,5 +23,5 @@ data:
   LocationService__BaseUrl: "http://location-service:5003"
   GymService__BaseUrl: "http://gym-service:5004"
   PlayerService__BaseUrl: "http://player-service:5002"
-  OCRServiceUrl: "http://ocr-service:5001"
+  OCRServiceUrl: "http://ocr-service:5006"
 

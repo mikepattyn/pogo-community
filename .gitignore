@@ -97,3 +97,10 @@ lib/
 out
 **/obj/*
 **/bin/*
+
+# ===========================================
+# OCR Extraction
+# ===========================================
+ocr-extraction/debug_crops/
+ocr-extraction/raid_data.json
+ocr-extraction/*.json

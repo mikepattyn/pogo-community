@@ -167,3 +167,5 @@ When adding new endpoints:
 2. Use environment variables for URLs: `{{service_name_url}}`
 3. Include documentation in the `docs` block
 4. Use descriptive names for request files
+
+

@@ -1,14 +1,13 @@
 # Use the official .NET 9 runtime as base image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
-EXPOSE 5001
+EXPOSE 5006
 
 # Install Tesseract OCR
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
     tesseract-ocr-nld \
-    libgdiplus \
     && rm -rf /var/lib/apt/lists/*
 
 # Use the official .NET 9 SDK for building
@@ -46,7 +45,7 @@ RUN mkdir -p /app/tessdata && \
     cp /usr/share/tesseract-ocr/5/tessdata/*.traineddata /app/tessdata/
 
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:5001
+ENV ASPNETCORE_URLS=http://+:5006
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENTRYPOINT ["dotnet", "OCR.Service.dll"]
