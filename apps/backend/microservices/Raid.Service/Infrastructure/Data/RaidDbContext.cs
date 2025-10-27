@@ -1,4 +1,3 @@
-using Raid.Service.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Pogo.Shared.Infrastructure;
 using RaidEntity = Raid.Service.Domain.Entities.Raid;
@@ -50,7 +49,7 @@ public class RaidDbContext : BaseDbContext
             entity.HasIndex(e => e.IsCompleted);
             entity.HasIndex(e => e.IsCancelled);
             entity.HasIndex(e => e.Difficulty);
-            
+
             // Composite indexes for common queries
             entity.HasIndex(e => new { e.GymId, e.StartTime });
             entity.HasIndex(e => new { e.IsActive, e.StartTime });

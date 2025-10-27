@@ -112,3 +112,11 @@ public class RaidParticipationDto
     public DateTime JoinedAt { get; set; }
     public bool IsActive { get; set; }
 }
+
+/// <summary>
+/// Data Transfer Object for joining a raid
+/// </summary>
+public class JoinRaidDto
+{
+    public int PlayerId { get; set; }
+}
