@@ -32,6 +32,7 @@ public class RaidController : ControllerBase
     {
         var command = new CreateRaidCommand
         {
+            DiscordMessageId = request.DiscordMessageId,
             GymId = request.GymId,
             PokemonSpecies = request.PokemonSpecies,
             Level = request.Level,

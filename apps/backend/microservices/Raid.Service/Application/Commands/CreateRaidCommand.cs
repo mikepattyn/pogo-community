@@ -8,6 +8,7 @@ namespace Raid.Service.Application.Commands;
 /// </summary>
 public class CreateRaidCommand : ICommand<RaidDto>
 {
+    public string DiscordMessageId { get; set; } = string.Empty;
     public int GymId { get; set; }
     public string PokemonSpecies { get; set; } = string.Empty;
     public int Level { get; set; }
