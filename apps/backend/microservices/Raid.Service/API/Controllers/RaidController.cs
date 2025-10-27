@@ -199,6 +199,31 @@ public class RaidController : ControllerBase
     }
 
     /// <summary>
+    /// Gets raid by Discord message ID
+    /// </summary>
+    /// <param name="messageId">Discord message ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Raid information</returns>
+    [HttpGet("by-message/{messageId}")]
+    public async Task<IActionResult> GetRaidByMessageId(string messageId, CancellationToken cancellationToken)
+    {
+        var query = new GetRaidByMessageIdQuery { MessageId = messageId };
+        var result = await _mediator.Send(query, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        if (result.Value == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     /// Gets currently active raids
     /// </summary>
     /// <param name="pageNumber">Page number</param>

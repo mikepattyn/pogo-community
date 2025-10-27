@@ -24,6 +24,12 @@ public class RaidRepository : IRaidRepository
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 
+    public async Task<RaidEntity?> GetByDiscordMessageIdAsync(string messageId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Raids
+            .FirstOrDefaultAsync(r => r.DiscordMessageId == messageId, cancellationToken);
+    }
+
     public async Task<IEnumerable<RaidEntity>> GetByGymIdAsync(int gymId, bool activeOnly = true, DateTime? fromDate = null, DateTime? toDate = null, CancellationToken cancellationToken = default)
     {
         var query = _context.Raids
