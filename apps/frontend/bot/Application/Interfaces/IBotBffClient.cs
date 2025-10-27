@@ -10,8 +10,7 @@ public interface IBotBffClient
     
     Task<RaidResponseDto?> GetRaidByMessageIdAsync(string messageId, CancellationToken cancellationToken = default);
     Task<RaidResponseDto> CreateRaidAsync(CreateRaidRequestDto request, CancellationToken cancellationToken = default);
-    Task JoinRaidAsync(int raidId, int playerId, CancellationToken cancellationToken = default);
-    Task LeaveRaidAsync(int raidId, int playerId, CancellationToken cancellationToken = default);
+    Task JoinRaidAsync(string messageId, int playerId, CancellationToken cancellationToken = default);
     
     Task<ScanImageResponse> ScanImageAsync(ScanImageRequest request, CancellationToken cancellationToken = default);
 }

@@ -108,35 +108,22 @@ public class BotBffClient : IBotBffClient
         }
     }
 
-    public async Task JoinRaidAsync(int raidId, int playerId, CancellationToken cancellationToken = default)
+    public async Task JoinRaidAsync(string messageId, int playerId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _httpClient.PostAsync($"{_baseUrl}/api/raid/v1/raids/{raidId}/join?playerId={playerId}", null, cancellationToken);
+            var joinRequest = new { playerId };
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/raid/v1/raids/by-message/{messageId}/join", joinRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
-            _logger.LogInformation("Successfully joined raid {RaidId} as player {PlayerId}", raidId, playerId);
+            _logger.LogInformation("Successfully joined raid {MessageId} as player {PlayerId}", messageId, playerId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to join raid {RaidId} as player {PlayerId}", raidId, playerId);
+            _logger.LogError(ex, "Failed to join raid {MessageId} as player {PlayerId}", messageId, playerId);
             throw;
         }
     }
 
-    public async Task LeaveRaidAsync(int raidId, int playerId, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var response = await _httpClient.PostAsync($"{_baseUrl}/api/raid/v1/raids/{raidId}/leave?playerId={playerId}", null, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            _logger.LogInformation("Successfully left raid {RaidId} as player {PlayerId}", raidId, playerId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to leave raid {RaidId} as player {PlayerId}", raidId, playerId);
-            throw;
-        }
-    }
 
     public async Task<ScanImageResponse> ScanImageAsync(ScanImageRequest request, CancellationToken cancellationToken = default)
     {

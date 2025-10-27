@@ -10,6 +10,7 @@ post {
 
 body:json {
   {
+    "discordMessageId": "1234567890",
     "gymId": 1,
     "pokemonSpecies": "Mewtwo",
     "level": 5,
@@ -28,6 +29,7 @@ docs {
   Creates a new raid.
 
   ## Request Body
+  - `discordMessageId`: Discord message ID for this raid
   - `gymId`: Gym where raid is occurring
   - `pokemonSpecies`: Pokemon species for the raid
   - `level`: Raid level 1-5 (where 5 is legendary)
