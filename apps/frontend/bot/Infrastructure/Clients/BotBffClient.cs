@@ -65,13 +65,41 @@ public class BotBffClient : IBotBffClient
         }
     }
 
-    public async Task CreateRaidAsync(object raidData, CancellationToken cancellationToken = default)
+    public async Task<RaidResponseDto?> GetRaidByMessageIdAsync(string messageId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/raid/v1/raids", raidData, cancellationToken);
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/raid/v1/raids/by-message/{messageId}", cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var raid = await response.Content.ReadFromJsonAsync<RaidResponseDto>(cancellationToken: cancellationToken);
+                _logger.LogInformation("Successfully retrieved raid by message ID: {MessageId}", messageId);
+                return raid;
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
             response.EnsureSuccessStatusCode();
-            _logger.LogInformation("Successfully created raid");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get raid by message ID: {MessageId}", messageId);
+            throw;
+        }
+    }
+
+    public async Task<RaidResponseDto> CreateRaidAsync(CreateRaidRequestDto request, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/raid/v1/raids", request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var raid = await response.Content.ReadFromJsonAsync<RaidResponseDto>(cancellationToken: cancellationToken);
+            _logger.LogInformation("Successfully created raid with message ID: {MessageId}", request.DiscordMessageId);
+            return raid ?? throw new InvalidOperationException("Failed to deserialize created raid response");
         }
         catch (Exception ex)
         {
@@ -80,35 +108,32 @@ public class BotBffClient : IBotBffClient
         }
     }
 
-    public async Task<object?> GetRaidsAsync(CancellationToken cancellationToken = default)
+    public async Task JoinRaidAsync(int raidId, int playerId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/api/raid/v1/raids", cancellationToken);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<object>(cancellationToken: cancellationToken);
-            }
-            return null;
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/raid/v1/raids/{raidId}/join?playerId={playerId}", null, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            _logger.LogInformation("Successfully joined raid {RaidId} as player {PlayerId}", raidId, playerId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get raids");
+            _logger.LogError(ex, "Failed to join raid {RaidId} as player {PlayerId}", raidId, playerId);
             throw;
         }
     }
 
-    public async Task UpdateRaidAsync(string raidId, object raidData, CancellationToken cancellationToken = default)
+    public async Task LeaveRaidAsync(int raidId, int playerId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/raid/v1/raids/{raidId}", raidData, cancellationToken);
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/raid/v1/raids/{raidId}/leave?playerId={playerId}", null, cancellationToken);
             response.EnsureSuccessStatusCode();
-            _logger.LogInformation("Successfully updated raid: {RaidId}", raidId);
+            _logger.LogInformation("Successfully left raid {RaidId} as player {PlayerId}", raidId, playerId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to update raid: {RaidId}", raidId);
+            _logger.LogError(ex, "Failed to leave raid {RaidId} as player {PlayerId}", raidId, playerId);
             throw;
         }
     }
