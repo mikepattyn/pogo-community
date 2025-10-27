@@ -17,6 +17,14 @@ public interface IRaidRepository
     Task<RaidEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets a raid by Discord message ID
+    /// </summary>
+    /// <param name="messageId">Discord message ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Raid entity or null if not found</returns>
+    Task<RaidEntity?> GetByDiscordMessageIdAsync(string messageId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Gets raids by gym ID
     /// </summary>
     /// <param name="gymId">Gym ID</param>
