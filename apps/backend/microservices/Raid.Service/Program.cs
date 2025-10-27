@@ -84,11 +84,11 @@ app.MapMetrics();
 // Map health checks
 app.MapHealthChecks();
 
-// Ensure database is created
+// Apply database migrations
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<RaidDbContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
 
 app.Run();
