@@ -7,6 +7,6 @@ namespace Raid.Service.Application.Commands;
 /// </summary>
 public class JoinRaidCommand : ICommand
 {
-    public int RaidId { get; set; }
+    public string MessageId { get; set; } = string.Empty;
     public int PlayerId { get; set; }
 }
