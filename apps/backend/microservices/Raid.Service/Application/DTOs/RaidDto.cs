@@ -6,6 +6,7 @@ namespace Raid.Service.Application.DTOs;
 public class RaidDto
 {
     public int Id { get; set; }
+    public string DiscordMessageId { get; set; } = string.Empty;
     public int GymId { get; set; }
     public string PokemonSpecies { get; set; } = string.Empty;
     public int Level { get; set; }
@@ -28,6 +29,7 @@ public class RaidDto
 /// </summary>
 public class CreateRaidDto
 {
+    public string DiscordMessageId { get; set; } = string.Empty;
     public int GymId { get; set; }
     public string PokemonSpecies { get; set; } = string.Empty;
     public int Level { get; set; }
@@ -45,6 +47,7 @@ public class CreateRaidDto
 public class UpdateRaidDto
 {
     public int Id { get; set; }
+    public string? DiscordMessageId { get; set; }
     public int GymId { get; set; }
     public string PokemonSpecies { get; set; } = string.Empty;
     public int Level { get; set; }
@@ -65,6 +68,7 @@ public class UpdateRaidDto
 public class RaidSearchDto
 {
     public int Id { get; set; }
+    public string DiscordMessageId { get; set; } = string.Empty;
     public int GymId { get; set; }
     public string PokemonSpecies { get; set; } = string.Empty;
     public int Level { get; set; }
