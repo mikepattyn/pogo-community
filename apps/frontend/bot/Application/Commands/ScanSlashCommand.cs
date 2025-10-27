@@ -10,16 +10,13 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
 {
     private readonly ILogger<ScanSlashCommandModule> _logger;
     private readonly IBotBffClient _botBffClient;
-    private readonly IRaidService _raidService;
 
     public ScanSlashCommandModule(
         ILogger<ScanSlashCommandModule> logger,
-        IBotBffClient botBffClient,
-        IRaidService raidService)
+        IBotBffClient botBffClient)
     {
         _logger = logger;
         _botBffClient = botBffClient;
-        _raidService = raidService;
     }
 
     [SlashCommand("scan", "Scan a raid image to extract information")]
@@ -99,15 +96,30 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
                 await response.AddReactionAsync(new Emoji("4⃣"));
                 await response.AddReactionAsync(new Emoji("5⃣"));
 
-                // Create raid in service
-                await _raidService.CreateRaidAsync(
-                    response.Id.ToString(),
-                    $"T{raidInfo.Tier} {raidInfo.PokemonName}",
-                    DateTime.Now, // For scanned raids, use current time
-                    Context.User.Id.ToString(),
-                    Context.Guild.Id.ToString(),
-                    Context.Channel.Id.ToString()
-                );
+                // Create raid in backend via BFF
+                var messageId = response.Id.ToString();
+                var createRaidRequest = new CreateRaidRequestDto
+                {
+                    DiscordMessageId = messageId,
+                    GymId = 1, // TODO: Need to resolve gym by name
+                    PokemonSpecies = raidInfo.PokemonName,
+                    Level = raidInfo.Tier,
+                    StartTime = DateTime.UtcNow, // TODO: Parse from time info
+                    EndTime = DateTime.UtcNow.AddHours(1),
+                    MaxParticipants = 20,
+                    Difficulty = "Medium",
+                    Notes = $"Gym: {raidInfo.GymName}"
+                };
+
+                try
+                {
+                    await _botBffClient.CreateRaidAsync(createRaidRequest);
+                    _logger.LogInformation("Successfully created raid in backend for message {MessageId}", messageId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to create raid in backend for message {MessageId}", messageId);
+                }
 
                 _logger.LogInformation("Slash raid scan completed successfully: T{tier} {pokemon} at {gym}",
                     raidInfo.Tier, raidInfo.PokemonName, raidInfo.GymName);
