@@ -4,7 +4,14 @@ meta {
 }
 
 post {
-  url: {{raid_service_url}}/api/raid/1/join?playerId=1
+  url: {{raid_service_url}}/api/raid/by-message/{{messageId}}/join
+  body: json
+}
+
+body:json {
+  {
+    "playerId": 1
+  }
 }
 
 docs {
@@ -13,9 +20,9 @@ docs {
   Adds a player to a raid's participant list.
 
   ## Path Parameters
-  - `id`: Raid ID to join
+  - `messageId`: Discord message ID of the raid
 
-  ## Query Parameters
+  ## Request Body
   - `playerId`: Player ID joining the raid
 
   ## Response
