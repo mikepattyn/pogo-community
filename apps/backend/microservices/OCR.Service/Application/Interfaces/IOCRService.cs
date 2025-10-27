@@ -1,6 +1,9 @@
+using OCR.Service.Application.DTOs;
+using Pogo.Shared.Kernel;
+
 namespace OCR.Service.Application.Interfaces;
 
 public interface IOCRService
 {
-    Task<string[]> ExtractTextFromImageAsync(string imageUrl, string[] languageHints);
+    Task<Result<RaidDataDto>> ExtractRaidDataAsync(string imageUrl, CancellationToken cancellationToken = default);
 }

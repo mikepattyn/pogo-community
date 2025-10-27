@@ -28,7 +28,7 @@ echo "🔐 Checking for required secrets..."
 
 # Check if secrets exist
 SECRETS_MISSING=false
-REQUIRED_SECRETS=("discord-secrets" "jwt-secrets" "db-secrets")
+REQUIRED_SECRETS=("discord-secrets" "jwt-secrets" "db-secrets" "google-secrets")
 
 for secret in "${REQUIRED_SECRETS[@]}"; do
     if ! kubectl get secret "$secret" -n pogo-system &> /dev/null; then
@@ -44,10 +44,7 @@ if [ "$SECRETS_MISSING" = true ]; then
     echo "⚠️  Required secrets are missing!"
     echo ""
     echo "Please create secrets first by running:"
-    echo "  ./k8s/create-secrets.sh"
-    echo ""
-    echo "Or for auto-generation:"
-    echo "  ./k8s/create-secrets.sh --auto"
+    echo "  ./k8s/create-secrets-simple.sh"
     echo ""
     exit 1
 fi
@@ -66,6 +63,11 @@ sleep 3
 # Apply ingress after namespace is ready
 echo "  → Creating ingress..."
 kubectl apply -f k8s/base/ingress.yaml
+
+# Apply ConfigMaps
+echo "  → Applying ConfigMaps..."
+kubectl apply -f k8s/config/common-config.yaml
+kubectl apply -f k8s/config/service-urls-config.yaml
 
 # Apply database
 echo "  → Deploying CockroachDB..."

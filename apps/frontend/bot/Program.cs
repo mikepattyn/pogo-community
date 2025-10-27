@@ -42,6 +42,7 @@ builder.Services.AddSingleton<DiscordMetricsService>();
 builder.Services.AddScoped<IRaidService, RaidService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddSingleton<ReactionHandlerService>();
 
 // Add MediatR
 builder.Services.AddMediatR(cfg =>

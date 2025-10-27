@@ -5,7 +5,8 @@ using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Ocelot
+// Add Ocelot with configuration
+builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 builder.Services.AddOcelot();
 
 // Add services to the container
@@ -53,7 +54,7 @@ app.MapControllers();
 app.MapMetrics();
 
 // Use Ocelot only for non-health check and non-metrics paths
-app.MapWhen(context => !context.Request.Path.StartsWithSegments("/health") && 
+app.MapWhen(context => !context.Request.Path.StartsWithSegments("/health") &&
                       !context.Request.Path.StartsWithSegments("/metrics"), appBuilder =>
 {
     appBuilder.UseOcelot();

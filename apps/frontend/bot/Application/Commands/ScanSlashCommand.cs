@@ -10,30 +10,26 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
 {
     private readonly ILogger<ScanSlashCommandModule> _logger;
     private readonly IBotBffClient _botBffClient;
+    private readonly IRaidService _raidService;
 
     public ScanSlashCommandModule(
         ILogger<ScanSlashCommandModule> logger,
-        IBotBffClient botBffClient)
+        IBotBffClient botBffClient,
+        IRaidService raidService)
     {
         _logger = logger;
         _botBffClient = botBffClient;
+        _raidService = raidService;
     }
 
     [SlashCommand("scan", "Scan a raid image to extract information")]
     public async Task ScanAsync(
-        [Summary("tier", "Raid tier (1-5)")] int tier,
         [Summary("image", "Raid image to scan")] IAttachment image)
     {
         try
         {
-            _logger.LogInformation("Slash scan command executed by {User}: T{tier} with image {ImageUrl}",
-                Context.User.Username, tier, image.Url);
-
-            if (tier < 1 || tier > 5)
-            {
-                await RespondAsync("❌ Invalid tier. Tier must be between 1 and 5.", ephemeral: true);
-                return;
-            }
+            _logger.LogInformation("Slash scan command executed by {User} with image {ImageUrl}",
+                Context.User.Username, image.Url);
 
             if (!IsValidImageUrl(image.Url))
             {
@@ -53,18 +49,33 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
 
                 var scanResponse = await _botBffClient.ScanImageAsync(scanRequest);
 
-                if (scanResponse.TextResults.Length == 0)
+                if (scanResponse.RaidData == null || string.IsNullOrEmpty(scanResponse.RaidData.PokemonName))
                 {
-                    await ModifyOriginalResponseAsync(m => m.Content = "❌ No text could be extracted from the image. Please try with a clearer image.");
+                    await ModifyOriginalResponseAsync(m => m.Content = "❌ No data could be extracted from the image. Please try with a clearer image.");
                     return;
                 }
 
-                // Parse OCR results
-                var raidInfo = ParseRaidInfo(scanResponse.TextResults, tier);
+                // Validate tier extraction
+                if (scanResponse.RaidData.Tier <= 0 || scanResponse.RaidData.Tier > 5)
+                {
+                    await ModifyOriginalResponseAsync(m => m.Content = "❌ Could not extract raid tier from the image. Please try with a clearer image.");
+                    return;
+                }
+
+                // Use structured data from OCR service
+                var raidInfo = new RaidScanResult
+                {
+                    Tier = scanResponse.RaidData.Tier,
+                    PokemonName = scanResponse.RaidData.PokemonName,
+                    GymName = scanResponse.RaidData.GymName,
+                    TimeInfo = scanResponse.RaidData.TimeRemaining,
+                    IsHatched = !string.IsNullOrEmpty(scanResponse.RaidData.PokemonName) &&
+                                scanResponse.RaidData.PokemonName.ToLower() != "unknown"
+                };
 
                 // Create raid embed
                 var embed = new EmbedBuilder()
-                    .WithTitle($"🗡️ T{tier} {raidInfo.PokemonName}")
+                    .WithTitle($"🗡️ T{raidInfo.Tier} {raidInfo.PokemonName}")
                     .WithDescription($"**Gym:** {raidInfo.GymName}\n**Time:** {raidInfo.TimeInfo}")
                     .WithColor(raidInfo.IsHatched ? Color.Green : Color.Orange)
                     .WithTimestamp(DateTimeOffset.Now)
@@ -88,8 +99,18 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
                 await response.AddReactionAsync(new Emoji("4⃣"));
                 await response.AddReactionAsync(new Emoji("5⃣"));
 
+                // Create raid in service
+                await _raidService.CreateRaidAsync(
+                    response.Id.ToString(),
+                    $"T{raidInfo.Tier} {raidInfo.PokemonName}",
+                    DateTime.Now, // For scanned raids, use current time
+                    Context.User.Id.ToString(),
+                    Context.Guild.Id.ToString(),
+                    Context.Channel.Id.ToString()
+                );
+
                 _logger.LogInformation("Slash raid scan completed successfully: T{tier} {pokemon} at {gym}",
-                    tier, raidInfo.PokemonName, raidInfo.GymName);
+                    raidInfo.Tier, raidInfo.PokemonName, raidInfo.GymName);
             }
             catch (Exception ex)
             {
@@ -108,45 +129,6 @@ public class ScanSlashCommandModule : InteractionModuleBase<SocketInteractionCon
     {
         var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
         return validExtensions.Any(ext => url.ToLower().Contains(ext));
-    }
-
-    private static RaidScanResult ParseRaidInfo(string[] textResults, int tier)
-    {
-        var result = new RaidScanResult
-        {
-            Tier = tier,
-            PokemonName = "Unknown",
-            GymName = "Unknown Gym",
-            TimeInfo = "Unknown",
-            IsHatched = false
-        };
-
-        // Simple parsing logic - in a real implementation, this would be more sophisticated
-        foreach (var text in textResults)
-        {
-            // Look for time patterns (HH:MM)
-            if (System.Text.RegularExpressions.Regex.IsMatch(text, @"\d{1,2}:\d{2}"))
-            {
-                result.TimeInfo = text;
-            }
-
-            // Look for gym names (usually longer text without numbers)
-            if (text.Length > 5 && !System.Text.RegularExpressions.Regex.IsMatch(text, @"\d") && !text.Contains(":"))
-            {
-                result.GymName = text;
-            }
-
-            // Look for Pokemon names (this would need a Pokemon database lookup)
-            if (text.Length > 3 && text.Length < 20 && !System.Text.RegularExpressions.Regex.IsMatch(text, @"\d"))
-            {
-                result.PokemonName = text;
-            }
-        }
-
-        // Determine if hatched based on Pokemon name presence
-        result.IsHatched = !string.IsNullOrEmpty(result.PokemonName) && result.PokemonName != "Unknown";
-
-        return result;
     }
 
     private class RaidScanResult

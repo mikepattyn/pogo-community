@@ -479,6 +479,8 @@ kubectl port-forward service/grafana 3001:3000 -n pogo-system
 
 ```bash
 # Build and deploy
+
+
 make k8s-build          # Build all Docker images
 make k8s-deploy         # Deploy to Kubernetes
 make k8s-teardown       # Remove all resources

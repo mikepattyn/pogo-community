@@ -1,0 +1,25 @@
+4
+linear   essential      -0.250000   0.750000
+linear   non-essential   0.000000   1.000000
+linear   essential       0.000000   1.000000
+linear   essential       0.000000   1.000000
+
+tier_label_one 1
+significant   elliptical     1
+	  0.476562  0.721484  0.265625  0.261719
+	  0.000400  0.000400  0.000400  0.000400
+
+tier_label_two 1
+significant   elliptical     1
+	  0.476562  0.738281  0.261719  0.257812
+	  0.000400  0.000400  0.000400  0.000400
+
+tier_label_three 1
+significant   elliptical     1
+	  0.476562  0.721484  0.265625  0.261719
+	  0.000400  0.000400  0.000400  0.000400
+
+tier_label_four 1
+significant   elliptical     1
+	  0.476562  0.755859  0.257812  0.257812
+	  0.000400  0.000400  0.000400  0.000400

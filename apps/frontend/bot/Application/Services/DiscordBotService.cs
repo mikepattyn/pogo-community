@@ -19,6 +19,7 @@ public class DiscordBotService : BackgroundService
     private readonly ILogger<DiscordBotService> _logger;
     private readonly IBotBffClient _botBffClient;
     private readonly DiscordMetricsService _metricsService;
+    private readonly ReactionHandlerService _reactionHandler;
 
     public DiscordBotService(
         DiscordSocketClient client,
@@ -26,7 +27,8 @@ public class DiscordBotService : BackgroundService
         IConfiguration configuration,
         ILogger<DiscordBotService> logger,
         IBotBffClient botBffClient,
-        DiscordMetricsService metricsService)
+        DiscordMetricsService metricsService,
+        ReactionHandlerService reactionHandler)
     {
         _client = client;
         _services = services;
@@ -34,6 +36,7 @@ public class DiscordBotService : BackgroundService
         _logger = logger;
         _botBffClient = botBffClient;
         _metricsService = metricsService;
+        _reactionHandler = reactionHandler;
         _commands = new CommandService();
         _interactions = new InteractionService(_client.Rest);
     }
@@ -42,13 +45,16 @@ public class DiscordBotService : BackgroundService
     {
         _client.Log += LogAsync;
         _commands.Log += LogAsync;
+        _interactions.Log += LogAsync;
 
         // Register event handlers
         _client.Ready += OnReadyAsync;
+        _client.InteractionCreated += HandleInteractionAsync;
         _client.MessageReceived += OnMessageReceivedAsync;
         _client.ReactionAdded += OnReactionAddedAsync;
         _client.ReactionRemoved += OnReactionRemovedAsync;
         _client.UserJoined += OnUserJoinedAsync;
+        _client.JoinedGuild += OnJoinedGuildAsync;
         _client.Connected += OnConnectedAsync;
         _client.Disconnected += OnDisconnectedAsync;
 
@@ -76,7 +82,7 @@ public class DiscordBotService : BackgroundService
             _metricsService.UpdateConnectionState(_client.ConnectionState);
             _metricsService.UpdateGuildMetrics(_client.Guilds);
             _metricsService.UpdateUptime();
-            
+
             await Task.Delay(30000, stoppingToken);
         }
     }
@@ -90,8 +96,49 @@ public class DiscordBotService : BackgroundService
         _metricsService.UpdateConnectionState(_client.ConnectionState);
         _metricsService.UpdateGuildMetrics(_client.Guilds);
 
-        // Register slash commands
+        // Register slash commands globally (takes up to 1 hour to propagate)
         await _interactions.RegisterCommandsGloballyAsync();
+        _logger.LogInformation("Registered slash commands globally");
+
+        // Register slash commands for all current guilds (instant updates)
+        foreach (var guild in _client.Guilds)
+        {
+            try
+            {
+                await _interactions.RegisterCommandsToGuildAsync(guild.Id);
+                _logger.LogInformation($"Registered slash commands for guild: {guild.Name} ({guild.Id})");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to register commands for guild: {guild.Name} ({guild.Id})");
+            }
+        }
+    }
+
+    private async Task HandleInteractionAsync(SocketInteraction interaction)
+    {
+        try
+        {
+            var ctx = new SocketInteractionContext(_client, interaction);
+            await _interactions.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling interaction");
+
+            // Try to respond to the interaction with an error message
+            try
+            {
+                if (interaction.HasResponded == false)
+                {
+                    await interaction.RespondAsync("❌ An error occurred while processing your request.", ephemeral: true);
+                }
+            }
+            catch
+            {
+                // Ignore errors when trying to respond
+            }
+        }
     }
 
     private async Task OnMessageReceivedAsync(SocketMessage message)
@@ -113,7 +160,7 @@ public class DiscordBotService : BackgroundService
             {
                 var result = await _commands.ExecuteAsync(context, argPos, _services);
                 var duration = DateTime.UtcNow - startTime;
-                
+
                 // Track command execution
                 var commandName = "text_command"; // We don't have access to the specific command name from IResult
                 _metricsService.TrackCommand(commandName, result.IsSuccess, duration);
@@ -143,28 +190,8 @@ public class DiscordBotService : BackgroundService
         // Track reaction added event
         _metricsService.TrackReactionAdded();
 
-        // Handle raid reactions
-        var allowedEmojisRaid = new[] { "👍" };
-        var allowedEmojisRaidExtra = new[] { "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣" };
-        var allowedEmojisRank = new[] { "🔴", "🔵", "🟡", "⚪" };
-
-        var emojiName = reaction.Emote.Name;
-
-        if (allowedEmojisRaid.Contains(emojiName))
-        {
-            // Handle joining raid
-            _logger.LogInformation($"User {reaction.User.Value.Username} joined raid");
-        }
-        else if (allowedEmojisRaidExtra.Contains(emojiName))
-        {
-            // Handle adding extra players
-            _logger.LogInformation($"User {reaction.User.Value.Username} added extra players");
-        }
-        else if (allowedEmojisRank.Contains(emojiName))
-        {
-            // Handle rank selection
-            _logger.LogInformation($"User {reaction.User.Value.Username} selected rank");
-        }
+        // Delegate to ReactionHandlerService
+        await _reactionHandler.HandleReactionAddedAsync(message, channel, reaction);
     }
 
     private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
@@ -175,8 +202,8 @@ public class DiscordBotService : BackgroundService
         // Track reaction removed event
         _metricsService.TrackReactionRemoved();
 
-        // Handle leaving raid
-        _logger.LogInformation($"User {reaction.User.Value.Username} left raid");
+        // Delegate to ReactionHandlerService
+        await _reactionHandler.HandleReactionRemovedAsync(message, channel, reaction);
     }
 
     private async Task OnUserJoinedAsync(SocketGuildUser user)
@@ -205,6 +232,21 @@ public class DiscordBotService : BackgroundService
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Failed to create player for Discord user {user.Username}");
+        }
+    }
+
+    private async Task OnJoinedGuildAsync(SocketGuild guild)
+    {
+        _logger.LogInformation($"Bot joined new guild: {guild.Name} ({guild.Id})");
+
+        try
+        {
+            await _interactions.RegisterCommandsToGuildAsync(guild.Id);
+            _logger.LogInformation($"Registered slash commands for new guild: {guild.Name} ({guild.Id})");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to register commands for new guild: {guild.Name} ({guild.Id})");
         }
     }
 

@@ -3,7 +3,6 @@ using Discord.Commands;
 using Bot.Service.Application.Interfaces;
 using Bot.Service.Application.DTOs;
 using Microsoft.Extensions.Logging;
-using System.Text.RegularExpressions;
 
 namespace Bot.Service.Application.Commands;
 
@@ -30,7 +29,8 @@ public class ScanCommandModule : ModuleBase<SocketCommandContext>
             _logger.LogInformation("Scan command executed by {User} with args: {Args}", Context.User.Username, args);
 
             // Parse tier argument (T1-T5)
-            var tierMatch = Regex.Match(args, @"T([1-5])", RegexOptions.IgnoreCase);
+            System.Text.RegularExpressions.Regex tierRegex = new(@"T([1-5])", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var tierMatch = tierRegex.Match(args);
             if (!tierMatch.Success)
             {
                 await ReplyAsync("❌ Invalid format. Use: `!scan T1-5`\nExample: `!scan T5`");
@@ -69,14 +69,22 @@ public class ScanCommandModule : ModuleBase<SocketCommandContext>
 
                 var scanResponse = await _botBffClient.ScanImageAsync(scanRequest);
 
-                if (scanResponse.TextResults.Length == 0)
+                if (scanResponse.RaidData == null || string.IsNullOrEmpty(scanResponse.RaidData.PokemonName))
                 {
-                    await processingMessage.ModifyAsync(m => m.Content = "❌ No text could be extracted from the image. Please try with a clearer image.");
+                    await processingMessage.ModifyAsync(m => m.Content = "❌ No data could be extracted from the image. Please try with a clearer image.");
                     return;
                 }
 
-                // Parse OCR results
-                var raidInfo = ParseRaidInfo(scanResponse.TextResults, tier);
+                // Use structured data from OCR service
+                var raidInfo = new RaidScanResult
+                {
+                    Tier = scanResponse.RaidData.Tier > 0 ? scanResponse.RaidData.Tier : tier,
+                    PokemonName = scanResponse.RaidData.PokemonName,
+                    GymName = scanResponse.RaidData.GymName,
+                    TimeInfo = scanResponse.RaidData.TimeRemaining,
+                    IsHatched = !string.IsNullOrEmpty(scanResponse.RaidData.PokemonName) &&
+                                scanResponse.RaidData.PokemonName.ToLower() != "unknown"
+                };
 
                 // Create raid embed
                 var embed = new EmbedBuilder()
@@ -122,46 +130,6 @@ public class ScanCommandModule : ModuleBase<SocketCommandContext>
     {
         var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
         return validExtensions.Any(ext => url.ToLower().Contains(ext));
-    }
-
-    private static RaidScanResult ParseRaidInfo(string[] textResults, int tier)
-    {
-        var result = new RaidScanResult
-        {
-            Tier = tier,
-            PokemonName = "Unknown",
-            GymName = "Unknown Gym",
-            TimeInfo = "Unknown",
-            IsHatched = false
-        };
-
-        // Simple parsing logic - in a real implementation, this would be more sophisticated
-        foreach (var text in textResults)
-        {
-            // Look for time patterns (HH:MM)
-            if (Regex.IsMatch(text, @"\d{1,2}:\d{2}"))
-            {
-                result.TimeInfo = text;
-            }
-
-            // Look for gym names (usually longer text without numbers)
-            if (text.Length > 5 && !Regex.IsMatch(text, @"\d") && !text.Contains(":"))
-            {
-                result.GymName = text;
-            }
-
-            // Look for Pokemon names (this would need a Pokemon database lookup)
-            // For now, we'll use a simple heuristic
-            if (text.Length > 3 && text.Length < 20 && !Regex.IsMatch(text, @"\d"))
-            {
-                result.PokemonName = text;
-            }
-        }
-
-        // Determine if hatched based on Pokemon name presence
-        result.IsHatched = !string.IsNullOrEmpty(result.PokemonName) && result.PokemonName != "Unknown";
-
-        return result;
     }
 
     private class RaidScanResult
