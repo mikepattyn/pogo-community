@@ -43,6 +43,8 @@ public class GymDbContext : BaseDbContext
             entity.HasIndex(e => e.IsUnderAttack);
             entity.HasIndex(e => e.IsInRaid);
             entity.HasIndex(e => e.LastUpdated);
+
+            entity.ToTable("Gyms");
         });
     }
 }

@@ -12,7 +12,7 @@ using Raid.Service.Infrastructure.Data;
 namespace Raid.Service.Migrations
 {
     [DbContext(typeof(RaidDbContext))]
-    [Migration("20251027201508_InitialMigration")]
+    [Migration("20251031183454_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -129,7 +129,7 @@ namespace Raid.Service.Migrations
 
                     b.HasIndex("Level", "IsActive");
 
-                    b.ToTable("Raids");
+                    b.ToTable("Raids", (string)null);
                 });
 #pragma warning restore 612, 618
         }

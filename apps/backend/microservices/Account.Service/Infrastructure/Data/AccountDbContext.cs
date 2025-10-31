@@ -33,9 +33,11 @@ public class AccountDbContext : BaseDbContext
 
             // Create unique index on email
             entity.HasIndex(e => e.Email).IsUnique();
-            
+
             // Create index on player ID
             entity.HasIndex(e => e.PlayerId);
+
+            entity.ToTable("Accounts");
         });
     }
 }

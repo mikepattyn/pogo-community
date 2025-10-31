@@ -55,5 +55,7 @@ public class RaidDbContext : BaseDbContext
             entity.HasIndex(e => new { e.IsActive, e.StartTime });
             entity.HasIndex(e => new { e.Level, e.IsActive });
         });
+
+        modelBuilder.Entity<RaidEntity>().ToTable("Raids");
     }
 }
