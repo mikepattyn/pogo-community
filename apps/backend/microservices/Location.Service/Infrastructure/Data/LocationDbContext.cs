@@ -42,9 +42,13 @@ public class LocationDbContext : BaseDbContext
             entity.HasIndex(e => e.IsActive);
             entity.HasIndex(e => e.City);
             entity.HasIndex(e => e.Country);
-            
+
             // Create spatial index for location-based queries
             entity.HasIndex(e => new { e.Latitude, e.Longitude });
+
+            entity.ToTable("Locations");
         });
     }
+
+
 }

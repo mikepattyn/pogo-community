@@ -126,7 +126,7 @@ namespace Raid.Service.Migrations
 
                     b.HasIndex("Level", "IsActive");
 
-                    b.ToTable("Raids");
+                    b.ToTable("Raids", (string)null);
                 });
 #pragma warning restore 612, 618
         }
