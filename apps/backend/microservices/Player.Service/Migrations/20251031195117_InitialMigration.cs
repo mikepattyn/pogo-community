@@ -27,8 +27,8 @@ namespace Player.Service.Migrations
                     Language = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     DiscordUserId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     LastActivity = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "(now() AT TIME ZONE 'UTC')"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "(now() AT TIME ZONE 'UTC')"),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -46,7 +46,7 @@ namespace Player.Service.Migrations
                 table: "Players",
                 column: "DiscordUserId",
                 unique: true,
-                filter: "[DiscordUserId] IS NOT NULL");
+                filter: "\"DiscordUserId\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_IsActive",

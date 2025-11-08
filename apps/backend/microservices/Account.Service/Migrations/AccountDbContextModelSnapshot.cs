@@ -33,7 +33,7 @@ namespace Account.Service.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<DateTime>("DateJoined")
                         .HasColumnType("timestamp with time zone");
@@ -60,7 +60,7 @@ namespace Account.Service.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<int>("WrongAttempts")
                         .ValueGeneratedOnAdd()

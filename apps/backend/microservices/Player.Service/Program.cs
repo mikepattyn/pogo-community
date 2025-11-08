@@ -4,12 +4,16 @@ using Player.Service.Application.Queries;
 using Player.Service.Infrastructure.Data;
 using Player.Service.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Linq;
 using Pogo.Shared.API;
 using Pogo.Shared.Application;
 using MediatR;
 using FluentValidation;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Prometheus;
+using Npgsql;
+using Pogo.Shared.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +61,9 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Map health checks BEFORE HTTPS redirection to avoid redirect issues with K8s probes
+app.MapHealthChecks();
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
@@ -67,14 +74,8 @@ app.UseHttpMetrics();
 app.MapControllers();
 app.MapMetrics();
 
-// Map health checks
-app.MapHealthChecks();
-
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<PlayerDbContext>();
-    context.Database.Migrate();
-}
+// Run database migrations asynchronously to avoid blocking startup
+// This allows the HTTP server to start immediately while migrations run in background
+app.RunMigrationsAsync<PlayerDbContext>();
 
 app.Run();

@@ -1,14 +1,18 @@
+using System.Linq;
+using FluentValidation;
 using Location.Service.Application.Commands;
 using Location.Service.Application.Interfaces;
 using Location.Service.Application.Queries;
 using Location.Service.Infrastructure.Data;
 using Location.Service.Infrastructure.Repositories;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Npgsql;
 using Pogo.Shared.API;
 using Pogo.Shared.Application;
-using MediatR;
-using FluentValidation;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Pogo.Shared.Infrastructure;
 using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +27,8 @@ builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("Defa
 
 // Add Entity Framework
 builder.Services.AddDbContext<LocationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 // Add MediatR
 builder.Services.AddMediatR(cfg =>
@@ -43,12 +48,13 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
 });
 
 var app = builder.Build();
@@ -56,6 +62,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Map health checks BEFORE HTTPS redirection to avoid redirect issues with K8s probes
+app.MapHealthChecks();
 
 app.UseHttpsRedirection();
 
@@ -67,14 +76,8 @@ app.UseHttpMetrics();
 app.MapControllers();
 app.MapMetrics();
 
-// Map health checks
-app.MapHealthChecks();
-
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<LocationDbContext>();
-    context.Database.Migrate();
-}
+// Run database migrations asynchronously to avoid blocking startup
+// This allows the HTTP server to start immediately while migrations run in background
+app.RunMigrationsAsync<LocationDbContext>();
 
 app.Run();

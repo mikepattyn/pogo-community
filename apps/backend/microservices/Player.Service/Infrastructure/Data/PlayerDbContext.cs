@@ -38,7 +38,7 @@ public class PlayerDbContext : BaseDbContext
             entity.HasIndex(e => e.Username).IsUnique();
 
             // Create unique index on Discord user ID (nullable)
-            entity.HasIndex(e => e.DiscordUserId).IsUnique().HasFilter("[DiscordUserId] IS NOT NULL");
+            entity.HasIndex(e => e.DiscordUserId).IsUnique().HasFilter("\"DiscordUserId\" IS NOT NULL");
 
             // Create index on team for filtering
             entity.HasIndex(e => e.Team);

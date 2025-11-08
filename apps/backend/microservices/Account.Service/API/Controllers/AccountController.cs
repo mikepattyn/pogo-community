@@ -11,7 +11,7 @@ namespace Account.Service.API.Controllers;
 /// Controller for account operations
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/accounts")]
 public class AccountController : ControllerBase
 {
     private readonly IMediator _mediator;

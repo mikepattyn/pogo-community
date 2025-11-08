@@ -21,8 +21,8 @@ public class PlayerServiceClient : IPlayerServiceClient
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/player/{playerId}", cancellationToken);
-            
+            var response = await _httpClient.GetAsync($"api/v1/player/{playerId}", cancellationToken);
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -51,7 +51,7 @@ public class PlayerServiceClient : IPlayerServiceClient
     public async Task<Dictionary<int, PlayerInfoDto>> GetPlayersByIdsAsync(IEnumerable<int> playerIds, CancellationToken cancellationToken = default)
     {
         var result = new Dictionary<int, PlayerInfoDto>();
-        
+
         // For now, get players one by one
         // In a real implementation, you might want to batch these requests
         foreach (var playerId in playerIds)

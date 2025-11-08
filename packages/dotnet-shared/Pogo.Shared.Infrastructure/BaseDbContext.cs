@@ -24,18 +24,18 @@ public abstract class BaseDbContext : DbContext
                 // Configure CreatedAt and UpdatedAt
                 modelBuilder.Entity(entityType.ClrType)
                     .Property(nameof(BaseEntity.CreatedAt))
-                    .HasDefaultValueSql("GETUTCDATE()");
+                    .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                 modelBuilder.Entity(entityType.ClrType)
                     .Property(nameof(BaseEntity.UpdatedAt))
-                    .HasDefaultValueSql("GETUTCDATE()");
+                    .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                 // Configure soft delete
                 var parameter = System.Linq.Expressions.Expression.Parameter(entityType.ClrType, "e");
                 var property = System.Linq.Expressions.Expression.Property(parameter, nameof(BaseEntity.IsDeleted));
                 var notExpression = System.Linq.Expressions.Expression.Not(property);
                 var lambda = System.Linq.Expressions.Expression.Lambda(notExpression, parameter);
-                
+
                 modelBuilder.Entity(entityType.ClrType)
                     .HasQueryFilter(lambda);
 

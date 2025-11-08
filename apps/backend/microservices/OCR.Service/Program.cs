@@ -59,7 +59,7 @@ app.MapMetrics();
 app.MapHealthChecks();
 
 // Minimal API endpoints
-app.MapPost("/api/scans", async (ScanImageRequest request, IMediator mediator, ILogger<Program> logger, CancellationToken cancellationToken) =>
+app.MapPost("/api/v1/scans", async (ScanImageRequest request, IMediator mediator, ILogger<Program> logger, CancellationToken cancellationToken) =>
 {
     try
     {

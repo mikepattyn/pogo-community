@@ -11,7 +11,7 @@ namespace Player.Service.API.Controllers;
 /// Controller for player operations
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/players")]
 public class PlayerController : ControllerBase
 {
     private readonly IMediator _mediator;

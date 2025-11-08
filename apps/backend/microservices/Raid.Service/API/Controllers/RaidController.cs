@@ -11,7 +11,7 @@ namespace Raid.Service.API.Controllers;
 /// Controller for raid operations
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/raids")]
 public class RaidController : ControllerBase
 {
     private readonly IMediator _mediator;
