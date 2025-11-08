@@ -83,6 +83,25 @@ public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerDto request
 - Create contract/integration tests that exercise the full flow: OCR scan → Bot BFF → Raid service → database, and emoji registration → Player service.
 - Document manual runbooks for reprocessing failed OCR scans and reconciling Discord reactions with persisted raid participation.
 
+## Next Steps Roadmap
+
+### 1. Immediate (This sprint)
+- Stand up Bot BFF façade endpoints for raid creation and player registration; adapt `BotBffClient` to the new routes.
+- Implement the missing raid command/query handlers and create a migration that adds `RaidParticipant` (raid ↔ player) tables.
+- Replace the in-memory raid cache in `RaidService` with calls to the new façade so OCR scans persist raids end-to-end.
+- Write Bruno (or integration) tests that cover raid creation via scan and emoji-rich player registration.
+
+### 2. Near Term (Next sprint)
+- Enhance OCR parsing to resolve gyms via Gym/Location service lookups and produce structured raid metadata.
+- Add structured logging/metrics around the new flows; surface success/error ratios on dashboards.
+- Harden Unicode handling by adding EF Core tests plus JSON encoder configuration to guarantee emoji round-trips.
+- Provide staging verification scripts/runbooks so QA can validate raid persistence and emoji sign-up manually.
+
+### 3. Follow-up
+- Address open questions (gym disambiguation, consent, unregistered Discord participants) and document chosen solutions.
+- Expand test coverage with Discord reaction simulations to ensure persistence stays consistent as features evolve.
+- Review performance and implement caching or eventing enhancements once the baseline flow is stable.
+
 ## Verification Plan
 - Implement end-to-end tests using Bruno collections or integration test projects that call the Bot BFF routes.
 - Validate database state directly (e.g., query `RaidDb` and `PlayerDb`) after bot interactions.
