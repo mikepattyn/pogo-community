@@ -21,8 +21,8 @@ public class GymServiceClient : IGymServiceClient
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/gym/{gymId}", cancellationToken);
-            
+            var response = await _httpClient.GetAsync($"api/v1/gym/{gymId}", cancellationToken);
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -51,7 +51,7 @@ public class GymServiceClient : IGymServiceClient
     public async Task<Dictionary<int, GymInfoDto>> GetGymsByIdsAsync(IEnumerable<int> gymIds, CancellationToken cancellationToken = default)
     {
         var result = new Dictionary<int, GymInfoDto>();
-        
+
         // For now, get gyms one by one
         // In a real implementation, you might want to batch these requests
         foreach (var gymId in gymIds)

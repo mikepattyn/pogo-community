@@ -96,7 +96,7 @@ public class BotBffClient : IBotBffClient
         {
             var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/raid/v1/raids", request, cancellationToken);
             response.EnsureSuccessStatusCode();
-            
+
             var raid = await response.Content.ReadFromJsonAsync<RaidResponseDto>(cancellationToken: cancellationToken);
             _logger.LogInformation("Successfully created raid with message ID: {MessageId}", request.DiscordMessageId);
             return raid ?? throw new InvalidOperationException("Failed to deserialize created raid response");
@@ -129,7 +129,7 @@ public class BotBffClient : IBotBffClient
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/ocr/scans", request, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/ocr/v1/scans", request, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ScanImageResponse>(cancellationToken: cancellationToken);

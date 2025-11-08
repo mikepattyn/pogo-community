@@ -35,5 +35,7 @@
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "yaya.organization": "methylium",
+  "yaya.project": "Rocksoft.Yaya"
 }

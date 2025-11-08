@@ -37,7 +37,7 @@ namespace Gym.Service.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -75,7 +75,7 @@ namespace Gym.Service.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.HasKey("Id");
 

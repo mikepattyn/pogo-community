@@ -21,8 +21,8 @@ public class LocationServiceClient : ILocationServiceClient
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/location/{locationId}", cancellationToken);
-            
+            var response = await _httpClient.GetAsync($"api/v1/location/{locationId}", cancellationToken);
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -51,7 +51,7 @@ public class LocationServiceClient : ILocationServiceClient
     public async Task<Dictionary<int, LocationInfoDto>> GetLocationsByIdsAsync(IEnumerable<int> locationIds, CancellationToken cancellationToken = default)
     {
         var result = new Dictionary<int, LocationInfoDto>();
-        
+
         // For now, get locations one by one
         // In a real implementation, you might want to batch these requests
         foreach (var locationId in locationIds)

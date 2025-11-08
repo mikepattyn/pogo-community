@@ -11,7 +11,7 @@ namespace Gym.Service.API.Controllers;
 /// Controller for gym operations
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/gyms")]
 public class GymController : ControllerBase
 {
     private readonly IMediator _mediator;

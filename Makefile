@@ -417,9 +417,30 @@ k8s-shell: ## Open shell in a pod (interactive)
 	@echo "$(YELLOW)Example: make k8s-shell POD=account-service-xxx CONTAINER=account-service$(NC)"
 	@if [ -n "$(POD)" ]; then \
 		echo "$(CYAN)Opening shell in pod $(POD)...$(NC)"; \
-		kubectl exec -it $(POD) -n pogo-system $(if [ -n "$(CONTAINER)" ]; then echo "-c $(CONTAINER)"; fi) -- /bin/bash || /bin/sh; \
+		if [ -n "$(CONTAINER)" ]; then \
+			kubectl exec -it $(POD) -n pogo-system -c $(CONTAINER) -- /bin/bash || kubectl exec -it $(POD) -n pogo-system -c $(CONTAINER) -- /bin/sh; \
+		else \
+			kubectl exec -it $(POD) -n pogo-system -- /bin/bash || kubectl exec -it $(POD) -n pogo-system -- /bin/sh; \
+		fi; \
 	else \
 		echo "$(RED)Please specify POD parameter$(NC)"; \
+	fi
+
+k8s-shell-logs: ## View logs for a deployment (interactive)
+	@echo "$(CYAN)Available deployments:$(NC)"
+	@kubectl get deployments -n pogo-system
+	@echo ""
+	@echo "$(YELLOW)Usage: make k8s-shell-logs DEPLOYMENT=<deployment-name> CONTAINER=<container-name>$(NC)"
+	@echo "$(YELLOW)Example: make k8s-shell-logs DEPLOYMENT=account-service-xxx CONTAINER=account-service$(NC)"
+	@if [ -n "$(DEPLOYMENT)" ]; then \
+		echo "$(CYAN)Opening shell in deployment $(DEPLOYMENT)...$(NC)"; \
+		if [ -n "$(CONTAINER)" ]; then \
+			kubectl logs -f deployment/$(DEPLOYMENT) -n pogo-system -c $(CONTAINER); \
+		else \
+			kubectl logs -f deployment/$(DEPLOYMENT) -n pogo-system; \
+		fi; \
+	else \
+		echo "$(RED)Please specify DEPLOYMENT parameter$(NC)"; \
 	fi
 
 k8s-validate: ## Validate deployment and check all components
@@ -437,4 +458,5 @@ k8s-port-forward-stop: ## Stop port forwarding for monitoring services
 k8s-port-forward-status: ## Show port forwarding status
 	@echo "$(CYAN)Checking port forwarding status...$(NC)"
 	@./k8s/port-forward.sh status
+
 

@@ -12,7 +12,7 @@ using Player.Service.Infrastructure.Data;
 namespace Player.Service.Migrations
 {
     [DbContext(typeof(PlayerDbContext))]
-    [Migration("20251031183352_InitialMigration")]
+    [Migration("20251031195117_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace Player.Service.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<string>("DiscordUserId")
                         .HasMaxLength(50)
@@ -77,7 +77,7 @@ namespace Player.Service.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -90,7 +90,7 @@ namespace Player.Service.Migrations
 
                     b.HasIndex("DiscordUserId")
                         .IsUnique()
-                        .HasFilter("[DiscordUserId] IS NOT NULL");
+                        .HasFilter("\"DiscordUserId\" IS NOT NULL");
 
                     b.HasIndex("IsActive");
 

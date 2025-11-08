@@ -1,16 +1,20 @@
+using System.Linq;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Npgsql;
+using Pogo.Shared.API;
+using Pogo.Shared.Application;
+using Pogo.Shared.Infrastructure;
+using Prometheus;
 using Raid.Service.Application.Commands;
 using Raid.Service.Application.Interfaces;
 using Raid.Service.Application.Queries;
 using Raid.Service.Infrastructure.Data;
 using Raid.Service.Infrastructure.Repositories;
 using Raid.Service.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
-using Pogo.Shared.API;
-using Pogo.Shared.Application;
-using MediatR;
-using FluentValidation;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +28,8 @@ builder.Services.AddHealthChecks(builder.Configuration.GetConnectionString("Defa
 
 // Add Entity Framework
 builder.Services.AddDbContext<RaidDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 // Add MediatR
 builder.Services.AddMediatR(cfg =>
@@ -44,25 +49,30 @@ builder.Services.AddScoped<IRaidRepository, RaidRepository>();
 // Add HTTP clients for other services
 builder.Services.AddHttpClient<IGymServiceClient, GymServiceClient>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["GymService:BaseUrl"] ?? "http://localhost:5004");
+    client.BaseAddress = new Uri(
+        builder.Configuration["GymService:BaseUrl"] ?? "http://localhost:5004"
+    );
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
 builder.Services.AddHttpClient<IPlayerServiceClient, PlayerServiceClient>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["PlayerService:BaseUrl"] ?? "http://localhost:5002");
+    client.BaseAddress = new Uri(
+        builder.Configuration["PlayerService:BaseUrl"] ?? "http://localhost:5002"
+    );
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
 });
 
 var app = builder.Build();
@@ -70,6 +80,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Map health checks BEFORE HTTPS redirection to avoid redirect issues with K8s probes
+app.MapHealthChecks();
 
 app.UseHttpsRedirection();
 
@@ -81,14 +94,8 @@ app.UseHttpMetrics();
 app.MapControllers();
 app.MapMetrics();
 
-// Map health checks
-app.MapHealthChecks();
-
-// Apply database migrations
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<RaidDbContext>();
-    context.Database.Migrate();
-}
+// Run database migrations asynchronously to avoid blocking startup
+// This allows the HTTP server to start immediately while migrations run in background
+app.RunMigrationsAsync<RaidDbContext>();
 
 app.Run();

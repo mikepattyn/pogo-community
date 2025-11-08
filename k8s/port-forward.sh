@@ -18,6 +18,7 @@ SERVICES=(
     "swagger-gateway:10000:10000"
     "grafana:10001:3000"
     "prometheus:10002:9090"
+    "cockroachdb-public:10003:26257"
 )
 
 # Helper function to get service name from config
@@ -164,9 +165,10 @@ start_port_forwards() {
         echo -e "${GREEN}✅ All port forwarding started successfully!${NC}"
         echo ""
         echo -e "${YELLOW}📋 Access your services:${NC}"
-        echo -e "  Swagger Gateway: http://localhost:10000"
+        echo -e "  Swagger Gateway: http://localhost:10000/swagger"
         echo -e "  Grafana:         http://localhost:10001"
         echo -e "  Prometheus:      http://localhost:10002"
+        echo -e "  CockroachDB:     localhost:10003"
         echo ""
         echo -e "${YELLOW}💡 To stop port forwarding: ./k8s/port-forward.sh stop${NC}"
         echo -e "${YELLOW}💡 To check status: ./k8s/port-forward.sh status${NC}"

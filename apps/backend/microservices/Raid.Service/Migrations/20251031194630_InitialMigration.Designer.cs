@@ -12,7 +12,7 @@ using Raid.Service.Infrastructure.Data;
 namespace Raid.Service.Migrations
 {
     [DbContext(typeof(RaidDbContext))]
-    [Migration("20251031183454_InitialMigration")]
+    [Migration("20251031194630_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace Raid.Service.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<int>("CurrentParticipants")
                         .HasColumnType("integer");
@@ -90,7 +90,7 @@ namespace Raid.Service.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<string>("WeatherBoost")
                         .HasMaxLength(50)

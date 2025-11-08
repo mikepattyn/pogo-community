@@ -11,7 +11,7 @@ namespace Location.Service.API.Controllers;
 /// Controller for location operations
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/locations")]
 public class LocationController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Account.Service.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20251031183207_InitialMigration")]
+    [Migration("20251031194616_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace Account.Service.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<DateTime>("DateJoined")
                         .HasColumnType("timestamp with time zone");
@@ -63,7 +63,7 @@ namespace Account.Service.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("(now() AT TIME ZONE 'UTC')");
 
                     b.Property<int>("WrongAttempts")
                         .ValueGeneratedOnAdd()

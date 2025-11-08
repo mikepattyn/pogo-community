@@ -499,6 +499,34 @@ make k8s-port-forward-status  # Show port forwarding status
 make k8s-shell POD=<pod-name>  # Open shell in pod
 ```
 
+### 🛠️ Interactive Management Scripts
+
+For easier management of individual service categories, use the interactive scripts in `k8s/scripts/`:
+
+```bash
+# Microservices management
+./k8s/scripts/microservices.sh    # Manage Account, Player, Location, Gym, Raid, OCR services
+
+# BFFs management
+./k8s/scripts/bffs.sh              # Manage App BFF and Bot BFF
+
+# Gateways management
+./k8s/scripts/gateways.sh          # Manage Swagger Gateway
+
+# Apps management
+./k8s/scripts/apps.sh              # Manage Bot app
+```
+
+Each script provides an interactive menu with options to:
+- 🔨 Rebuild Docker images
+- 🗑️ Remove deployments
+- 🚀 Deploy services
+- 🔄 Run all (rebuild → remove → deploy)
+
+You can select individual services or operate on all services in a category.
+
+📖 **For detailed script documentation, see [Kubernetes Scripts README](k8s/scripts/README.md)**
+
 📖 **For detailed Kubernetes documentation, see [Kubernetes Deployment Guide](docs/kubernetes.md)**
 
 ### 🏥 Health Checks

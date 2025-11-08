@@ -80,7 +80,7 @@ public class Raid : BaseEntity
     /// <summary>
     /// Checks if the raid is currently happening
     /// </summary>
-    public bool IsCurrentlyActive => IsActive && !IsCompleted && !IsCancelled && 
+    public bool IsCurrentlyActive => IsActive && !IsCompleted && !IsCancelled &&
                                    DateTime.UtcNow >= StartTime && DateTime.UtcNow <= EndTime;
 
     /// <summary>

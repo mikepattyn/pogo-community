@@ -259,6 +259,30 @@ minikube service pogo-app -n pogo-system
 
 ### CockroachDB Problems
 
+> **📖 For detailed information about CockroachDB migration handling, see [CockroachDB Migrations Guide](./cockroachdb-migrations.md)**
+
+#### Migration Errors
+
+**Symptoms:**
+- Services not becoming ready
+- Migration lock errors in logs: `42601: at or near "lock": syntax error`
+- SQL syntax errors: `42883: unknown function: getutcdate()`
+- SQL syntax errors: `42601: at or near "discorduserid": syntax error`
+
+**Explanation:**
+CockroachDB requires special migration handling because:
+1. **No LOCK TABLE support** - CockroachDB doesn't support PostgreSQL's `LOCK TABLE ... IN ACCESS EXCLUSIVE MODE` syntax
+2. **SQL Server syntax** - Some legacy code uses SQL Server syntax (`[Identifier]`, `GETUTCDATE()`) that needs conversion
+
+**Solution:**
+Our microservices use a shared migration runner (`DatabaseMigrationRunner`) that:
+- Tries standard EF Core migration first
+- Falls back to direct SQL execution when lock errors occur
+- Automatically converts SQL Server syntax to PostgreSQL syntax
+- Handles errors gracefully without crashing the service
+
+See [CockroachDB Migrations Guide](./cockroachdb-migrations.md) for complete details.
+
 #### Database Not Starting
 
 **Symptoms:**
