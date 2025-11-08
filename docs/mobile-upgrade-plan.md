@@ -1,84 +1,90 @@
-# Mobile App Modernization Plan
+# Mobile App Greenfield Plan (React Native 0.82)
 
-## Goal
-- Align the React Native mobile app with the current Expo/React Native ecosystem.
-- Close security gaps around configuration, authentication, and secret handling.
-- Improve architecture, test coverage, and developer experience across platforms (iOS, Android, Web).
+## Vision
+- Deliver a production-grade React Native 0.82 application following the official getting-started guidance.
+- Adopt modern architecture, security, and testing practices from day one.
+- Ensure parity across iOS, Android, and Web while enabling future scalability.
 
-## Guiding Assumptions
-- Target Expo SDK `~53.x` (or latest stable at execution time) with React Native `0.76+`.
-- Node `>=18`, pnpm workspace, and monorepo tooling remain the baseline.
-- Backend APIs and authentication flows are being modernized in parallel; the app should read configuration from environment rather than embedding secrets.
-- iOS minimum deployment target remains `15.1` unless cross-team alignment allows lowering it.
-- Android should target SDK `35`, min SDK `24`, and adopt the new architecture once the upgrade stabilizes.
+## Foundational Decisions
+- Use the new React Native CLI workflow (`npx @react-native-community/cli@latest init`).
+- Node `>=18`, pnpm workspace integration, TypeScript baseline (`strict` enabled).
+- Prefer native module support over Expo managed workflow; integrate Expo modules selectively via config plugins when needed.
+- Establish minimum OS targets: iOS 15.1+, Android minSdk 24, targetSdk 35.
+- Follow trunk-based development with feature flags and robust CI.
 
-## Workstream A — Platform & Tooling Upgrade
-- [ ] Audit current Expo CLI and renovation prerequisites (`node`, `pnpm`, `expo-cli`).
-- [ ] Run `npx expo upgrade` toward the target SDK; resolve merge conflicts.
-- [ ] Regenerate native projects (`android`, `ios`) using the new templates; keep backup to compare customizations.
-- [ ] Replace legacy Expo config (`app.json`) with typed `app.config.ts` and align metadata.
-- [ ] Enable Hermes, new architecture, and Gradle managed devices as appropriate.
-- [ ] Validate Metro bundler configuration for monorepo compatibility (`metro.config.js`, `@expo/metro-runtime` updates).
+## Workstream A — Project Bootstrap
+- [ ] Create RN 0.82 app with TypeScript template and workspace-friendly folder layout.
+- [ ] Configure package scripts (`start`, `android`, `ios`, `test`, `lint`, `typecheck`).
+- [ ] Adopt `app.json`/`react-native.config.js` settings for assets, fonts, and monorepo support.
+- [ ] Add commit hooks (`lint-staged`, `husky`) enforcing lint, formatting, and type checks.
+- [ ] Document developer onboarding and environment prerequisites.
 
-## Workstream B — Native Project Modernization
-- [ ] Android: align package name vs. folder structure, migrate `MainApplication` to `DefaultReactNativeHost`, and trim manifest permissions.
-- [ ] Update Gradle wrapper, Kotlin, and AGP versions per Expo guidance.
-- [ ] Introduce modularized `android/app/src/main/java` structure for future features (e.g., location services).
-- [ ] iOS: move to `ExpoAppDelegate`, configure Apple Maps/Google Maps keys via Expo config plugins, and enable auto-linking.
-- [ ] Regenerate Pods (`pod install`), ensure Swift compatibility, and verify build with Xcode 15.
-- [ ] Add CI scripts for `gradlew assembleRelease` / `xcodebuild` smoke builds.
+## Workstream B — Architecture & State Management
+- [ ] Define feature-driven folder structure (`app/`): modules, screens, components, hooks, services.
+- [ ] Implement navigation with React Navigation v7 (stack, bottom tabs, deep linking).
+- [ ] Introduce global state via React Query + Context for auth/session, keeping Redux optional.
+- [ ] Establish configuration service reading from `.env` and runtime overrides.
+- [ ] Codify domain interfaces and DTOs; enforce strict typing and API contracts.
 
-## Workstream C — Application Architecture & Code Quality
-- [ ] Convert legacy class components to functional components with hooks (`useNavigation`, `useRoute`, `useState`, `useEffect`).
-- [ ] Replace deprecated lifecycle methods (`UNSAFE_componentWillReceiveProps`, manual `forceUpdate`) with effect-driven logic.
-- [ ] Migrate to React Navigation v7 patterns (`NavigationContainer`, typed params).
-- [ ] Enable TypeScript `strict` mode; resolve resulting type gaps incrementally.
-- [ ] Adopt `@react-native-async-storage/async-storage` and refactor storage utilities accordingly.
-- [ ] Introduce centralized state (React Context or lightweight store) for auth/session data.
+## Workstream C — UI/UX & Accessibility
+- [ ] Select design system (`react-native-paper` or custom plus Tailwind alternative such as `nativewind`) and document usage.
+- [ ] Implement theming (light/dark), spacing, typography tokens maintained centrally.
+- [ ] Bake in accessibility: focus management, VoiceOver/ TalkBack labels, dynamic type.
+- [ ] Plan localization support (i18next) with resource scaffolding.
+- [ ] Define responsive layout strategy for tablets and web.
 
-## Workstream D — Networking & Security
-- [ ] Remove hard-coded API base URLs and bearer tokens; load configuration from environment (`expo-constants`, build-time `.env`).
-- [ ] Rebuild Axios client to instantiate per request with interceptors scoped to that instance.
-- [ ] Integrate secure credential storage for tokens (`expo-secure-store` or `react-native-keychain`).
-- [ ] Implement environment-driven logging (toggleable in dev vs. production).
-- [ ] Ensure HTTPS endpoints and certificate pinning strategy where feasible.
-- [ ] Document onboarding for environment variables and secret rotation.
+## Workstream D — Networking, Security & Data
+- [ ] Build Axios (or Fetch wrapper) client with interceptors, retries, and logging.
+- [ ] Integrate secure storage for tokens (`react-native-keychain`), with refresh token workflow.
+- [ ] Enforce HTTPS, certificate pinning (via `react-native-cert-pinner`) roadmap.
+- [ ] Implement offline caching strategies (React Query persistence, SQLite/WatermelonDB evaluation).
+- [ ] Establish telemetry/logging pipeline (Sentry for errors, Segment/Amplitude for analytics) with privacy guardrails.
 
-## Workstream E — Features, UX, and Accessibility
-- [ ] Redesign welcome/registration flow to use form libraries (e.g., `react-hook-form`) with validation feedback.
-- [ ] Audit navigation stack for unused routes and future features; define backlog items.
-- [ ] Update UI components to contemporary design system (consider `react-native-paper` or custom components).
-- [ ] Add accessibility labels, dynamic type scaling, and localization scaffolding.
-- [ ] Review Google Maps integration for quota usage and fallback when APIs fail.
-- [ ] Provide offline/low-connectivity handling where applicable.
+## Workstream E — Native Capabilities
+- [ ] Handle runtime permissions through a central service with UX flows.
+- [ ] Integrate geolocation/maps using community-supported modules (`react-native-maps` with Google/Apple keys via config plugins).
+- [ ] Set up push notifications blueprint (Firebase for Android, APNs/PushKit for iOS) with abstraction layer.
+- [ ] Prepare background tasks (location sync, fetch) respecting platform limits.
+- [ ] Plan for feature flags and remote config (LaunchDarkly or open-source alternative).
 
-## Workstream F — Testing, Tooling, and CI
-- [ ] Introduce unit/integration tests with `@testing-library/react-native` and snapshot baselines.
-- [ ] Configure Detox or Expo E2E tests for core flows (login, map, registration).
-- [ ] Expand linting rules (`eslint-config-universe`, TypeScript ESLint) and enable automatic formatting.
-- [ ] Add GitHub Actions (or existing CI) jobs for lint, type-check, test, and platform build verification.
-- [ ] Define release checklist, including OTA updates if using Expo EAS.
-- [ ] Capture metrics for crash/error reporting (Sentry or Expo Updates).
+## Workstream F — Quality Engineering
+- [ ] Testing pyramid:
+  - Unit: Jest + React Native Testing Library.
+  - Integration: component tests with mocked native modules.
+  - End-to-end: Detox for iOS/Android, Playwright for web.
+- [ ] Configure code coverage thresholds and reporting to CI.
+- [ ] Add storybook or equivalent for isolated UI testing.
+- [ ] Establish performance budget: measure TTI, memory usage, animation FPS.
+- [ ] Set up static analysis (ESLint, TS ESLint, `react-native-codegen` checks) and dependency vulnerability scans.
 
-## Deliverables & Milestones
-- **Phase 1 (Weeks 1-2):** Tooling upgrade, native project regeneration, initial CI checks pass.
-- **Phase 2 (Weeks 3-4):** Core architecture refactor (hooks, navigation), secure configuration, TypeScript strict baseline.
-- **Phase 3 (Weeks 5-6):** UX refresh, accessibility improvements, feature parity confirmation.
-- **Phase 4 (Weeks 7+):** Expanded testing, CI hardening, release readiness, documentation updates.
+## Workstream G — DevOps & Delivery
+- [ ] GitHub Actions (or existing CI) pipelines: install, lint, typecheck, test, build for each platform.
+- [ ] Automate nightly `gradlew assembleDebug` / `xcodebuild` to catch regressions.
+- [ ] Integrate Fastlane for beta distribution (TestFlight, Play Console internal testing).
+- [ ] Define versioning strategy (semantic with native build numbers) and release branches.
+- [ ] Prepare infrastructure for OTA updates (CodePush or RN OTA alternative) while respecting app store policies.
 
-## Dependencies & Coordination
-- Backend teams for API contract validation and auth token lifecycle.
-- DevOps/SRE for CI/CD pipelines, secret management, and app distribution.
-- Design/UX for updated flows and component library choices.
-- Security for reviewing token storage and permission scopes.
+## Roadmap & Milestones
+- **Phase 0 (Week 0):** Confirm requirements, finalize architecture, sign off on design system.
+- **Phase 1 (Weeks 1-2):** Bootstrap project, CI, baseline navigation, theming.
+- **Phase 2 (Weeks 3-5):** Core features (auth, dashboard, map interactions), secure networking.
+- **Phase 3 (Weeks 6-7):** Native integrations, offline strategy, accessibility, localization scaffolding.
+- **Phase 4 (Weeks 8+):** Testing automation, performance tuning, beta distribution readiness.
+
+## Coordination & Governance
+- Product/design to define MVP scope, UI kit, and content strategy.
+- Backend/API team to deliver versioned contracts and staging environments.
+- Security to review threat model, data retention, and dependency audits.
+- DevOps to maintain CI/CD, secrets management, and release tooling.
+- Weekly triage reviewing velocity, blocking issues, and risk mitigation.
 
 ## Risks & Mitigations
-- **Upgrade Breakage:** Run upgrade in stages, keep reproducible scripts, and gate merges via CI.
-- **API Changes:** Implement feature flags or mocked services to decouple from backend timelines.
-- **Resource Constraints:** Prioritize workstreams, schedule mob sessions for complex migrations.
-- **Secret Exposure:** Move keys to environment files immediately and rotate compromised credentials.
+- **Scope Creep:** Enforce milestone gates; backlog items outside MVP get tracked separately.
+- **Native Module Complexity:** Prototype high-risk integrations early; maintain upgrade plan per RN release cadence.
+- **Performance Regressions:** Include profiling in CI (Android systrace, iOS Instruments) and guard budgets.
+- **Compliance/Security:** Adopt secure coding guidelines, run static analysis (MobSF) regularly, and anonymize analytics by default.
 
-## Next Actions
-- Confirm target Expo SDK and ship date with stakeholders.
-- Schedule kickoff for Phase 1 with mobile, backend, and DevOps leads.
-- Allocate ownership for each workstream and establish progress checkpoints.
+## Immediate Next Actions
+- Align stakeholders on MVP feature set and success metrics.
+- Spin up the new RN 0.82 project in the monorepo and push baseline scaffolding.
+- Schedule architecture review to ratify state management, navigation, and data access patterns.
