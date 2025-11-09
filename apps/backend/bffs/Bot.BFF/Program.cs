@@ -1,3 +1,4 @@
+using Bot.BFF.Services;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Pogo.Shared.API;
@@ -13,6 +14,33 @@ builder.Services.AddOcelot();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Typed HTTP clients for downstream microservices
+builder.Services.AddHttpClient<IPlayerServiceClient, PlayerServiceClient>((provider, client) =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var baseUrl = configuration["Services:PlayerService:BaseUrl"];
+    if (string.IsNullOrWhiteSpace(baseUrl))
+    {
+        throw new InvalidOperationException("Player service base URL is not configured.");
+    }
+
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
+
+builder.Services.AddHttpClient<IRaidServiceClient, RaidServiceClient>((provider, client) =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var baseUrl = configuration["Services:RaidService:BaseUrl"];
+    if (string.IsNullOrWhiteSpace(baseUrl))
+    {
+        throw new InvalidOperationException("Raid service base URL is not configured.");
+    }
+
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
 
 // Add health checks using custom extension
 builder.Services.AddHealthChecks("");

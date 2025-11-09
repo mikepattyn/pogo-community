@@ -17,18 +17,6 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "player-service",
-          "Port": 5002
-        }
-      ],
-      "UpstreamPathTemplate": "/api/player/{everything}",
-      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
-    },
-    {
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
           "Host": "location-service",
           "Port": 5003
         }
@@ -46,18 +34,6 @@
         }
       ],
       "UpstreamPathTemplate": "/api/gym/{everything}",
-      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
-    },
-    {
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "raid-service",
-          "Port": 5005
-        }
-      ],
-      "UpstreamPathTemplate": "/api/raid/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
