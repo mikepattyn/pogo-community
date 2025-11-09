@@ -19,7 +19,7 @@ public class PlayerService : IPlayerService
     {
         try
         {
-            var player = new UpdatePlayerDto
+            var playerUpdatePayload = new UpdatePlayerDto
             {
                 FirstName = firstName,
                 Nickname = nickname,
@@ -31,9 +31,12 @@ public class PlayerService : IPlayerService
             var existingPlayer = await _botBffClient.GetPlayerAsync(discordId);
             if (existingPlayer != null)
             {
-                // Update existing player - we'd need the player ID from the response
-                // For now, we'll assume the API handles this by Discord ID
-                await _botBffClient.UpdatePlayerAsync(discordId, player);
+                playerUpdatePayload.FriendCode = existingPlayer.FriendCode;
+                playerUpdatePayload.Timezone = existingPlayer.Timezone;
+                playerUpdatePayload.Language = existingPlayer.Language;
+                playerUpdatePayload.IsActive = existingPlayer.IsActive;
+
+                await _botBffClient.UpdatePlayerAsync(discordId, playerUpdatePayload);
             }
             else
             {
@@ -45,7 +48,9 @@ public class PlayerService : IPlayerService
                     FirstName = firstName,
                     Nickname = nickname,
                     Level = level,
-                    Team = team
+                    Team = team,
+                    Timezone = "UTC",
+                    Language = "en"
                 };
                 await _botBffClient.CreatePlayerAsync(newPlayer);
             }
@@ -75,7 +80,13 @@ public class PlayerService : IPlayerService
             // This is a simplified implementation - in reality, you'd parse the player object
             var updatePlayer = new UpdatePlayerDto
             {
-                Level = 1 // This should be incremented from current level
+                Level = Math.Max(player.Level + 1, 1),
+                Team = player.Team,
+                Nickname = player.DisplayName,
+                FriendCode = player.FriendCode,
+                Timezone = player.Timezone,
+                Language = player.Language,
+                IsActive = player.IsActive
             };
 
             await _botBffClient.UpdatePlayerAsync(discordId, updatePlayer);
@@ -89,7 +100,7 @@ public class PlayerService : IPlayerService
         }
     }
 
-    public async Task<object?> GetPlayerAsync(string discordId)
+    public async Task<PlayerProfileDto?> GetPlayerAsync(string discordId)
     {
         try
         {
